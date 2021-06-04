@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card margin-top-15">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <dx-tabs [dataSource]="companyManagementTabs" [selectedIndex]="selectedTabIndex" (onItemClick)="onTabSelect($event)">
+                        </dx-tabs>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!--Company info tab-->
+                <div *ngIf="isTabVisible(0)">
+                    <company-form></company-form>
+                </div>
+                <!--Locations tab-->
+                <div *ngIf="isTabVisible(1)">
+                    <location-management></location-management>
+                </div>
+                <!--Rooms tab-->
+                <div *ngIf="isTabVisible(2)">
+                    <room-management></room-management>
+                </div>
+                <!--Employees tab-->
+                <div *ngIf="isTabVisible(3)">
+                    <employee-management></employee-management>
+                </div>
+                <!--Permissions tab-->
+                <div *ngIf="isTabVisible(4)">
+                    <permission-group></permission-group>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

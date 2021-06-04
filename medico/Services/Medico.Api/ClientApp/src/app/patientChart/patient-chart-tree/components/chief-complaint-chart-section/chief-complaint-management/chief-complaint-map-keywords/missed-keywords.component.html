@@ -1,0 +1,27 @@
+<dx-popup #missedKeywordsPopup class="popup" [width]="500" [height]="400"
+    [dragEnabled]="false" [showTitle]="false" [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <div class="row">
+            <div class="col-md-12">
+                <h6>MISSED KEYWORDS</h6>
+            </div>
+            <div class="col-md-12 mt-md-2">
+                <dx-list
+                    #missedKeywordsList
+                    [height]="300   "
+                    [showSelectionControls]="true"
+                    [items]="missedKeywords"
+                    selectionMode="multiple">
+                </dx-list>
+            </div>
+        </div>
+        <div class="row margin-top-15">
+            <div class="col-md-6 text-left">
+                <button type="button" (click)="saveMissedKeywords()" class="btn btn-sm btn-outline-primary">ADD KEYWORDS</button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button type="button" (click)="cancelMissedKeywords()" class="btn btn-sm btn-outline-danger">CANCEL</button>
+            </div>
+        </div>
+    </div>
+</dx-popup>

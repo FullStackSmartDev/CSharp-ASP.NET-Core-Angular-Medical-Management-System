@@ -1,0 +1,21 @@
+<dx-tabs
+    [width]="200"
+    [dataSource]="editorModes"
+    [selectedIndex]="selectedModeIndex" 
+    (onItemClick)="onEditorModeSelected($event.itemData)">
+</dx-tabs>
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <template-manual-editor
+            *ngIf="isManualModeSelected"
+            [initialContent]="detailedTemplateContent"
+            (onContentChanged)="onDetailedContentChanged($event)">
+        </template-manual-editor>
+
+        <selectable-items-editor *ngIf="isSelectableModeSelected" 
+            [templateContent]="detailedTemplateContent"
+            (onContentChanged)="onDetailedContentChanged($event)">
+        </selectable-items-editor>
+    </div>
+</div>

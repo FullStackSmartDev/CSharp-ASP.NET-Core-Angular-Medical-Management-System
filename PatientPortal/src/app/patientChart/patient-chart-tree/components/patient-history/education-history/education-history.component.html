@@ -1,0 +1,91 @@
+<div *ngIf="canRenderComponent" class="row">
+        <div *ngIf="!isSignedOff" class="col-md-2">
+          <button type="button" (click)="openEducationHistoryForm()" class="btn btn-sm btn-outline-secondary">ADD EDUCATION HISTORY</button>
+        </div>
+      </div>
+      <div *ngIf="isHistoryExist" class="row mt-md-2">
+        <div class="col-md-12">
+          <dx-data-grid [selectedRowKeys]="selectedEducationHistory" [hoverStateEnabled]="true" 
+            (onSelectionChanged)="onEducationHistorySelect($event)"
+            [wordWrapEnabled]="true" 
+            #educationHistoryDataGrid
+            [dataSource]="educationHistoryDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+      
+            <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+      
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+      
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+      
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="patientId" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column alignment="center" width="15%" dataField="degree" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column alignment="center" width="15%" dataField="yearCompleted" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column alignment="center" width="15%" dataField="createDate" dataType="date"></dxi-column>
+            <dxi-column dataField="notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+    
+            <dxi-column *ngIf="!isSignedOff" alignment="center" width="15%" caption="Delete" cellTemplate="deleteHistoryTemplate"></dxi-column>
+            <div class="text-center" *dxTemplate="let history of 'deleteHistoryTemplate'">
+                <button type="button" (click)="deleteHistory(history.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+            </div>
+      
+            <dxo-selection mode="single"></dxo-selection>
+      
+            <div class="text-left" *dxTemplate="let data of 'cellTemplate'">
+              <value-component [value]="data.value"></value-component>
+            </div>
+      
+          </dx-data-grid>
+        </div>
+      </div>
+      <div *ngIf="!isHistoryExist" class="row mt-md-2">
+        <div class="col-md-2">
+          <h6>{{defaultHistoryValue}}</h6>
+        </div>
+      </div>
+      <dx-popup #educationHistoryPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+        title="EDUCATION HISTORY" [closeOnOutsideClick]="false" [(visible)]="isEducationHistoryPopupOpened"
+        (onHidden)="onEducationHistoryPopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isEducationHistoryPopupOpened" class="row">
+              <div class="col-md-12">
+                  <dx-form #educationHistoryForm [height]="460" [colCount]="12" labelLocation="top" [(formData)]="educationHistory">
+                    <dxi-item [colSpan]="6" [label]="{text: 'Degree'}" dataField="degree" editorType="dxSelectBox" [editorOptions]="{ items: educationListValues }">
+                      <dxi-validation-rule type="required"></dxi-validation-rule>  
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="3" [label]="{text: 'Year Completed'}" dataField="yearCompleted" editorType="dxNumberBox" 
+                        [editorOptions]="{ items: educationStatusListValues, min: minCompletedYearNumber, max: maxCompletedYearNumber }">
+                      <dxi-validation-rule type="required"></dxi-validation-rule>  
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="3" dataField="createDate" editorType="dxDateBox" [editorOptions]="{ width: '100%', readOnly: isNewEducationHistory }">
+                      <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+                    
+                    <dxi-item [colSpan]="12" [label]="{text: 'Notes'}" dataField="notes" template="notesTemplate"></dxi-item>
+
+                    <div *dxTemplate="let data of 'notesTemplate'"> 
+                      <dx-text-area valueChangeEvent="keyup" [(value)]="data.component.option('formData')[data.dataField]" height="120">
+                      </dx-text-area>
+
+                      <phrase-suggestion-helper class="mt-2" 
+                        [typedText]="educationHistory.notes"
+                        [companyId]="companyId"
+                        (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+                      </phrase-suggestion-helper>
+                    </div>
+                  </dx-form>
+              </div>
+    
+              <div class="col-md-12 text-right mt-md-2">
+                <button type="button" (click)="createUpdateEducationHistory()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+              </div>
+            </div>
+        </div>
+      </dx-popup>
+      

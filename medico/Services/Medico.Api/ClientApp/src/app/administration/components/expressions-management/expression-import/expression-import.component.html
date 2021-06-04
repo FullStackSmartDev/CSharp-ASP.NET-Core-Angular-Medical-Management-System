@@ -1,0 +1,25 @@
+<div class="mt-2" *ngIf="expressions.length">
+    <dx-list [dataSource]="expressions" [height]="410" [searchEnabled]="true" keyExpr="id" searchExpr="name"
+        searchMode="contains" selectionMode="multiple" [showSelectionControls]="true" [(selectedItems)]="selectedExpressions">
+        <div *dxTemplate="let data of 'item'">
+            <div>{{data.title}}</div>
+        </div>
+    </dx-list>
+    <div class="row mt-md-2">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-sm btn-outline-danger text-left"
+                        (click)="cancelExpressionsImporting()">CANCEL</button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                        (click)="importExpressions()">IMPORT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-2" *ngIf="!expressions.length">
+    <h6>There are no any reference table to import</h6>
+</div>

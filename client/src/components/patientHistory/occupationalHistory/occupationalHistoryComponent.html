@@ -1,0 +1,275 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openOccupationalHistoryCreationForm($event)">Add Occupational History</a>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedOccupationalHistory" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onSelectedOccupationalHistory($event)"
+        [wordWrapEnabled]="true" 
+        #occupationalHistoryDataGrid 
+        [dataSource]="occupationalHistoryDataSource" 
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column width="20%" dataField="OccupationalType" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="20%" dataField="EmploymentStatus" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="5%" dataField="Days" [calculateCellValue]="getOccupationalDays" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="DisabilityClaimDetails" cellTemplate="cellTemplate" dateType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="WorkersCompensationClaimDetails" cellTemplate="cellTemplate" dateType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="10%" dataField="CreatedDate" dataType="date"></dxi-column>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+        <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+            <span>
+              {{data.value ? data.value : "-" }}
+            </span>
+        </div>
+
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row margin-top-15">
+    <div class="col-md-2">
+        <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #createUpdateOccupationalHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Occupational History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateOccupationalHistory($event)">
+              <dx-validation-group #occupationalHistoryValidationGroup>
+                <div class="dx-fieldset">
+                    <div class='dx-field'>
+                        <div class='dx-field-label'>Occupation:</div>
+                        <div class='dx-field-value'>
+                            <dx-select-box [searchEnabled]="true" [(value)]='occupationalHistory.OccupationalType' [items]='occupation.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Occupation Type is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class='dx-field'>
+                        <div class='dx-field-label'>Start:</div>
+                        <div class='dx-field-value'>
+                            <dx-date-box displayFormat="monthAndYear" maxZoomLevel="year" minZoomLevel="century" [(value)]="occupationalHistory.Start">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Start Date is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-date-box>
+                        </div>
+                    </div>
+                    <div class='dx-field'>
+                        <div class='dx-field-label'>End:</div>
+                        <div class='dx-field-value'>
+                            <dx-date-box displayFormat="monthAndYear" maxZoomLevel="year" minZoomLevel="century" [(value)]="occupationalHistory.End"
+                                type="date">
+                            </dx-date-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Disability claim:</div>
+                        <div class="dx-field-value">
+                            <dx-check-box [(value)]="hasDisabilityClaim"></dx-check-box>
+                        </div>
+                    </div>
+                    <div *ngIf="hasDisabilityClaim" class='dx-field'>
+                        <div class='dx-field-label'>Disability Claim Details:</div>
+                        <div class='dx-field-value'>
+                            <dx-text-area [height]="90" [(value)]="occupationalHistory.DisabilityClaimDetails">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Disability Claim Details is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Workers Compensation Claim:</div>
+                        <div class="dx-field-value">
+                            <dx-check-box [(value)]="hasWorkersCompensationClaim"></dx-check-box>
+                        </div>
+                    </div>
+                    <div *ngIf="hasWorkersCompensationClaim" class='dx-field'>
+                        <div class='dx-field-label'>Workers Compensation Claim Details:</div>
+                        <div class='dx-field-value'>
+                            <dx-text-area [height]="90" [(value)]="occupationalHistory.WorkersCompensationClaimDetails">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Workers Compensation Claim Details is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div class='dx-field'>
+                        <div class='dx-field-label'>Employment Status:</div>
+                        <div class='dx-field-value'>
+                            <dx-select-box [(value)]='occupationalHistory.EmploymentStatus' [items]='employment_Status.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Employment Status is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewOccupationalHistory" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                          <dx-check-box [(value)]="occupationalHistory.IsDelete">
+                          </dx-check-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Create Date:</div>
+                        <div class="dx-field-value">
+                          <dx-date-box [readOnly]="isNewOccupationalHistory" [(value)]="occupationalHistory.CreatedDate" type="date">
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-date-box>
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>
+<!-- <div class="row">
+    <div class="col-md-10">
+        <dx-data-grid (onRowRemoved)="onOccupationalHistoryRemoved($event)" [wordWrapEnabled]="true" #occupationalHistoryGrid [dataSource]="occupationalHistoryDataSource" [showBorders]="true">
+            <dxo-remote-operations [sorting]="true" [paging]="true"></dxo-remote-operations>
+            <dxo-paging [pageSize]="12"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[8, 12, 20]"></dxo-pager>
+            <dxo-search-panel [visible]="true" [highlightCaseSensitive]="true"></dxo-search-panel>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column width="20%" dataField="OccupationalType" [calculateCellValue]="getOccupationalType"></dxi-column>
+            <dxi-column width="20%" dataField="EmploymentStatus" [calculateCellValue]="getEmploymentStatus"></dxi-column>
+            <dxi-column width="5%" dataField="Days" [calculateCellValue]="getOccupationalDays"></dxi-column>
+            <dxi-column dataField="DisabilityClaimDetails" dateType="string"></dxi-column>
+            <dxi-column dataField="WorkersCompensationClaimDetails" dateType="string"></dxi-column>
+            <dxi-column width="10%" dataField="CreatedDate" dataType="date"></dxi-column>
+
+            <dxo-editing mode="row" [allowDeleting]="true">
+            </dxo-editing>
+        </dx-data-grid>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card margin-top-15">
+            <div class="card-header">
+                Add new occupational history:
+            </div>
+            <div class="card-body">
+                <form #occupationalHistoryCreateForm (submit)="createOccupationalHistory($event)">
+                    <div class='dx-fieldset'>
+                        <div class='dx-field'>
+                            <div class='dx-field-label'>Occupation:</div>
+                            <div class='dx-field-value'>
+                                <dx-select-box [searchEnabled]="true" [(value)]='occupationalHistory.OccupationalType' [dataSource]='lookupTables.occupationType'
+                                    displayExpr="Name" valueExpr="Value">
+                                    <dx-validator #occupationTypeValidator>
+                                        <dxi-validation-rule type="required" message="Occupation Type is required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                        <div class='dx-field'>
+                            <div class='dx-field-label'>Start:</div>
+                            <div class='dx-field-value'>
+                                <dx-date-box displayFormat="monthAndYear" maxZoomLevel="year" minZoomLevel="century" [(value)]="occupationalHistory.Start">
+                                    <dx-validator #occupationStartDateValidator>
+                                        <dxi-validation-rule type="required" message="Start Date is required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-date-box>
+                            </div>
+                        </div>
+                        <div class='dx-field'>
+                            <div class='dx-field-label'>End:</div>
+                            <div class='dx-field-value'>
+                                <dx-date-box displayFormat="monthAndYear" maxZoomLevel="year" minZoomLevel="century" [(value)]="occupationalHistory.End"
+                                    type="date">
+                                </dx-date-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Disability claim:</div>
+                            <div class="dx-field-value">
+                                <dx-check-box [(value)]="hasDisabilityClaim"></dx-check-box>
+                            </div>
+                        </div>
+                        <div *ngIf="hasDisabilityClaim" class='dx-field'>
+                            <div class='dx-field-label'>Disability Claim Details:</div>
+                            <div class='dx-field-value'>
+                                <dx-text-area [height]="90" [(value)]="occupationalHistory.DisabilityClaimDetails">
+                                    <dx-validator #disabilityClaimDetailsValidator>
+                                        <dxi-validation-rule type="required" message="Disability Claim Details is required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-area>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Workers Compensation Claim:</div>
+                            <div class="dx-field-value">
+                                <dx-check-box [(value)]="hasWorkersCompensationClaim"></dx-check-box>
+                            </div>
+                        </div>
+                        <div *ngIf="hasWorkersCompensationClaim" class='dx-field'>
+                            <div class='dx-field-label'>Workers Compensation Claim Details:</div>
+                            <div class='dx-field-value'>
+                                <dx-text-area [height]="90" [(value)]="occupationalHistory.WorkersCompensationClaimDetails">
+                                    <dx-validator #workersCompensationClaimDetailsValidator>
+                                        <dxi-validation-rule type="required" message="Workers Compensation Claim Details is required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-area>
+                            </div>
+                        </div>
+                        <div class='dx-field'>
+                            <div class='dx-field-label'>Employment Status:</div>
+                            <div class='dx-field-value'>
+                                <dx-select-box [(value)]='occupationalHistory.EmploymentStatus' displayExpr="Name" valueExpr="Value" [dataSource]='lookupTables.employmentStatus'>
+                                    <dx-validator #employmentStatusValidator>
+                                        <dxi-validation-rule type="required" message="Employment Status is required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dx-fieldset">
+                        <dx-button text="Add" type="default" [useSubmitBehavior]="true"></dx-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <dx-load-panel shadingColor="rgba(0,0,0,0.4)" [(visible)]="isLoaderVisible" [showIndicator]="true" [showPane]="true" [shading]="true"
+            [message]="loaderMessage" [closeOnOutsideClick]="false">
+        </dx-load-panel>
+    </div>
+</div> -->

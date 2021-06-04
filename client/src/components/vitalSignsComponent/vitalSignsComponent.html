@@ -1,0 +1,170 @@
+<div class="row">
+    <div class="col-md-7">
+        <div class="card">
+            <div *ngIf="!isSignedOff" class="card-header">
+                <a href="" (click)="openVitalSignsCreationForm($event)">Add Vital Signs</a>
+            </div>
+            <div class="card-body">
+                <div class="row margin-top-15">
+                    <div class="col-md-12">
+                        <dx-data-grid [selectedRowKeys]="selectedVitalSigns" [hoverStateEnabled]="true"
+                            (onSelectionChanged)="onSelectedVitalSigns($event)" [wordWrapEnabled]="true"
+                            #vitalSignsDataGrid [dataSource]="vitalSignsDataSource" [showBorders]="true" [showRowLines]="true">
+
+                            <dxo-remote-operations [paging]="true" [sorting]="true">
+                            </dxo-remote-operations>
+
+                            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+                            </dxo-paging>
+
+                            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+                            </dxo-pager>
+
+                            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+                            <dxi-column dataField="PatientId" dataType="string" [visible]="false"></dxi-column>
+                            <dxi-column dataField="IsDelete" dataType="boolean" [visible]="false"></dxi-column>
+                            <dxi-column dataField="AdmissionId" dataType="string" [visible]="false"></dxi-column>
+
+                            <dxi-column [width]="10+'%'" alignment="left" dataField="CreateDate" caption="Time" cellTemplate="timeTemplte" dataType="string"
+                                [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxi-column [width]="10+'%'" alignment="left" dataField="Pulse" dataType="number" [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxi-column [width]="15+'%'" alignment="left" cellTemplate="cellTemplate" caption="Respiration" dataField="RespirationRate"
+                                dataType="number" [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxi-column [width]="40+'%'" alignment="left" caption="Blood pressure" cellTemplate="bloodPressureTemplte" dataType="string"
+                                [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxi-column [width]="10+'%'" alignment="left" cellTemplate="cellTemplate" caption="O2 Sat, %" dataField="OxygenSaturationAtRestValue"
+                                dataType="number" [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxi-column [width]="10+'%'" alignment="left" cellTemplate="cellTemplate" caption="O2 Sat Type" dataField="OxygenSaturationAtRest"
+                                dataType="number" [allowSorting]="false">
+                            </dxi-column>
+
+                            <dxo-selection mode="single"></dxo-selection>
+
+                            <div class="text-left" *dxTemplate="let d of 'timeTemplte'">
+                                <span>
+                                    {{d.displayValue | time}}
+                                </span>
+                            </div>
+
+                            <div class="text-left" *dxTemplate="let d of 'oxygenTemplte'">
+                                <span>
+                                    {{d.data.OxygenAmount || d.data.OxygenUse ? d.data.OxygenAmount + " / " +
+                                    d.data.OxygenUse
+                                    : "-" }}
+                                </span>
+                            </div>
+
+                            <div class="text-left" *dxTemplate="let d of 'cellTemplate'">
+                                <span>
+                                    {{d.value === null ? "-" : d.value }}
+                                </span>
+                            </div>
+
+                            <div class="text-left" *dxTemplate="let d of 'bloodPressureTemplte'">
+                                <span> {{d.data.SystolicBloodPressure ? d.data.SystolicBloodPressure : "-" }} /
+                                    {{d.data.DiastolicBloodPressure ? d.data.DiastolicBloodPressure : "-" }} 
+                                    {{d.data.BloodPressureLocation ? d.data.BloodPressureLocation : "-" }} /
+                                    {{d.data.BloodPressurePosition ? d.data.BloodPressurePosition : "-" }} </span>
+                            </div>
+
+                        </dx-data-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <base-vital-signs [isSignedOff]="isSignedOff" [patientId]="patientId"></base-vital-signs>
+    </div>
+</div>
+<dx-popup #createUpdateVitalSignsPopup class="popup" [width]="500" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Vital Signs" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()"
+    (onShowing)="onCreateUpdatePopupShowing()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div class="row">
+                <div class="col-md-12">
+                    <form (submit)="createUpdateVitalSigns($event)">
+                            <div class='dx-fieldset'>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Pulse:</div>
+                                    <div class="dx-field-value">
+                                        <dx-number-box [(value)]="vitalSigns.Pulse"></dx-number-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Systolic:</div>
+                                    <div class="dx-field-value">
+                                        <dx-number-box [(value)]="vitalSigns.SystolicBloodPressure"></dx-number-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Diastolic:</div>
+                                    <div class="dx-field-value">
+                                        <dx-number-box [(value)]="vitalSigns.DiastolicBloodPressure"></dx-number-box>
+                                    </div>
+                                </div>
+                                <div class='dx-field'>
+                                    <div class='dx-field-label'>Position:</div>
+                                    <div class='dx-field-value'>
+                                        <dx-select-box [(value)]='vitalSigns.BloodPressurePosition' [items]='bloodPressurePosition.values'>
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                                <div class='dx-field'>
+                                    <div class='dx-field-label'>Location:</div>
+                                    <div class='dx-field-value'>
+                                        <dx-select-box [(value)]='vitalSigns.BloodPressureLocation' [items]='bloodPressureLocation.values'>
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">Respiration:</div>
+                                    <div class="dx-field-value">
+                                        <dx-number-box [(value)]="vitalSigns.RespirationRate"></dx-number-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">O2 Sat, %:</div>
+                                    <div class="dx-field-value">
+                                        <dx-number-box [(value)]="vitalSigns.OxygenSaturationAtRestValue"></dx-number-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">O2 Sat Type:</div>
+                                    <div class="dx-field-value">
+                                        <dx-select-box [(value)]='vitalSigns.OxygenSaturationAtRest' [items]='oxygenSatTest.values'>
+                                        </dx-select-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-fieldset">
+                                <div *ngIf="!isNewVitalSigns" class="dx-field">
+                                    <div class="dx-field-label">Is Delete: </div>
+                                    <div class="dx-field-value">
+                                        <dx-check-box [(value)]="vitalSigns.IsDelete">
+                                        </dx-check-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-fieldset">
+                                <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true">
+                                </dx-button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

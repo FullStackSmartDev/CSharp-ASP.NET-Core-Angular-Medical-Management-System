@@ -1,0 +1,109 @@
+<div *ngIf="canRenderComponent" class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <button type="button" (click)="openAllergyForm()" class="btn btn-sm btn-outline-secondary">ADD ALLERGY</button>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row mt-md-2">
+    <div class="col-md-12">
+      <dx-data-grid [selectedRowKeys]="selectedAllergy" [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onAllergySelect($event)"
+        [wordWrapEnabled]="true" 
+        #allergyDataGrid
+        [dataSource]="allergyDataSource"
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+        </dxo-pager>
+  
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column caption="Medication / Class" dataField="medication" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" width="10%" dataField="reaction" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="notes" cellTemplate="cellTemplate" dataType="string"></dxi-column>
+        <dxi-column alignment="center" width="10%" width="10%" dataField="createDate" dataType="date"></dxi-column>
+
+        <dxi-column *ngIf="!isSignedOff" alignment="center" width="15%" caption="Delete" cellTemplate="deleteHistoryTemplate"></dxi-column>
+        <div class="text-center" *dxTemplate="let history of 'deleteHistoryTemplate'">
+            <button type="button" (click)="deleteHistory(history.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+        </div>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+        <div *dxTemplate="let data of 'cellTemplate'">
+          <value-component [value]="data.value"></value-component>
+        </div>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row mt-md-2">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #allergyPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="ALLERGY" [closeOnOutsideClick]="false" [(visible)]="isAllergyPopupOpened"
+    (onHidden)="onAllergyPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isAllergyPopupOpened" class="row">
+          <div class="col-md-12">
+            <dx-form class="mt-md-2" #allergyForm [height]="460" labelLocation="top" 
+              [(formData)]="allergy" (onFieldDataChanged)="onAllergyFieldChanged($event)">
+
+              <dxi-item itemType="tabbed" [tabPanelOptions]="{ height: 450 }">
+                  <dxi-tab [colCount]="12" title="Base Info">
+                    <dxi-item [colSpan]="12">
+                      <dx-select-box [(value)]="medicationClassId" [dataSource]="medicationClassDataSource"
+                        valueExpr="id" displayExpr="name" (onValueChanged)="onMedicationClassChanged($event)"
+                        [searchEnabled]="true" showClearButton="true" placeholder="Search medication classes">
+                      </dx-select-box>
+                      <dx-select-box class="mt-md-2" [(value)]="medicationNameId" [dataSource]="medicationNameDataSource"
+                        valueExpr="id" displayExpr="name" (onValueChanged)="onMedicationNameChanged($event)"
+                        [searchEnabled]="true" showClearButton="true" placeholder="Search medications">
+                      </dx-select-box>
+                    </dxi-item>
+      
+                    <dxi-item [colSpan]="12" [label]="{text: 'Medication'}" dataField="medication" editorType="dxTextArea" 
+                      [editorOptions]="{ height: 80, readOnly: medicationNameOrClassSelected }" >
+                      <dxi-validation-rule type="required"></dxi-validation-rule>  
+                    </dxi-item>
+      
+                    <dxi-item [colSpan]="9" [label]="{text: 'Reaction'}" dataField="reaction" editorType="dxSelectBox" [editorOptions]="{ items: medicationReactionListValues }">
+                      <dxi-validation-rule type="required"></dxi-validation-rule>  
+                    </dxi-item>
+      
+                    <dxi-item [colSpan]="3" dataField="createDate" editorType="dxDateBox" [editorOptions]="{ width: '100%', readOnly: isNewAllergy }">
+                      <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+                  </dxi-tab>
+                  <dxi-tab [colCount]="12" title="Notes">
+                      <dxi-item [colSpan]="12" dataField="notes" template="notesTemplate"></dxi-item>
+
+                      <div *dxTemplate="let data of 'notesTemplate'">
+                        <dx-text-area valueChangeEvent="keyup" [(value)]="allergy.notes" height="120">
+                        </dx-text-area>
+      
+                        <phrase-suggestion-helper class="mt-2" 
+                          [typedText]="allergy.notes"
+                          [companyId]="companyId"
+                          (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+                        </phrase-suggestion-helper>
+                      </div>
+                  </dxi-tab>
+              </dxi-item>
+
+              </dx-form>
+          </div>
+
+          <div class="col-md-12 text-right mt-md-2">
+            <button type="button" (click)="createUpdateAllergy()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+          </div>
+        </div>
+    </div>
+  </dx-popup>
+  

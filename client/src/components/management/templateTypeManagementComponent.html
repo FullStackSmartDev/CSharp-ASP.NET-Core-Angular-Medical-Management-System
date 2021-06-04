@@ -1,0 +1,109 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openTemplateTypeCreationForm()">New Template Type</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-6">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedTemplateTypes"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onTemplateTypeSelected($event)"
+            [wordWrapEnabled]="true"
+            #templateTypeDataGrid
+            [dataSource]="templateTypeDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging  [pageSize]="applicationConfiguration.defaultPageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="Title" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration">
+            </dxi-column>
+            <dxi-column dataField="Name" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="IsActive"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteTemplateTypeTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let templateType of 'deleteTemplateTypeTemplate'">        
+                <span class="action delete-action"  (click)="deleteTemplateType(templateType.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup 
+    #createUpdateTemplateTypePopup 
+    class="popup" [width]="600" [height]="200" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Template Type" [closeOnOutsideClick]="false" 
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div id="template-type-form-popup" *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        [colCount]="4"
+                        #templateTypeCreationForm
+                        [(formData)]="templateType"
+                        (onFieldDataChanged)="onTemplateTypeFieldChanged($event)">
+                    
+                        <dxi-item [colSpan]="3" dataField="Title">
+                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            <dxi-validation-rule *ngIf="isNewTemplateType" type="custom" [validationCallback]="validateGeneratedName">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                    
+                        <dxi-item dataField="IsActive"></dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-left margin-top-15">
+                    <dx-button (onClick)="createUpdateTemplateType()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+            <!-- <div id="template-type-form-container" class="row">
+                <div class="col-md-12">
+                    <form (submit)="createUpdateTemplateType($event)">
+                        <div class="dx-fieldset">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Title:</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box 
+                                        [(value)]="templateType.Title"
+                                        placeholder="Title">
+                                        <dx-validator #titleValidator>
+                                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Is Delete:</div>
+                                <div class="dx-field-value">
+                                    <dx-check-box [(value)]="templateType.IsDelete">
+                                    </dx-check-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dx-fieldset">
+                            <dx-button 
+                                text="Create / Update" 
+                                type="default" 
+                                [useSubmitBehavior]="true">
+                            </dx-button>
+                        </div>
+                    </form>
+                </div>
+            </div> -->
+        </dx-scroll-view>
+    </div>
+</dx-popup>

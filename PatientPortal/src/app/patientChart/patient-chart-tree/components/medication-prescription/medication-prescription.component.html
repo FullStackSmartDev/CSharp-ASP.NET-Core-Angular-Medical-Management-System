@@ -1,0 +1,139 @@
+<div *ngIf="canRenderComponent" class="row">
+    <div *ngIf="!isSignedOff" class="col-md-3">
+      <button type="button" (click)="openMedicationPrescriptionForm()" class="btn btn-sm btn-outline-secondary">ADD PRESCRIPTION</button>
+    </div>
+  </div>
+  <div *ngIf="isPrescriptionExist" class="row mt-md-2">
+    <div class="col-md-12">
+      <dx-data-grid [selectedRowKeys]="selectedMedicationPrescription" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onMedicationPrescriptionSelect($event)"
+        [wordWrapEnabled]="true" 
+        #medicationPrescriptionDataGrid
+        [dataSource]="medicationPrescriptionDataSource"
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+        </dxo-pager>
+  
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="medication" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" width="10%" dataField="route" dataType="string"cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" width="5%" dataField="dose" dataType="number" cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" width="5%" dataField="units" dataType="string" cellTemplate="cellTemplate"[allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" width="10%" dataField="dosageForm" dataType="string" cellTemplate="cellTemplate"[allowSorting]="false"></dxi-column>
+        <dxi-column alignment="left" width="10%" dataField="sig"></dxi-column>
+        <dxi-column alignment="center" width="10%" dataField="startDate" dataType="date"></dxi-column>
+        <dxi-column alignment="center" width="10%" dataField="endDate" dataType="date"></dxi-column>
+        <dxi-column alignment="center" width="5%" dataField="dispense"></dxi-column>
+        <dxi-column alignment="center" width="5%" dataField="refills"></dxi-column>
+
+        <dxi-column *ngIf="!isSignedOff" alignment="center" width="10%" caption="Delete" cellTemplate="deletePrescriptionTemplate"></dxi-column>
+        <div class="text-center" *dxTemplate="let prescription of 'deletePrescriptionTemplate'">
+            <button type="button" (click)="deletePrescription(prescription.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+        </div>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+        <div *dxTemplate="let data of 'cellTemplate'">
+          <value-component [value]="data.value"></value-component>
+        </div>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isPrescriptionExist" class="row mt-md-2">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #medicationPrescriptionPopup class="popup" [width]="800" [height]="600" [dragEnabled]="false" [showTitle]="true"
+    title="MEDICATION PRESCRIPTION" [closeOnOutsideClick]="false" [(visible)]="isMedicationPrescriptionPopupOpened"
+    (onHidden)="onMedicationPrescriptionPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isMedicationPrescriptionPopupOpened" class="row">
+          <div class="col-md-12">
+              <dx-select-box #searchMedicationSelectBox [(value)]="medicationNameId" [dataSource]="medicationNameDataSource"
+                valueExpr="id" displayExpr="name" (onValueChanged)="onMedicationNameChanged($event)"
+                [searchEnabled]="true"
+                showClearButton="true">
+              </dx-select-box>
+              <h6 style="color: red" *ngIf="patientHasAllergyOnMedication" class="mt-md-1">{{allergyWarningMessage}}</h6>
+              <dx-form class="mt-md-1" #medicationPrescriptionForm [height]="medicationPrescriptionFormHeight" [colCount]="12"
+                 labelLocation="top" [(formData)]="medicationPrescription" (onFieldDataChanged)="onMedicationPrescriptionFieldChanged($event)">
+                <dxi-item [colSpan]="12" [label]="{text: 'Medication'}" dataField="medication" editorType="dxTextArea" [editorOptions]="{ height: 80, readOnly: isMedicationSelected }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>  
+                </dxi-item>
+
+                <dxi-item *ngIf="isMedicationSelected" [colSpan]="2" [label]="{text: 'Dose'}" dataField="dose" editorType="dxSelectBox"
+                    [editorOptions]="{ items: medicationItemInfo.strengthList }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isMedicationSelected" [colSpan]="2" [label]="{text: 'Dose'}" dataField="dose" editorType="dxNumberBox"
+                    [editorOptions]="{ showSpinButtons: true }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="2" [label]="{text: 'Units'}" dataField="units" editorType="dxSelectBox" [editorOptions]="{ items: medicationUnitsListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>  
+                </dxi-item>
+
+                <dxi-item [colSpan]="4" [label]="{text: 'Route'}" dataField="route" editorType="dxSelectBox" [editorOptions]="{ items: medicationRouteListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>  
+                </dxi-item>
+
+                <dxi-item *ngIf="!isMedicationSelected" [colSpan]="4" [label]="{text: 'Dosage Form'}" dataField="dosageForm" editorType="dxTextBox">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="isMedicationSelected" [colSpan]="4" [label]="{text: 'Dosage Form'}" dataField="dosageForm" editorType="dxSelectBox"
+                    [editorOptions]="{ items: medicationItemInfo.dosageFormList }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="4" [label]="{text: 'SIG Selection'}" dataField="sigSelection" editorType="dxSelectBox" [editorOptions]="{ items: medicationDoseScheduleListValues, showClearButton: true }">
+                </dxi-item>
+
+                <dxi-item [colSpan]="8" [label]="{text: 'SIG'}" dataField="sig" editorType="dxTextArea" [editorOptions]="{ height: 80 }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>  
+                </dxi-item>
+
+                <dxi-item [colSpan]="2" [label]="{text: 'Dispense'}" dataField="dispense" editorType="dxNumberBox"
+                    [editorOptions]="{ showSpinButtons: true }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="2" [label]="{text: 'Refills'}" dataField="refills" editorType="dxNumberBox"
+                    [editorOptions]="{ showSpinButtons: true }">
+                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="3" dataField="startDate" editorType="dxDateBox" [editorOptions]="{ width: '100%' }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="3" dataField="endDate" editorType="dxDateBox" [editorOptions]="{ width: '100%' }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="2" [label]="{text: 'Total days'}" [editorOptions]="{ readOnly: true }">
+                    <h5>{{prescriptionDurationInDays}}</h5>
+                </dxi-item>
+
+              </dx-form>
+          </div>
+
+          <div class="col-md-12 text-right mt-md-2">
+            <button type="button" (click)="createUpdateMedicationPrescription()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+          </div>
+        </div>
+    </div>
+  </dx-popup>
+  

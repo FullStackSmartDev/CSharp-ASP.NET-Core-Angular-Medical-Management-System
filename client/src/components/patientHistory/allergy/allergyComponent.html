@@ -1,0 +1,126 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openAllergyCreationForm($event)">Add Allergy</a>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedAllergy" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onSelectedAllergy($event)"
+        [wordWrapEnabled]="true" 
+        #allergyDataGrid 
+        [dataSource]="allergyDataSource" 
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="Medication" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="Reaction" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string"></dxi-column>
+        <dxi-column width="15%" dataField="CreatedDate" dataType="date"></dxi-column>
+  
+        <dxo-selection mode="single"></dxo-selection>
+
+        <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+            <span>
+              {{data.value ? data.value : "-" }}
+            </span>
+        </div>
+
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row margin-top-15">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #createUpdateAllergyPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Allergy History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateAllergy($event)">
+              <dx-validation-group #allergyValidationGroup>
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div class="dx-field-label">Search Medication:</div>
+                        <div class="dx-field-value">
+                            <dx-lookup
+                                #medicationLookup 
+                                [dataSource]="medicationDataSource"
+                                valueExpr="Id"
+                                displayExpr="NonProprietaryName"
+                                placeholder="Search Medications..."
+                                (onValueChanged)="medicationChanged($event)">
+                            </dx-lookup>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Medication:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="allergy.Medication" [height]="90">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class='dx-field-label'>Reaction:</div>
+                        <div class='dx-field-value'>
+                            <dx-select-box [(value)]='allergy.Reaction' [items]='mED_Allergy.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Reaction is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class='dx-field-label'>Notes:</div>
+                        <div class='dx-field-value'>
+                            <dx-text-area [(value)]="allergy.Notes" [height]="90">
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewAllergy" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                          <dx-check-box [(value)]="allergy.IsDelete">
+                          </dx-check-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Create Date:</div>
+                        <div class="dx-field-value">
+                          <dx-date-box [readOnly]="isNewAllergy" [(value)]="allergy.CreatedDate" type="date">
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-date-box>
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>

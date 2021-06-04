@@ -1,0 +1,14 @@
+<div class="row mt-md-2">
+    <div class="col-md-4">
+        <dx-tabs [dataSource]="expressionManagementTabs" [selectedIndex]="selectedTabIndex"
+            (onItemClick)="onTabSelect($event)">
+        </dx-tabs>
+    </div>
+    <div class="col-md-12 mt-2">
+        <!--Reference tables-->
+        <library-reference-table *ngIf="isTabVisible(0)"></library-reference-table>
+
+        <!--Expressions builder-->
+        <library-expressions-builder *ngIf="isTabVisible(1)"></library-expressions-builder>
+    </div>
+</div>

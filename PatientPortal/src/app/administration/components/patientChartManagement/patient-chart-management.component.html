@@ -1,0 +1,65 @@
+<div class="row mt-2">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header text-left" style="height: 7vh">
+                PATIENT CHART TREE
+            </div>
+            <div class="card-body" style="height: 73vh">
+                <dx-tree-view width="100%" height="100%"
+                    #treeView [dataSource]="patientChartTreeView"
+                    (onItemContextMenu)="openPatientChartContextMenu($event)"
+                    (onItemClick)="selectPatientChartItem($event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <span>{{data.text}}</span>
+                    </div>
+                </dx-tree-view>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header" style="height: 7vh">
+                PATIENT CHART TREE ITEM
+            </div>
+            <div class="card-body" style="height: 73vh">
+                <div *ngIf="isSectionPreviewVisible" class="row text-left mt-2">
+                    <div class="col-md-12 mt-2">ITEM TYPE: <b style="text-transform: uppercase;">{{sectionPreviewItem.type}}</b></div>
+                    <div class="col-md-12 mt-2">ITEM NAME: <b style="text-transform: uppercase;">{{sectionPreviewItem.name}}</b></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dx-context-menu
+    #contextMenu
+    [dataSource]="[]" 
+    [width]="200"  
+    (onItemClick)="onPatientChartContextMenuClick($event)"
+    [position]="{ my: 'top', at: 'bottom' }">
+</dx-context-menu>
+
+<dx-popup #createEditPatientChartTreeItemPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Edit Patient Chart Tree Item" [closeOnOutsideClick]="false" 
+    [(visible)]="isCreateEditPatientChartTreeItemPopupOpened"
+    (onHidden)="onCreateEditPatientChartTreeItemPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <chart-section-management *ngIf="isSectionManagementComponentVisible" 
+            [patientChartContextMenuActionItem]="patientChartContextMenuActionItem"
+            [patientChartTree]="patientChartTree"
+            (onPatientChartChanged)="onPatientChartChanged($event)">
+        </chart-section-management>
+        <chart-template-management *ngIf="isChartTemplateManagementComponentVisible" 
+            [patientChartContextMenuActionItem]="patientChartContextMenuActionItem"
+            [patientChartTree]="patientChartTree"
+            [companyId]="companyId"
+            (onPatientChartChanged)="onPatientChartChanged($event)">
+        </chart-template-management>
+        <chart-template-list-management *ngIf="isTemplateListManagementComponentVisible" 
+            [patientChartContextMenuActionItem]="patientChartContextMenuActionItem"
+            [patientChartTree]="patientChartTree"
+            [companyId]="companyId"
+            (onPatientChartChanged)="onPatientChartChanged($event)">
+        </chart-template-list-management>
+    </div>
+</dx-popup>

@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-md-8">
+        <dx-text-area valueChangeEvent="keyup" [(value)]="addendumText" height="120"></dx-text-area>
+
+        <phrase-suggestion-helper class="mt-2" 
+            [typedText]="addendumText" 
+            [companyId]="companyId"
+            (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+        </phrase-suggestion-helper>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 text-right mt-md-2">
+        <button type="button" (click)="saveAddendum()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+    </div>
+</div>

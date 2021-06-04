@@ -1,0 +1,5 @@
+<div [ngClass]="{'date-fully-booked': appointmentCount === 9, 'date-partially-booked': appointmentCount >= 1, 'date-patients-not-booked': appointmentCount === 0}">
+    <div class="number">
+        <h3>{{date}}</h3>
+    </div>
+</div>

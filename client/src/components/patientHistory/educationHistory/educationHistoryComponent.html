@@ -1,0 +1,115 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openEducationHistoryCreationForm($event)">Add Education History</a>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedEducationHistory" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onSelectedEducationHistory($event)"
+        [wordWrapEnabled]="true" 
+        #educationHistoryDataGrid 
+        [dataSource]="educationHistoryDataSource" 
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="Degree" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="YearCompleted" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="CreatedDate" dataType="date"></dxi-column>
+  
+        <dxo-selection mode="single"></dxo-selection>
+
+        <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+          <span>
+            {{data.value ? data.value : "-" }}
+          </span>
+        </div>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row margin-top-15">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #createUpdateEducationHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Education History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateEducationHistory($event)">
+              <dx-validation-group #educationHistoryValidationGroup>
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div class="dx-field-label">Degree:</div>
+                        <div class="dx-field-value">
+                            <dx-select-box [(value)]='educationHistory.Degree' [items]='education.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Degree is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class='dx-field'>
+                        <div class='dx-field-label'>Year Completed:</div>
+                        <div class='dx-field-value'>
+                          <dx-number-box [(value)]='educationHistory.YearCompleted' 
+                            [min]='minCompletedYearNumber' 
+                            [max]='maxCompletedYearNumber'>
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-number-box>
+                        </div>
+                      </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Notes:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [height]="90" [(value)]="educationHistory.Notes">
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewEducationHistory" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                          <dx-check-box [(value)]="educationHistory.IsDelete">
+                          </dx-check-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Create Date:</div>
+                        <div class="dx-field-value">
+                          <dx-date-box [readOnly]="isNewEducationHistory" [(value)]="educationHistory.CreatedDate" type="date">
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-date-box>
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>

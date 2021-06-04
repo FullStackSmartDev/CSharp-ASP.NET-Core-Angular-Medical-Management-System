@@ -1,0 +1,160 @@
+<div class="row mt-md-2">
+    <div *ngIf="!isSignedOff" class="col-md-10">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-6 text-left">
+              <div (click)="onChiefComplaintAllegationsClick()" class="chief-complaint-allegations">
+                <b>PATIENT ALLEGATIONS: {{appointmentAllegations ? appointmentAllegations.join(", ") : 'WHERE NOT SPECIFIED DURING APPOINTMENT CREATION'}}</b>
+              </div>
+            </div>
+            <div class="col-md-6 text-right">
+              <allegations-notes-status [appointmentId]="appointmentId"></allegations-notes-status>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-md-2">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-8 vcenter">
+              <div>{{ isPatientAllegationsSetsEmpty ? "ADD CHIEF COMPLAINT" : "PATIENT CHIEF COMPLAINTS"}}</div> 
+            </div>
+            <div *ngIf="!isPatientAllegationsFormVisible" class="col-md-4 text-right">
+              <button type="button" (click)="addAllegationSet()" class="btn btn-sm btn-outline-secondary">ADD ALLEGATIONS SET</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="patientChiefComplaint.patientAllegationsSets.length" class="row mt-md-2">
+      <div class="col-md-10">
+          <dx-data-grid
+            [wordWrapEnabled]="true"
+            [dataSource]="patientChiefComplaint.patientAllegationsSets" 
+            [showBorders]="true"
+            [selectedRowKeys]="selectedPatientAllegationsSets"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onPatientAllegationSetSelected($event)">
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column [width]="50+'%'" dataField="allegations" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column caption="Hpi Templates" cellTemplate="hpiTemplatesTemplate"></dxi-column>
+            <dxi-column caption="Ros Templates" cellTemplate="rosTemplatesTemplate"></dxi-column>
+            <dxi-column caption="PE Templates" cellTemplate="peTemplatesTemplate"></dxi-column>
+            <dxi-column alignment="center" caption="Delete Allegations" cellTemplate="deleteAllegtionsTemplate"></dxi-column>
+  
+            <div *dxTemplate="let template of 'hpiTemplatesTemplate'">
+                <div class="text-left mt-md-1" *ngFor="let item of template.data.hpiTemplates; let i = index">
+                  {{item.reportTitle}}
+                </div>
+            </div>
+  
+            <div *dxTemplate="let template of 'rosTemplatesTemplate'">
+              <div class="text-left mt-md-1" *ngFor="let item of template.data.rosTemplates; let i = index">
+                  {{item.reportTitle}}
+              </div>
+            </div>
+  
+            <div *dxTemplate="let template of 'peTemplatesTemplate'">
+                <div class="text-left mt-md-1" *ngFor="let item of template.data.peTemplates; let i = index">
+                  {{item.reportTitle}}
+                </div>
+            </div>
+  
+            <div *dxTemplate="let template of 'deleteAllegtionsTemplate'">
+              <div class="text-center mt-md-1">
+                <button [disabled]="isSignedOff" type="button" (click)="deletePatientAllegationsSet($event, template.data.Id)" class="btn btn-sm btn-outline-danger">DELETE</button>
+              </div>
+            </div>
+  
+          <dxo-selection mode="single"></dxo-selection>
+          </dx-data-grid>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-md-10">
+        <div *ngIf="isPatientAllegationsFormVisible" class="row mt-md-2">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header text-left">
+                <button *ngIf="isNewPatientAllegationsSet" type="button" (click)="showAllegationsRelatedChiefComplaints()" class="btn btn-sm btn-outline-secondary">SEARCH TEMPLATES</button>
+              </div>
+              <div class="card-body">
+                <div *ngIf="isPatientAllegationsFormVisible" class="dx-filed mt-md-2">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <b>ALLEGATIONS:</b>
+                      <dx-text-area [height]="90" [(value)]="allegationSet.allegations"></dx-text-area>
+                    </div>
+                  </div>
+                  <div *ngIf="allegationSet.hpiTemplates.length || allegationSet.peTemplates.length || allegationSet.rosTemplates.length" class="row mt-md-2">
+                    <div class="col-md-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">HPI Templates</th>
+                                    <th scope="col">PE Templates</th>
+                                    <th scope="col">ROS Templates</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                  <td>
+                                    <div class="mt-md-1 text-left" *ngFor="let item of allegationSet.hpiTemplates; let i = index">
+                                      {{item.reportTitle}}
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="mt-md-1 text-left" *ngFor="let item of allegationSet.peTemplates; let i = index">
+                                      {{item.reportTitle}}
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="mt-md-1 text-left" *ngFor="let item of allegationSet.rosTemplates; let i = index">
+                                      {{item.reportTitle}}
+                                    </div>
+                                  </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                  <div class="row mt-md-2">
+                      <div class="col-md-6 text-left">
+                        <button type="button" (click)="savePatientAllegationSet()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                      </div>
+                      <div class="col-md-6 text-right">
+                        <button type="button" (click)="cancelPatientAllegationCreation()" class="btn btn-sm btn-outline-danger">CANCEL</button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <chief-complaint-management #chiefComplaintManagementPopup
+    [companyId]="companyId"
+    [allegations]="allegationSet.allegations"
+    (templatesAdded)="addTemplates($event)">
+  </chief-complaint-management>
+
+  <dx-popup class="popup" [(visible)]="isAllegationsPopupOpened"
+        [width]="400" 
+        [height]="400" 
+        [showTitle]="true" 
+        [title]="'PATIENT ALLEGATIONS'"
+        [closeOnOutsideClick]="false">
+        <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isAllegationsPopupOpened">
+                <patient-allegations
+                  [appointmentAllegations]="appointmentAllegations"
+                  [allegationSet]="allegationSet.allegations"
+                  [addingAllegationsEnabled]="isPatientAllegationsFormVisible"
+                  (onAllegationsAdded)="onNewAllegationsAdded($event)">
+              </patient-allegations>
+            </div>
+        </div>
+    </dx-popup>

@@ -1,0 +1,52 @@
+<ion-content padding>
+    <div class="row margin-top-5">
+        <div class="col-md-12">
+            <patient-chart-header 
+                [patientChartHeaderData]="patientChartHeaderData">
+            </patient-chart-header>
+        </div>
+    </div>
+    <div class="row margin-top-10">   
+        <div class="col-md-3">
+            <div>
+                <dx-button [text]="savePatientAdmissionBtnText" [type]="savePatientAdmissionBtnType" (onClick)="savePatientAdmission()"></dx-button>
+                <dx-button [text]="makeReportBtnText" [type]="makeReportBtnType" (onClick)="makeReport()"></dx-button>
+                <dx-button *ngIf="!isSignedOff" [text]="signOffBtnText" [type]="signOffBtnType" (onClick)="signOff()"></dx-button>
+            </div>
+            <div class="margin-top-10">
+                <dx-tree-view
+                    width="100%"
+                    scrollDirection="vertical"
+                    #treeView 
+                    id="patient-data-treeview"
+                    [dataSource]="patientAdmissionModelTree" 
+                    (onItemClick)="selectPatientAdmissionSection($event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <span [ngClass]="{'required-node' : data.isRequired}">{{data.text}}</span>
+                    </div>
+                </dx-tree-view>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <html-outlet [patientAdmissionSectionModel]="patientAdmissionSectionModel"></html-outlet>
+        </div>
+    </div>
+    <dx-popup 
+        class="popup" [width]="1400" [height]="650"
+        [dragEnabled]="false" 
+        [showTitle]="true"
+        title="Report builder"
+        [closeOnOutsideClick]="false"
+        [(visible)]="isReportPopupOpened">
+        <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isReportPopupOpened" class="row">
+                <div class="col-md-12">
+                    <report 
+                        [patientAdmission]="currentPatientAdmission"
+                        [patientAdmissionModelTree]="patientAdmissionModelTree">
+                    </report>
+                </div>
+            </div>
+        </div>
+  </dx-popup>
+</ion-content>

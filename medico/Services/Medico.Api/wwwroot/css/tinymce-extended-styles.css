@@ -1,0 +1,20 @@
+﻿.patient-rich-text-editor label[selectable-type] {
+    cursor: pointer;
+    border: 1px solid red;
+    padding: 2px;
+    line-height: 1.6em;
+    color: black !important;
+    font-weight: bolder;
+}
+
+body.mce-content-body label[selectable-type] {
+    color: red;
+    font-weight: lighter;
+    font-style: italic
+}
+
+body.mce-content-body label[expr-id] {
+    color: lightslategrey;
+    font-weight: lighter;
+    font-style: italic
+}

@@ -1,0 +1,117 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openMedicalHistoryCreationForm($event)">Add Medical History</a>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedMedicalHistory" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onSelectedMedicalHistory($event)"
+        [wordWrapEnabled]="true" 
+        #medicalHistoryDataGrid 
+        [dataSource]="medicalHistoryDataSource" 
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="PatientId" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="Diagnosis" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="CreatedDate" dataType="date"></dxi-column>
+  
+        <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+          <span>
+            {{data.value ? data.value : "-" }}
+          </span>
+        </div>
+
+        <dxo-selection mode="single"></dxo-selection>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row margin-top-15">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #createUpdateMedicalHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Medical History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateMedicalHistory($event)">
+              <dx-validation-group #medicalHistoryValidationGroup>
+                <div class="dx-fieldset">
+                  <div class="dx-field">
+                    <div class="dx-field-label">Search diagnosis:</div>
+                    <div class="dx-field-value">
+                        <dx-lookup
+                            #icdCodeLookup
+                            [dataSource]="icdCodeDataSource"
+                            valueExpr="Id"
+                            displayExpr="Name"
+                            placeholder="Search diagnosis..." 
+                            (onValueChanged)="diagnosisChanged($event)">
+                        </dx-lookup>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label">Diagnosis:</div>
+                    <div class="dx-field-value">
+                        <dx-text-area [(value)]="medicalHistory.Diagnosis" [height]="90">
+                            <dx-validator>
+                                <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-area>
+                    </div>
+                </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">PMH Notes:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="medicalHistory.Notes" [height]="90">
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewMedicalHistory" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                          <dx-check-box [(value)]="medicalHistory.IsDelete">
+                          </dx-check-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Create Date:</div>
+                        <div class="dx-field-value">
+                          <dx-date-box [readOnly]="isNewMedicalHistory" [(value)]="medicalHistory.CreatedDate" type="date">
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-date-box>
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>

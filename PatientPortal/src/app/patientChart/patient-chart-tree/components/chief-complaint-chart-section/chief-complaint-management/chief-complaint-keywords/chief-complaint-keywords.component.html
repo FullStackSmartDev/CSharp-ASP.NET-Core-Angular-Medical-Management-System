@@ -1,0 +1,29 @@
+<div class="mt-md-2">
+    <dx-data-grid
+        #chiefComplaintsGrid
+        [wordWrapEnabled]="true"
+        [dataSource]="chiefComplaints" 
+        [showBorders]="true"
+        height="500">
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column [width]="20+'%'" dataField="title" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column [width]="70+'%'" caption="Keywords" cellTemplate="chiefComplaintkeywordsTemplate"></dxi-column>
+        <dxi-column alignment="center" [width]="10+'%'" caption="Add Templates" cellTemplate="addTemplatesTemplate"></dxi-column>
+
+        <div class="text-left" *dxTemplate="let chiefComplaintKeywords of 'chiefComplaintkeywordsTemplate'">
+            <span style="font-weight: bold"> {{ chiefComplaintKeywords.data.keywords }}</span>
+        </div>
+
+        <div class="text-center" *dxTemplate="let chiefComplaintKeywords of 'addTemplatesTemplate'">
+            <dx-button icon="plus" (onClick)="addTemplates(chiefComplaintKeywords.data.id)"></dx-button>
+        </div>
+
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
+    </dx-data-grid>
+</div>
+<add-templates *ngIf="canAddTemplates"
+    [companyId]="companyId"
+    [chiefComplaintId]="templatesData.chiefComplaintId"
+    (onTemplatesCanceled)="onTemplatesCanceled()"
+    (onTemplatesAdded)="onTemplatesAdded($event)">
+</add-templates>

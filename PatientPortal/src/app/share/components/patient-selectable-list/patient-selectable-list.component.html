@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-popup #selectablePopup class="popup"
+            [width]="500"
+            [height]="500"
+            [dragEnabled]="false"
+            [showTitle]="true"
+            title="Select" 
+            [closeOnOutsideClick]="false"
+            (onHidden)="onSelectablePopupHidden()">
+            <div *dxTemplate="let data of 'content'">
+                <div class="row">
+                    <div class="col-md-12">
+                        <dx-list 
+                            [dataSource]="selectableItemValues"
+                            [height]="300"
+                            [selectionMode]="single"
+                            [showSelectionControls]="true" 
+                            (onSelectionChanged)="applySelectableItemValue($event)"
+                            [(selectedItems)]="selectedSelectableItemValues">
+                        </dx-list>
+                    </div>
+                </div>
+                <div *ngIf="!isPreviewMode" class="row margin-top-15">
+                    <div class="col-md-9">
+                        <dx-text-area 
+                            #selectableItemResultTextarea 
+                            [(value)]="selectableItemResult"
+                            height="90">
+                        </dx-text-area>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <dx-button text='Apply' type='default' (onClick)='saveSelectbleItemChanges()'></dx-button>
+                    </div>
+                </div>
+            </div>
+        </dx-popup>
+    </div>
+</div>

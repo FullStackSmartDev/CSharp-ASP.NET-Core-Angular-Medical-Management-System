@@ -1,0 +1,18 @@
+<div *ngIf="isTemplateListNodeFormShown" class="row">
+    <div class="col-md-12">
+        <dx-form #templateListNodeForm [(formData)]="templateListNode" [height]="460">
+            <dxi-item dataField="title" editorType="dxTextBox">
+                <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+            </dxi-item>
+
+            <dxi-item [label]="{text: 'Template List Type'}" dataField="templateTypeId" editorType="dxSelectBox" 
+                [editorOptions]="{ displayExpr: 'name', valueExpr: 'id', dataSource: templateTypeDataSource, searchEnabled: true }">
+                <dxi-validation-rule type="required" message="Template type is required"></dxi-validation-rule>
+            </dxi-item>
+        </dx-form>
+    </div>
+
+    <div class="col-md-12 text-right mt-md-2">
+        <button type="button" (click)="createUpdateTemplateListNode()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-md-12">
+        <admin-selectable-list #selectableList
+            [companyId]="companyId"
+            (onSelectableHtmlElementGenerated)="onSelectableHtmlElementGenerated($event)">
+        </admin-selectable-list>
+        <admin-selectable-range #selectableRange
+            (onSelectableHtmlElementGenerated)="onSelectableHtmlElementGenerated($event)">
+        </admin-selectable-range>
+        <admin-selectable-date #selectableDate
+            (onSelectableHtmlElementGenerated)="onSelectableHtmlElementGenerated($event)">
+        </admin-selectable-date>
+    </div>
+</div>

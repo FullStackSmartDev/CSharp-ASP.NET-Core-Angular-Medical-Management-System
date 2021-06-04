@@ -1,0 +1,55 @@
+<div *ngIf="matchedKeywordsExist">
+    <dx-data-grid
+        #matchedKeywordsGrid
+        [wordWrapEnabled]="true"
+        [dataSource]="matchedChiefComplaintKeywords" 
+        [showBorders]="true"
+        height="500">
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column [width]="20+'%'" dataField="title" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column [width]="30+'%'" caption="Matched Keywords" cellTemplate="matchedKeywordsTemplate"></dxi-column>
+        <dxi-column [width]="30+'%'" caption="Missed Keywords" cellTemplate="missedKeywordsTemplate"></dxi-column>
+        <dxi-column alignment="center" [width]="10+'%'" caption="Add Keywords" cellTemplate="addMissedKeywordsTemplate"></dxi-column>
+        <dxi-column alignment="center" [width]="10+'%'" caption="Add Templates" cellTemplate="addTemplatesTemplate"></dxi-column>
+
+            <div class="text-left" *dxTemplate="let chiefComplaintKeywords of 'matchedKeywordsTemplate'">
+                <span style="font-weight: bold"> {{ chiefComplaintKeywords.data.matchedKeywords }}</span>
+            </div>
+
+            <div class="text-left" *dxTemplate="let chiefComplaintKeywords of 'missedKeywordsTemplate'">
+                <span style="font-weight: bold; color: red;"> {{ chiefComplaintKeywords.data.missedKeywords }}</span>
+            </div>
+
+            <div class="text-center" *dxTemplate="let chiefComplaintKeywords of 'addMissedKeywordsTemplate'">
+                <dx-button
+                    icon="plus" 
+                    [disabled]="!chiefComplaintKeywords.data.missedKeywords.length" 
+                    (onClick)="addMissedKeywords(chiefComplaintKeywords.data.id, chiefComplaintKeywords.data.missedKeywords)">
+                </dx-button>
+            </div>
+
+            <div class="text-center" *dxTemplate="let chiefComplaintKeywords of 'addTemplatesTemplate'">
+                <dx-button icon="plus" (onClick)="addTemplates(chiefComplaintKeywords.data.id)"></dx-button>
+            </div>
+
+    </dx-data-grid>
+</div>
+<div *ngIf="!matchedKeywordsExist">
+    <p>Matched Keywords were not found. Please swith to "Full Search" or "New Mapping" tab.</p> 
+</div>
+
+<missed-keywords
+    *ngIf="canAddMissedKeywords"
+    [missedKeywords]="missedKeywordsData.missedKeywords"
+    [chiefComplaintId]="missedKeywordsData.chiefComplaintId"
+    (onMissedKeywordsCanceled)="onMissedKeywordsCanceled()"
+    (onMissedKeywordsAdded)="onMissedKeywordsAdded()">
+</missed-keywords>
+
+<add-templates
+    *ngIf="canAddTemplates"
+    [companyId]="companyId"
+    [chiefComplaintId]="templatesData.chiefComplaintId"
+    (onTemplatesCanceled)="onTemplatesCanceled()"
+    (onTemplatesAdded)="onTemplatesAdded($event)">
+</add-templates>

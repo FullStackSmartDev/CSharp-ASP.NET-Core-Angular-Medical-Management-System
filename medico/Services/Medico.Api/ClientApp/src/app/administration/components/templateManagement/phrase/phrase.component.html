@@ -1,0 +1,102 @@
+<div *ngIf="!isPhraseFormVisible" class="row">
+    <div class="col-md-4 mt-md-2">
+        <button type="button" (click)="switchToPhraseForm()" class="btn btn-sm btn-outline-secondary">NEW PHRASE</button>
+    </div>
+</div>
+    <div class="row mt-md-2">
+        <div *ngIf="!isPhraseFormVisible" class="col-md-6">
+            <dx-data-grid #phrasesGrid [selectedRowKeys]="selectedPhrases" [showBorders]="true" id="gridContainer"
+                [dataSource]="phraseDataSource" [allowColumnReordering]="true" [columnHidingEnabled]="false"
+                [hoverStateEnabled]="true" (onSelectionChanged)="onPhraseChanged($event)">
+    
+                <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]="true">
+                </dxo-remote-operations>
+    
+                <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+                </dxo-paging>
+    
+                <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+                </dxo-pager>
+    
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+    
+                <dxi-column dataField="id" dataType="string" [visible]="false">
+                </dxi-column>
+    
+                <dxi-column [width]="70+'%'" [allowSorting]="false" dataField="title" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+                </dxi-column>
+    
+                <dxi-column [allowSorting]="false" dataField="name" [visible]="false" dataType="string">
+                </dxi-column>
+    
+                <dxi-column [width]="10+'%'" [allowSorting]="false" [allowFiltering]="false" dataField="isActive" dataType="boolean">
+                </dxi-column>
+    
+                <dxi-column alignment="center" caption="Delete" cellTemplate="deletePhraseTemplate"></dxi-column>
+    
+                <div class="text-center" *dxTemplate="let phrase of 'deletePhraseTemplate'">        
+                    <button type="button" (click)="deletePhrase(phrase.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+                </div>
+    
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+        <div *ngIf="isPhraseFormVisible" class="col-md-12">
+            <div class="row">
+                <div class="col-md-12 mt-md-2">
+                    <dx-form #phraseForm [(formData)]="phrase">
+                        <dxi-item [tabPanelOptions]="{ deferRendering: false}" itemType="tabbed" [colSpan]="2">
+                            <dxi-tab title="Base Info">
+        
+                                <dxi-item [editorOptions]="{ width: '50%' }" dataField="title">
+                                    <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                                    <dxi-validation-rule *ngIf="isNewPhrase" type="custom" [validationCallback]="validateGeneratedName"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [editorOptions]="{ width: '10%' }" dataField="isActive" editorType="dxCheckBox"></dxi-item>
+        
+                            </dxi-tab>
+        
+                            <dxi-tab title="Content">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <admin-selectable-root
+                                            [companyId]="companyId"
+                                            (onSelectableItemValueGenerated)="onSelectableItemValueGenerated($event)">
+                                        </admin-selectable-root>
+                                        <div class="text-left mt-2">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" (click)="showPhrasePreview()">Preview Mode</button>
+                                        </div>
+                                        <detailed-template-preview
+                                            *ngIf="isPhrasePreviewVisible"
+                                            (detailedTemplatePreviewHidden)="onPhrasePreviewHidden()"
+                                            [detailedTemplateContent]="phraseContentRichTextEditor.content"
+                                            [companyId]="companyId">
+                                        </detailed-template-preview>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <admin-rich-text-editor
+                                            [initialContent]="phrase.content"
+                                            #phraseContentRichTextEditor>
+                                        </admin-rich-text-editor>
+                                    </div>
+                                </div>
+                            </dxi-tab>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+            </div>
+            <div class="row mt-md-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-sm btn-outline-danger text-left" (click)="switchToPhrasesDataGrid()">CANCEL</button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="savePhrase()">SAVE</button>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

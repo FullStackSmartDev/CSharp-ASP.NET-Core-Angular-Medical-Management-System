@@ -1,0 +1,58 @@
+<dx-popup
+    #addTemplatesPopup
+    class="popup"
+    [width]="500"
+    [height]="400"
+    [dragEnabled]="false"
+    [showTitle]="false"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="areMappedTemplatesExist" class="row" class="margin-top-15">
+            <h6>HPI Templates</h6>
+            <dx-list
+                itemTemplate="listItem"
+                [dataSource]="templates.hpi"
+                [height]="60">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.ReportTitle}}</div>
+                    </div>
+            </dx-list>
+
+            <h6 class="margin-top-15">PE Templates</h6>
+            <dx-list
+                itemTemplate="listItem" 
+                [dataSource]="templates.pe"
+                [height]="60">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.ReportTitle}}</div>
+                    </div>
+            </dx-list>
+
+            <h6 class="margin-top-15">ROS Templates</h6>
+            <dx-list
+                itemTemplate="listItem"
+                [dataSource]="templates.ros"
+                [height]="60">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.ReportTitle}}</div>
+                    </div>
+            </dx-list>
+        </div>
+        <div *ngIf="!areMappedTemplatesExist" class="row" class="margin-top-15">
+            <h6>There are no mapped templates</h6>
+        </div>
+        <div class="row margin-top-15">
+            <div class="col-md-12 text-right">
+                <dx-button
+                    *ngIf="areMappedTemplatesExist"
+                    text="Add Templates" 
+                    (onClick)="addTemplates()">
+                </dx-button>
+                <dx-button
+                    text="Cancel" 
+                    (onClick)="cancelAddingTemplates()">
+                </dx-button>
+            </div>
+        </div>
+    </div>
+</dx-popup>

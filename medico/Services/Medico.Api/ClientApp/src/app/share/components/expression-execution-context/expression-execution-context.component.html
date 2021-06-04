@@ -1,0 +1,119 @@
+<div *ngIf="expressionExecutionContext">
+    <h5>Patient: </h5>
+    <div class="d-flex h6">
+        <div class="p-2 bg-secondary text-white border-white border-right">
+            {{expressionExecutionContext.patient.firstName}} {{expressionExecutionContext.patient.lastName}}</div>
+        <div class="p-2 bg-secondary text-white border-white border-left border-right">
+            {{expressionExecutionContext.patient.dateOfBirth | date}}</div>
+        <div class="p-2 bg-secondary text-white border-white border-left border-right">
+            {{expressionExecutionContext.patient.dateOfBirth | age}}</div>
+    </div>
+    <h5 class="mt-3">Base Vital Signs:</h5>
+    <table class="table table-bordered mt-3">
+        <thead class="thead-light">
+            <tr>
+                <th class="text-center" scope="col">Weight, lbs</th>
+                <th class="text-center" scope="col">Height, inches</th>
+                <th class="text-center" scope="col">Dominant Hand</th>
+                <th class="text-center" scope="col">Oxygen, lpm</th>
+                <th *ngIf="isHeadCircumferenceEnabled" class="text-center" scope="col">Head Circumference, cm</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.weight }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.height }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.dominantHand }}
+                </td>
+                <td class="text-center">
+                    {{ expressionExecutionContext.baseVitalSigns.oxygenUseInfo }}
+                </td>
+                <td *ngIf="isHeadCircumferenceEnabled" class="text-center">
+                    {{ expressionExecutionContext.baseVitalSigns.headCircumference }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered mt-5">
+        <thead class="thead-light">
+            <tr>
+                <th class="text-center" scope="col">Location</th>
+                <th class="text-center" scope="col">Calf, cm</th>
+                <th class="text-center" scope="col">Thigh, cm</th>
+                <th class="text-center" scope="col">Forearm, cm</th>
+                <th class="text-center" scope="col">Bicep, cm</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th class="text-center">Right: </th>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.rightCalf }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.rightThigh }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.rightForearm }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.rightBicep }}</td>
+            </tr>
+            <tr>
+                <th class="text-center">Left: </th>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.leftCalf }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.leftThigh }}</td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.leftForearm }}
+                </td>
+                <td class="text-center">{{ expressionExecutionContext.baseVitalSigns.leftBicep }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 class="mt-3">Vital Signs:</h5>
+    <table class="table table-bordered mt-3">
+        <thead class="thead-light">
+            <tr>
+                <th class="text-center" scope="col">Pulse</th>
+                <th class="text-center" scope="col">Blood pressure</th>
+                <th class="text-center" scope="col">Position</th>
+                <th class="text-center" scope="col">Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let vitalSignsItem of expressionExecutionContext.vitalSigns;">
+                <td class="text-center">{{vitalSignsItem.pulse}}</td>
+                <td class="text-center">{{vitalSignsItem.systolicBloodPressure}} / {{vitalSignsItem.diastolicBloodPressure}}</td>
+                <td class="text-center">{{vitalSignsItem.bloodPressurePosition}}</td>
+                <td class="text-center">{{vitalSignsItem.bloodPressureLocation}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 class="mt-3">Variables:</h5>
+    <div *ngIf="expressionExecutionContext.selectableVariables">
+        <h5 class="mt-3">Text:</h5>
+        <table class="table table-bordered mt-3">
+            <thead class="thead-light">
+                <tr>
+                    <th class="text-center" scope="col">Name</th>
+                    <th class="text-center" scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let textVariableName of expressionExecutionContext.selectableVariables.textVariables | keys">
+                    <td class="text-center">{{textVariableName}}</td>
+                    <td class="text-center">{{expressionExecutionContext.selectableVariables.textVariables[textVariableName]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h5 class="mt-3">Numeric:</h5>
+        <table class="table table-bordered mt-3">
+            <thead class="thead-light">
+                <tr>
+                    <th class="text-center" scope="col">Name</th>
+                    <th class="text-center" scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let numericVariableName of expressionExecutionContext.selectableVariables.numericVariables | keys">
+                    <td class="text-center">{{numericVariableName}}</td>
+                    <td class="text-center">{{expressionExecutionContext.selectableVariables.numericVariables[numericVariableName]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

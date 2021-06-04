@@ -1,0 +1,17 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-10">
+                <dx-text-box [(value)]="currentKeyword"></dx-text-box>
+            </div>
+            <div class="col-md-2 text-right">
+                <dx-button icon="plus" (onClick)="addNewKeyword()">
+                </dx-button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <dx-list [dataSource]="keywords" [height]="90" [allowItemDeleting]="true" [itemDeleteMode]="'toggle'">
+        </dx-list>
+    </div>
+</div>

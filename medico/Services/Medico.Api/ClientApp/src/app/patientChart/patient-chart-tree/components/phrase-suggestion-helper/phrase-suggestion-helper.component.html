@@ -1,0 +1,51 @@
+<div class="mt-2" *ngIf="areSuggestionsVisible">
+    <div class="row">
+        <div class="col-md-8">
+            <div style="font-size: 0.8em;" class="row">
+                <div class="col-md-6"> PHRASES </div>
+                <div class="col-md-6 text-right">
+                    <i (click)="closeSuggestionList()" class="dx-icon dx-icon-close"></i>
+                </div>
+            </div>
+            <dx-data-grid class="mt-1" 
+                [height]="150" 
+                [selectedRowKeys]="selectedPhrases" 
+                [hoverStateEnabled]="true" 
+                [wordWrapEnabled]="true"
+                #phraseGrid (onSelectionChanged)="onPhraseSelected($event)"
+                [showColumnHeaders]="false"
+                [dataSource]="phrasesDataSource"
+                [showBorders]="true">
+
+                <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+                <dxi-column caption="Phrase" alignment="left" dataField="name" dataType="string"></dxi-column>
+
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+    </div>
+    <dx-popup class="popup" 
+        [width]="800" 
+        [height]="560" 
+        [dragEnabled]="false"
+        [showTitle]="true"
+        title="Phrase content" 
+        [closeOnOutsideClick]="false"
+        [(visible)]="isPhrasePopupOpened"
+        (onHidden)="onPhrasePopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isPhrasePopupOpened">
+                <patient-rich-text-editor #phraseContentEditor 
+                    [initialContent]="phraseContent"
+                    [companyId]="companyId"
+                    (onEditorChange)="onPhraseEditorChanged($event)" 
+                    (onEditorReady)="onPhraseEditorReady($event)">
+                </patient-rich-text-editor>
+                <div class="text-right mt-1">
+                    <button type="button" (click)="insertPhraseContent()"class="btn btn-sm btn-outline-secondary">INSERT</button>
+                </div>
+            </div>
+        </div>
+    </dx-popup>
+</div>

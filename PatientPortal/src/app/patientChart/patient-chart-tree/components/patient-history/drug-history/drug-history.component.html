@@ -1,0 +1,145 @@
+<div *ngIf="canRenderComponent" class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <button type="button" (click)="openDrugHistoryForm()" class="btn btn-sm btn-outline-secondary">ADD DRUG HISTORY</button>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row mt-md-2">
+    <div class="col-md-12">
+      <dx-data-grid [selectedRowKeys]="selectedDrugHistory" [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onDrugHistorySelect($event)"
+        [wordWrapEnabled]="true" 
+        #drugHistoryDataGrid
+        [dataSource]="drugHistoryDataSource"
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+        </dxo-pager>
+  
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="patientId" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="status" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="type" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="amount" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="use" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="route" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="frequency" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="length" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="duration" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="quit" cellTemplate="cellTemplate" dataType="boolean" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="statusLength" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="left" dataField="notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="createDate" dataType="date"></dxi-column>
+
+        <dxi-column *ngIf="!isSignedOff" alignment="center" caption="Delete" cellTemplate="deleteHistoryTemplate"></dxi-column>
+        <div class="text-center" *dxTemplate="let history of 'deleteHistoryTemplate'">
+            <button type="button" (click)="deleteHistory(history.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+        </div>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+        <div *dxTemplate="let data of 'cellTemplate'">
+          <value-component [value]="data.value"></value-component>
+        </div>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row mt-md-2">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #drugHistoryPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="DRUG HISTORY" [closeOnOutsideClick]="false" [(visible)]="isDrugHistoryPopupOpened"
+    (onHidden)="onDrugHistoryPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <div *ngIf="isDrugHistoryPopupOpened" class="row">
+        <div class="col-md-12">
+          <dx-form #drugHistoryForm [height]="460" labelLocation="top" [(formData)]="drugHistory" (onFieldDataChanged)="onDrugHistoryFieldChanged($event)">
+            <dxi-item itemType="tabbed" [tabPanelOptions]="{ height: 450 }">
+              <dxi-tab [colCount]="12" title="Base Info">
+                <dxi-item [colSpan]="9" [label]="{text: 'Status'}" dataField="status" editorType="dxSelectBox"
+                  [editorOptions]="{ items: statusDrugUseListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item [colSpan]="3" dataField="createDate" editorType="dxDateBox" [editorOptions]="{ width: '100%', readOnly: isNewDrugHistory }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Type'}" dataField="type" editorType="dxSelectBox"
+                  [editorOptions]="{ items: typeDrugListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Amount'}" dataField="amount" editorType="dxNumberBox"
+                  [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Use'}" dataField="use" editorType="dxSelectBox"
+                  [editorOptions]="{ items: useDrugListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Route'}" dataField="route" editorType="dxSelectBox"
+                  [editorOptions]="{ items: useDrugRouteListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Frequency'}" dataField="frequency" editorType="dxSelectBox"
+                  [editorOptions]="{ items: useFrequencyListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Length'}" dataField="length" editorType="dxNumberBox"
+                  [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Duration'}" dataField="duration" editorType="dxSelectBox"
+                  [editorOptions]="{ items: durationListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Quit'}" dataField="quit" editorType="dxCheckBox"></dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected && drugHistory.quit" [colSpan]="6" [label]="{text: 'Status Length'}" dataField="statusLength" editorType="dxNumberBox"
+                  [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isDefaultHistoryValueSelected && drugHistory.quit" [colSpan]="6" [label]="{text: 'Status Length Type'}" dataField="statusLengthType" editorType="dxSelectBox"
+                  [editorOptions]="{ items: durationListValues }">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-item>
+              </dxi-tab>
+              <dxi-tab [colCount]="12" title="Notes">
+                <dxi-item [colSpan]="12" [label]="{text: 'Notes'}" dataField="notes" template="notesTemplate"></dxi-item>
+                <div *dxTemplate="let data of 'notesTemplate'">
+                  <dx-text-area valueChangeEvent="keyup" [(value)]="drugHistory.notes" height="120">
+                  </dx-text-area>
+            
+                  <phrase-suggestion-helper class="mt-2" 
+                    [typedText]="drugHistory.notes"
+                    [companyId]="companyId"
+                    (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+                  </phrase-suggestion-helper>
+                </div>
+              </dxi-tab>
+            </dxi-item>
+          </dx-form>
+        </div>
+        <div class="col-md-12 text-right mt-md-2">
+          <button type="button" (click)="createUpdateDrugHistory()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+        </div>
+      </div>
+    </div>
+  </dx-popup>
+  

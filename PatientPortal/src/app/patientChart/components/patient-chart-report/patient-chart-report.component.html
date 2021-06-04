@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col-md-2">
+        <dx-tree-view #patientChartTree width="100%"
+            height="520" scrollDirection="vertical" 
+            showCheckBoxesMode="normal"
+            (onItemSelectionChanged)="patientChartSectionSelectionChanged($event)">
+            <div *dxTemplate="let data of 'item'">
+                <span [ngClass]="{'required-node' : data.isRequired}">{{data.text}}</span>
+            </div>
+        </dx-tree-view>
+    </div>
+    <div class="col-md-10">
+        <!-- <div class="page" [innerHtml]="reportContent | safeHtml"></div> -->
+        <textarea id="{{reportEditorId}}"></textarea>
+    </div>
+</div>
+<div class="row margin-top-10">
+    <div class="col-md-6 text-left">
+        <!-- <dx-button text="Preview" type="default"></dx-button> -->
+    </div>
+    <div class="col-md-6 text-right mt-md-2">
+        <button type="button" (click)="generatePdfReport()" class="btn btn-sm btn-outline-primary">GENERATE REPORT</button>
+    </div>
+</div>

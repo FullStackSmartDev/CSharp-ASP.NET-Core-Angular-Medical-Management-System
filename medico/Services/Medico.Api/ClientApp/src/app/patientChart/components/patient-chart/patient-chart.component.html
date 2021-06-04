@@ -1,0 +1,48 @@
+<div class="row mt-md-1">
+    <div class="col-md-12">
+        <patient-chart-header [patientChartHeaderData]="patientChartHeaderData">
+        </patient-chart-header>
+    </div>
+</div>
+<div class="row mt-md-1">
+    <div class="col-md-3">
+        <div class="clearfix p-1 border-top border-bottom">
+            <span *ngIf="!isAdmissionSignedOff" class="float-left"><b>SIGNED OFF / REPORT</b></span>
+            <span *ngIf="isAdmissionSignedOff" class="float-left"><b>REPORT</b></span>
+            <button (click)="makeReport()" class="float-right btn btn-sm btn-outline-secondary ml-2"><i class="fas fa-file-alt"></i></button>
+            <button *ngIf="!isAdmissionSignedOff" (click)="signOff()" class="float-right btn btn-sm btn-outline-danger"><i class="fas fa-signature"></i></button>
+        </div>
+        <div class="mt-1">
+            <dx-tree-view width="100%"
+                #treeView id="patient-data-treeview"
+                [dataSource]="patientChartProjectionTree"
+                (onItemClick)="selectPatientChartNode($event)"
+                height="70vh">
+                <div *dxTemplate="let data of 'item'">
+                    <span [ngClass]="{'selected' : isNodeOpened(data.id)}">{{data.text}}</span>
+                </div>
+            </dx-tree-view>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <html-outlet [patientChartInfo]="patientChartInfo"></html-outlet>
+    </div>
+</div>
+<dx-popup class="popup" [width]="1400" [height]="650" [dragEnabled]="false" 
+    [showTitle]="true" title="Report builder"
+    [closeOnOutsideClick]="false"
+    (onHidden)="onReportPopupHidden()"
+    [(visible)]="isReportPopupOpened">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isReportPopupOpened" class="row">
+            <div class="col-md-12">
+                <patient-chart-report
+                    *ngIf="isReportPopupOpened"
+                    [admission]="admission"
+                    [companyId]="companyId"
+                    [patientChartTreeView]="patientChartProjectionTree">
+                </patient-chart-report>
+            </div>
+        </div>
+    </div>
+</dx-popup>

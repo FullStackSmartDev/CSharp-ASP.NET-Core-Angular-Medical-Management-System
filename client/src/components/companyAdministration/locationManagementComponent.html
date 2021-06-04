@@ -1,0 +1,111 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openCreateLocationForm()">New Location</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedLocations"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onLocationSelected($event)"
+            [wordWrapEnabled]="true"
+            #locationDataGrid
+            [dataSource]="locationDataSource"
+            [showBorders]="true">
+            
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations>
+            
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+            
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes"></dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column alignment="left" dataField="Name" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+
+            <dxi-column dataField="Address" cellTemplate="addressTemplate" dataType="string"[filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+            <div class="text-left" *dxTemplate="let address of 'addressTemplate'">        
+                <span>{{getAddress(address.data)}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="State" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" dataField="City" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+            <dxi-column alignment="center" dataField="Zip" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" dataField="Phone" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" dataField="Fax" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column dataField="IsActive" dataType="boolean"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteLocationTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let location of 'deleteLocationTemplate'">        
+                <span class="action delete-action" (click)="deleteLocation(location.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #createUpdateLocationPopup class="popup" [width]="900" [height]="520" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Location" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened" (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        #locationCreationForm
+                        [(formData)]="location"
+                        (onFieldDataChanged)="onLocationFieldChanged($event)">
+            
+                        <dxi-item itemType="tabbed">
+                            <dxi-tab [colCount]="2" title="Base Info">
+                                <dxi-item dataField="Name">
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item [editorOptions]="{ height: '70' }" dataField="Address" editorType="dxTextArea">
+                                    <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item [editorOptions]="{ height: '70' }" dataField="SecondaryAddress" editorType="dxTextArea">
+                                </dxi-item>
+            
+                                <dxi-item dataField="City">
+                                    <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="State" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Value', dataSource: lookups.state}">
+                                    <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="Zip" [editorOptions]="{ mask: '(00000)-(00000)'}">
+                                    <dxi-validation-rule type="required" message="ZIP is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="Phone" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                                    <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="Fax" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                                    <dxi-validation-rule type="required" message="Fax is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="IsActive"></dxi-item>
+                            </dxi-tab>
+                            <!-- <extra-fields-tab
+                                *ngIf="isLocationSet"
+                                #extraFieldsTab
+                                [entityName]="tableNames.location"
+                                [entityModel]="location"
+                                (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                            </extra-fields-tab> -->
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-left margin-top-10">
+                    <dx-button (onClick)="createUpdateLocation()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

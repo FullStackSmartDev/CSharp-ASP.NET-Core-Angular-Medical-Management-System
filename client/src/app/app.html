@@ -1,0 +1,26 @@
+<ion-nav [root]="rootPage"></ion-nav>
+<!-- shared load panel -->
+<div class="col-md-6">
+    <dx-load-panel 
+        shadingColor="rgba(0,0,0,0.4)" 
+        [(visible)]="loadPanelInfo.show"
+        [showIndicator]="true" 
+        [showPane]="true"
+        [shading]="true"
+        [message]="loadPanelInfo.loadMessage"
+        [closeOnOutsideClick]="false">
+    </dx-load-panel>
+</div>
+<!-- shared alert -->
+<dx-popup 
+    class="popup" 
+    [(visible)]="alertInfo.visible"
+    [width]="alertInfo.width" 
+    [height]="alertInfo.height" 
+    [showTitle]="true" 
+    [title]="alertInfo.title"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <p>{{alertInfo.message}}</p>
+    </div>
+</dx-popup>

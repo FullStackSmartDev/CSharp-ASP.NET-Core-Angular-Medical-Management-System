@@ -1,0 +1,67 @@
+<div class="row">
+        <div class="col-md-2">
+            <span class="action" (click)="openCreateAllegationForm()">New Allegation</span>
+        </div>
+    </div>
+    <div class="row margin-top-15">
+        <div class="col-md-12">
+            <dx-data-grid
+                height="450"
+                [selectedRowKeys]="selectedAllegations"
+                [hoverStateEnabled]="true"
+                (onSelectionChanged)="onAllegationSelected($event)"
+                [wordWrapEnabled]="true"
+                #allegationDataGrid
+                [dataSource]="allegations"
+                [showBorders]="true">
+                
+                <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations>
+                
+                <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+                
+                <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes"></dxo-pager>
+    
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+    
+                <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+                <dxi-column dataField="CodeId" dataType="string" [visible]="false"></dxi-column>
+
+                <dxi-column [width]="20+'%'" dataField="Keyword" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+                <dxi-column [width]="10+'%'" caption="Code" dataField="CodeName" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+                <dxi-column dataField="CodeDescription" dataType="string" [filterOperations]="applicationConfiguration.searchConfiguration"></dxi-column>
+                <dxi-column [width]="10+'%'" alignment="center" caption="Delete" cellTemplate="deleteAllegationTemplate"></dxi-column>
+    
+                <div class="text-center" *dxTemplate="let allegation of 'deleteAllegationTemplate'">        
+                    <span class="action delete-action" (click)="deleteAllegation(allegation.data, $event)"><i class="dx-icon-remove"></i></span>
+                </div>
+    
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+    </div>
+    <dx-popup #createUpdateAllegationPopup class="popup" [width]="900" [height]="220" [dragEnabled]="false" [showTitle]="true"
+        title="Create / Update Allegation" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened" (onHidden)="onCreateUpdatePopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <dx-scroll-view [scrollByContent]="true">
+                <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                    <div class="col-md-12">
+                        <dx-form
+                            #allegationCreationForm
+                            [(formData)]="allegation">
+                
+                            <dxi-item [label]="{text: 'Allegation'}" dataField="Keyword" [editorOptions]="{ onValueChanged: onKeywordValueChanged}">
+                                <dxi-validation-rule type="required" message="Allegation is required"></dxi-validation-rule>
+                            </dxi-item>
+            
+                            <dxi-item [label]="{text: 'Select ICD Codes'}" dataField="CodeId" editorType="dxSelectBox" [editorOptions]="{displayExpr: 'Name', valueExpr: 'Id', dataSource: icdCodesDataSource}">
+                            </dxi-item>
+
+                        </dx-form>
+                    </div>
+                    <div class="col-md-12 text-right margin-top-10">
+                        <dx-button (onClick)="createUpdateAllegation()" text="ADD" type="default"></dx-button>
+                    </div>
+                </div>
+            </dx-scroll-view>
+        </div>
+    </dx-popup>

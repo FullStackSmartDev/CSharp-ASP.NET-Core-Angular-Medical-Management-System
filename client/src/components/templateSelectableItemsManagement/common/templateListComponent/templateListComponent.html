@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-md-6">
+        <div *ngIf="!isSignedOff" class="row">
+            <div class="col-md-12">
+                <dx-autocomplete 
+                    [(value)]="selectedTemplateId"
+                    valueExpr="Id"
+                    (onItemClick)="onTemplateAdded($event)"
+                    placeholder="Select template"
+                    displayExpr="ReportTitle"
+                    [dataSource]="templatesDataSource">
+                    <div *dxTemplate="let item of 'item'">
+                        <h6>{{item.ReportTitle}}</h6>
+                    </div>
+                </dx-autocomplete>
+            </div>
+        </div>
+        <div class="margin-top-15 row">
+            <div class="col-md-12">
+                Templates:
+            </div>
+        </div>
+        <div class="margin-top-5 row">
+            <div class="col-md-12">
+                <dx-list
+                    #templateList
+                    [items]="templates" 
+                    [allowItemDeleting]="!isSignedOff"
+                    (onItemDeleted)="onTemplateDeleted($event)">
+                    <div *dxTemplate="let item of 'item'">
+                        <div>
+                            <div>{{item.Title}}</div>
+                        </div>
+                    </div>
+                </dx-list>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+<div class="row">
+    <div class="col-md-2">
+        <a href="" (click)="openChiefComplaintCreationForm($event)">New Chief Complaint</a>
+    </div>
+    <div class="col-md-3"> Include deleted items: <dx-check-box [(value)]="includeDeletedItems" (onValueChanged)="includeDeletedItemsCheckboxChanged($event)"></dx-check-box>
+    </div>
+    <div class="offset-md-3 col-md-4">
+        <dx-text-box placeholder="Search chief complaints..." mode="search" valueChangeEvent="keyup" [(value)]="searchText">
+        </dx-text-box>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedChiefComplaints"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onChiefComplaintSelected($event)"
+            [wordWrapEnabled]="true"
+            #chiefComplaintDataGrid
+            [dataSource]="chiefComplaintDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations [paging]="true"></dxo-remote-operations>
+
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-search-panel [text]="searchText" [highlightCaseSensitive]="true">
+            </dxo-search-panel>
+
+            <dxi-column dataField="Id" dataType="string" [allowEditing]="false" [visible]="false"></dxi-column>
+            <dxi-column dataField="Name" dataType="string" [allowEditing]="false" [visible]="false"></dxi-column>
+            <dxi-column dataField="Title" dataType="string"></dxi-column>
+            <dxi-column dataField="Keywords" dataType="string"></dxi-column>
+            <dxi-column dataField="HpiTemplates" dataType="string"></dxi-column>
+            <dxi-column dataField="RosTemplates" dataType="string"></dxi-column>
+            <dxi-column dataField="PhysicalExamTemplates" dataType="string"></dxi-column>
+            <dxi-column dataField="IsDelete" dataType="boolean"></dxi-column>
+            
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup class="popup" [width]="500" [height]="500" [showTitle]="true" title="Create / Update Chief Complaint"
+    [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened" (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div class="row">
+                <div class="col-md-12">
+                    <form (submit)="createUpdateChiefComplaint($event)">
+                        <div class="dx-fieldset">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Chief complaint title:</div>
+                                <div class="dx-field-value">
+                                    <dx-text-box #titleTextBox [(value)]="chiefComplaint.Title"
+                                        (onValueChanged)="titleChanged($event)">
+                                        <dx-validator #chiefComplaintTitleValidator>
+                                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">
+                                    Chief complaint name <br />generated automatically:
+                                </div>
+                                <div class="dx-field-value">
+                                    <dx-text-box [(value)]="chiefComplaint.Name" [readOnly]="true">
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <dx-lookup 
+                                                    [(value)]="selectedHpiTemplateId" 
+                                                    [dataSource]="hpiTemplateDataSource"
+                                                    [showPopupTitle]="false"
+                                                    valueExpr="Id" displayExpr="ReportTitle"
+                                                    placeholder="Search HPI templates..."
+                                                    (onValueChanged)="onHpiTemplateChanged($event)">
+                                                </dx-lookup>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <dx-button icon="plus" (onClick)="addNewHpiTemplate()">
+                                                </dx-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <dx-list [dataSource]="hpiTemplates" itemTemplate="data" [height]="100"
+                                            [allowItemDeleting]="allowTemplateDeleting" [itemDeleteMode]="templateDeleteType">
+                                            <div *dxTemplate="let item of 'data'">
+                                                <div>{{item.ReportTitle}}</div>
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <dx-lookup [(value)]="selectedRosTemplateId" [dataSource]="rosTemplateDataSource"
+                                                    [showPopupTitle]="false" valueExpr="Id" displayExpr="ReportTitle"
+                                                    placeholder="Search ROS templates..." (onValueChanged)="onRosTemplateChanged($event)">
+                                                </dx-lookup>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <dx-button icon="plus" (onClick)="addNewRosTemplate()">
+                                                </dx-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <dx-list [dataSource]="rosTemplates" [height]="100" itemTemplate="data"
+                                            [allowItemDeleting]="allowTemplateDeleting" [itemDeleteMode]="templateDeleteType">
+                                            <div *dxTemplate="let item of 'data'">
+                                                <div>{{item.ReportTitle}}</div>
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <dx-lookup [(value)]="selectedPhysicalExamTemplateId" [dataSource]="physicalExamTemplateDataSource"
+                                                    [showPopupTitle]="false" valueExpr="Id" displayExpr="ReportTitle"
+                                                    placeholder="Search physical exam templates..." (onValueChanged)="onPhysicalExamTemplateChanged($event)">
+                                                </dx-lookup>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <dx-button icon="plus" (onClick)="addNewPhysicalExamTemplate()">
+                                                </dx-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <dx-list [dataSource]="physicalExamTemplates" itemTemplate="data" [height]="100"
+                                            [allowItemDeleting]="allowTemplateDeleting" [itemDeleteMode]="templateDeleteType">
+                                            <div *dxTemplate="let item of 'data'">
+                                                <div>{{item.ReportTitle}}</div>
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <dx-text-box [(value)]="keyword" placeholder="Keywords...">
+                                                </dx-text-box>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <dx-button icon="plus" (onClick)="addNewKeyword()">
+                                                </dx-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <dx-list [items]="keywords" [height]="100"
+                                            [allowItemDeleting]="allowTemplateDeleting" [itemDeleteMode]="templateDeleteType">
+                                        </dx-list>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Is Delete: </div>
+                                <div class="dx-field-value">
+                                    <dx-check-box [(value)]="chiefComplaint.IsDelete">
+                                    </dx-check-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dx-fieldset">
+                            <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true">
+                            </dx-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

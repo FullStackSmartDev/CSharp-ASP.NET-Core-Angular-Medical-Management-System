@@ -1,0 +1,10 @@
+<div *ngIf="visible" class="row">
+    <div class="col-md-6">
+        <dx-text-box *ngIf="isTextVariable" [(value)]="variableValue"></dx-text-box>
+        <dx-number-box *ngIf="isNumericVariable" [(value)]="variableValue"></dx-number-box>
+    </div>
+    <div *ngIf="!isPreviewMode" class="col-md-6 text-right">
+        <button type="button" (click)="saveSelectbleItemChanges()"
+            class="btn btn-sm btn-outline-secondary">APPLY</button>
+    </div>
+</div>

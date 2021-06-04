@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-form
+            #companyCreationForm
+            [(formData)]="company">
+
+            <dxi-item itemType="tabbed">
+                <dxi-tab [colCount]="2" title="Base Info">
+                    <dxi-item dataField="Name">
+                        <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [editorOptions]="{ height: '70' }" dataField="Address" editorType="dxTextArea">
+                        <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [editorOptions]="{ height: '70' }" dataField="SecondaryAddress" editorType="dxTextArea">
+                    </dxi-item>
+
+                    <dxi-item dataField="City">
+                        <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item dataField="State" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Value', dataSource: lookups.state}">
+                        <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item dataField="ZipCode" [editorOptions]="{ mask: '(00000)-(00000)'}">
+                        <dxi-validation-rule type="required" message="ZIP is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item dataField="Phone" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                        <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item dataField="Fax" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                        <dxi-validation-rule type="required" message="Fax is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item dataField="WebSiteUrl">
+                        <dxi-validation-rule type="pattern" [pattern]="validationRegexRules.url" message="Invalid URL."></dxi-validation-rule>
+                    </dxi-item>
+                </dxi-tab>
+                <!-- <extra-fields-tab
+                    *ngIf="isCompanySet"
+                    #extraFieldsTab
+                    [entityName]="tableNames.company"
+                    [entityModel]="company"
+                    (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                </extra-fields-tab> -->
+            </dxi-item>
+        </dx-form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10 text-left margin-top-10">
+        <dx-button (onClick)="updateCompany()" text="SAVE" type="default"></dx-button>
+    </div>
+</div>

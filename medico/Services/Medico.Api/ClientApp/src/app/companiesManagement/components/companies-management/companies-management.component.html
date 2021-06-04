@@ -1,0 +1,126 @@
+<div class="row mt-md-2">
+    <div class="col-md-2">
+        <button type="button" (click)="openCompanyForm()" class="btn btn-sm btn-outline-secondary">NEW COMPANY</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedCompanys"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onCompanySelected($event)"
+            [wordWrapEnabled]="true"
+            #companyDataGrid 
+            [dataSource]="companyDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations 
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="name"></dxi-column>
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="address"></dxi-column>
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="city"></dxi-column>
+
+            <dxi-column alignment="center" cellTemplate="stateTemplate" dataField="state" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let state of 'stateTemplate'">        
+                <span>{{getState(state.data)}}</span>
+            </div>
+
+            <dxi-column alignment="center" cellTemplate="zipTemplate" dataField="zipCode"  dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let zip of 'zipTemplate'">        
+                <span *ngIf="isFiveDigitCode(zip.data.zipCodeType)">{{zip.data.zipCode | mask: validationMasks.fiveDigitZip}}</span>
+                <span *ngIf="isNineDigitCode(zip.data.zipCodeType)">{{zip.data.zipCode | mask: validationMasks.nineDigitZip}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="phone" dataType="string" cellTemplate="phoneTemplate" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let phone of 'phoneTemplate'">        
+                <span>{{phone.data.phone | mask: validationMasks.phone}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="fax" cellTemplate="faxTemplate" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let fax of 'faxTemplate'">        
+                <span>{{fax.data.fax | mask: validationMasks.phone}}</span>
+            </div>
+
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="webSiteUrl"></dxi-column>
+
+            <dxi-column dataField="isActive" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" caption="Activate / Deactivate" cellTemplate="activateDeactivateTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let company of 'activateDeactivateTemplate'">
+                <button *ngIf="company.data.isActive" type="button" (click)="deactivateCompany(company.data, $event)" class="btn btn-sm btn-outline-danger">DEACTIVATE</button>
+                <button *ngIf="!company.data.isActive" type="button" (click)="activateCompany(company.data, $event)" class="btn btn-sm btn-outline-primary">ACTIVATE</button>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+            
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #companyPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true" title="Company"
+    [closeOnOutsideClick]="false" [(visible)]="isCompanyPopupOpened" (onHidden)="onCompanyPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isCompanyPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #companyForm labelLocation="top" [height]="460" [colCount]="12" [(formData)]="company">
+                        <dxi-item [colSpan]="5" dataField="name">
+                            <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="7" [editorOptions]="{ height: '70' }" dataField="address" editorType="dxTextArea">
+                            <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="7" [editorOptions]="{ height: '70' }" dataField="secondaryAddress" editorType="dxTextArea">
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="5" dataField="city">
+                            <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="6" dataField="state" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: states}">
+                            <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="3" dataField="zipCodeType" editorType="dxSelectBox"
+                            [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value' }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="3" dataField="zipCode" [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: zipMask }">
+                            <dxi-validation-rule type="required" message="ZIP is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="4" dataField="phone" [editorOptions]="{ mask: validationMasks.phone }">
+                            <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="4" dataField="fax" [editorOptions]="{ mask: validationMasks.phone}">
+                            <dxi-validation-rule type="required" message="Fax is required"></dxi-validation-rule>
+                        </dxi-item>
+                
+                        <dxi-item [colSpan]="4" dataField="webSiteUrl">
+                            <dxi-validation-rule type="pattern" [pattern]="regexRuleList.url" message="Invalid URL."></dxi-validation-rule>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="createUpdateCompany()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                </div>
+            </div>
+    </div>
+</dx-popup>

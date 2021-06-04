@@ -1,0 +1,164 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openCreateEmployeeForm()">New Employee</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedEmployees"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onEmployeeSelected($event)"
+            [wordWrapEnabled]="true" 
+            #employeeDataGrid
+            [dataSource]="employeeDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations 
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column alignment="left" [filterOperations]="applicationConfiguration.searchConfiguration" dataField="FirstName" dataType="string"></dxi-column>
+            <dxi-column alignment="left" [filterOperations]="applicationConfiguration.searchConfiguration" dataField="LastName" dataType="string"></dxi-column>
+            <dxi-column alignment="center" format="M/d/yyyy" dataField="DateOfBirth" [allowFiltering]="false" dataType="date"></dxi-column>
+            <dxi-column dataField="Ssn" dataType="string"></dxi-column>
+            <dxi-column [allowSorting]="false" [allowFiltering]="false" dataField="State" dataType="string"></dxi-column>
+            <dxi-column dataField="City" dataType="string"></dxi-column>
+            <dxi-column [allowSorting]="false" [allowFiltering]="false" dataField="EmployeeType" dataType="string"></dxi-column>
+            <dxi-column dataField="PermissionGroupName" dataType="string"></dxi-column>
+            <dxi-column dataField="IsActive" dataType="boolean"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteEmployeeTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let employee of 'deleteEmployeeTemplate'">        
+                <span class="action delete-action" (click)="deleteEmployee(employee.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+
+            <div class="text-left" *dxTemplate="let employee of 'employeeTemplate'">
+                <span style="font-weight: bold"> {{ getEmployeeInfo(employee.data) }}</span>
+            </div>
+
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup
+    #createUpdateLocationPopup
+    class="popup"
+    [width]="1000"
+    [height]="700"
+    [dragEnabled]="false"
+    [showTitle]="true" title="Create / Update Employee"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        #employeeCreationForm
+                        [(formData)]="employeeData"
+                        (onFieldDataChanged)="onEmployeeFieldChanged($event)"> 
+                        <dxi-item itemType="tabbed">
+                            <dxi-tab [colCount]="2" title="Base Info">
+                                <dxi-item dataField="FirstName">
+                                    <dxi-validation-rule type="required" message="First Name is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="LastName">
+                                    <dxi-validation-rule type="required" message="Last Name is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="MiddleName"></dxi-item>
+
+                                <dxi-item dataField="Email">
+                                    <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="email" message="Email has incorrect format"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [editorOptions]="{ mode: 'password' }" dataField="Password">
+                                    <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="Gender" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Value', dataSource: lookups.gender}">
+                                    <dxi-validation-rule type="required" message="Gender is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="DateOfBirth" editorType="dxDateBox">
+                                    <dxi-validation-rule type="required" message="Date Of Birth is required"></dxi-validation-rule>
+                                </dxi-item>
+                    
+                                <dxi-item [editorOptions]="{ height: '70' }" dataField="Address" editorType="dxTextArea">
+                                    <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [editorOptions]="{ height: '70' }" dataField="SecondaryAddress" editorType="dxTextArea">
+                                </dxi-item>
+                
+                                <dxi-item dataField="City">
+                                    <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                                </dxi-item>
+                                
+                                <dxi-item dataField="State" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Value', dataSource: lookups.state}">
+                                    <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                                </dxi-item>
+                    
+                                <dxi-item dataField="Zip" [editorOptions]="{ mask: validationHelper.masks.zip}">
+                                    <dxi-validation-rule type="required" message="ZIP is required"></dxi-validation-rule>
+                                </dxi-item>
+                    
+                                <dxi-item dataField="PrimaryPhone" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                                    <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="SecondaryPhone" [editorOptions]="{ mask: validationHelper.masks.phone, useMaskedValue: true}">
+                                </dxi-item>
+
+                                <dxi-item dataField="Ssn" [editorOptions]="{ mask: validationHelper.masks.ssn, useMaskedValue: true}">
+                                    <dxi-validation-rule type="required" message="SSN is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item dataField="EmployeeType" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Value', dataSource: lookups.employeeType}">
+                                    <dxi-validation-rule type="required" message="Employee Type is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [label]="{text: 'Permission Group'}" dataField="PermissionGroupId" editorType="dxLookup" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Id', dataSource: permissionGroupDataSource}">
+                                    <dxi-validation-rule type="required" message="Select premission group"></dxi-validation-rule>
+                                </dxi-item>
+                    
+                                <dxi-item dataField="IsActive"></dxi-item>
+                            </dxi-tab>
+                            <dxi-tab [colCount]="2" title="Name Info">
+                                <dxi-item [label]="{text: 'Prefix'}" dataField="NamePrefix" editorType="dxSelectBox" [editorOptions]="{ dataSource: namePrefix.values }"></dxi-item>
+                                <dxi-item [label]="{text: 'Suffix'}" dataField="NameSuffix" editorType="dxSelectBox" [editorOptions]="{ dataSource: nameSuffix.values }"></dxi-item>
+                            </dxi-tab>
+                            <!-- <extra-fields-tab
+                                *ngIf="isEmployeeSet"
+                                #extraFieldsTab
+                                [entityName]="tableNames.employee"
+                                [entityModel]="employeeData"
+                                (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                            </extra-fields-tab> -->
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-left margin-top-10">
+                    <dx-button (onClick)="createUpdateEmployee()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

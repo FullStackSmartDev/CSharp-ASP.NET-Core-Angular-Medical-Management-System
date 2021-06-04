@@ -1,0 +1,54 @@
+<div class="row mt-md-2">
+    <div class="col-md-2">
+        <button type="button" (click)="openMappingForm()" class="btn btn-sm btn-outline-secondary">NEW MAPPING</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid [selectedRowKeys]="selectedMappings"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onMappingSelected($event)"
+            [wordWrapEnabled]="true"
+            #mappingDataGrid
+            [dataSource]="mappingDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes"></dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [allowEditing]="false" [visible]="false"></dxi-column>
+            <dxi-column dataField="name" dataType="string" [allowEditing]="false" [visible]="false"></dxi-column>
+            <dxi-column dataField="title" dataType="string"></dxi-column>
+            <dxi-column dataField="keywords"></dxi-column>
+
+            <dxi-column dataField="hpiTemplates" dataType="string"></dxi-column>
+            <dxi-column dataField="rosTemplates" dataType="string"></dxi-column>
+            <dxi-column dataField="physicalExamTemplates" dataType="string"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteMapping"></dxi-column>
+            
+            <div class="text-center" *dxTemplate="let mapping of 'deleteMapping'">
+                <button type="button" (click)="deleteMapping(mapping.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup class="popup" [width]="1200" [height]="660" [showTitle]="true" title="Mapping" (onHidden)="onMappingPopupHidden()"
+    [closeOnOutsideClick]="false" [(visible)]="isMappingPopupOpened">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <template-keyword-mapping-form *ngIf="isMappingPopupOpened"
+                [mapping]="mapping"
+                [companyId]="companyId"
+                [isNewMapping]="isNewMapping"
+                (onMappingSaved)="onTemplateKeywordMappingSaved()">
+            </template-keyword-mapping-form>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

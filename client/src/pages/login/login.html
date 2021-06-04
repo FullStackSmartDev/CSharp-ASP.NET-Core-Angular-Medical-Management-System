@@ -1,0 +1,23 @@
+<ion-content padding>
+    <div class="form">
+        <div class="dx-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label">Email:</div>
+                <div class="dx-field-value">
+                    <dx-text-box [(value)]="email"></dx-text-box>
+                </div>
+            </div>
+            <div class="dx-field">
+                <div class="dx-field-label">Password:</div>
+                <div class="dx-field-value">
+                    <dx-text-box [(value)]="password" mode="password"></dx-text-box>
+                </div>
+            </div>
+            <div class="dx-field">
+                <div class="dx-field-value">
+                    <dx-button text="Login" (onClick)="loginClick()"></dx-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-content>

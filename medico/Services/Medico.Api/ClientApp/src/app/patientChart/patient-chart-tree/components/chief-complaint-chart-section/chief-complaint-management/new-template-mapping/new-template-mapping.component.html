@@ -1,0 +1,7 @@
+<template-keyword-mapping-form *ngIf="isMappingFormVisible"
+    [keywordsString]="allegations"
+    [mapping]="mapping"
+    [companyId]="companyId"
+    [isNewMapping]="isNewMapping"
+    (onMappingSaved)="onTemplateKeywordMappingSaved()">
+</template-keyword-mapping-form>

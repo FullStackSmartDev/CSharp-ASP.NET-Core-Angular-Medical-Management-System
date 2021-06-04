@@ -1,0 +1,6 @@
+<template-keyword-mapping-form *ngIf="isMappingFormVisible"
+    [mapping]="mapping"
+    [companyId]="companyId"
+    [isNewMapping]="isNewMapping"
+    (onMappingSaved)="onTemplateKeywordMappingSaved()">
+</template-keyword-mapping-form>

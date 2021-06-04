@@ -1,0 +1,89 @@
+<div class="row">
+    <div class="col-md-8">
+        <h6>Permission group management:</h6>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-10">
+                <h6>Create new group:</h6>
+            </div>
+            <div class="col-md-2 text-left">
+                <dx-button icon="plus" (onClick)="createNewPermissionGroupFormVisible()">
+                </dx-button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-8">
+        <dx-list #permissionGroupList selectionMode="single" [showSelectionControls]="true" [dataSource]="permissionGroups" itemTemplate="data" [height]="150"
+            [allowItemDeleting]="allowTemplateDeleting" [itemDeleteMode]="templateDeleteType" [searchEnabled]="true"
+            searchExpr="Name" searchMode="contains" (onSelectionChanged)='onSelectPermissionGroup($event)'>
+            <div *dxTemplate="let item of 'data'">
+                <div>{{item.Name}}</div>
+            </div>
+        </dx-list>
+    </div>
+</div>
+<div *ngIf="isCreateUpdatePermissionGroupVisible" class="row margin-top-15">
+    <div class="col-md-8">
+        <form (submit)="createUpdatePermissionGroup($event)">
+            <div class="dx-fieldset">
+                <div class='dx-field'>
+                    <div class='dx-field-label'>Name:</div>
+                    <div class='dx-field-value'>
+                        <dx-text-box [(value)]='groupName'>
+                            <dx-validator>
+                                <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-fieldset">
+                <div class='dx-field'>
+                    <div class='dx-field-label'>Administration:</div>
+                    <div class='dx-field-value'>
+                        <dx-check-box [(value)]='hasAdminPermission'></dx-check-box>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-fieldset">
+                <div class='dx-field'>
+                    <div class='dx-field-label'>Appointments:</div>
+                    <div class='dx-field-value'>
+                        <dx-check-box [(value)]='hasAppointmentPermission'></dx-check-box>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-fieldset">
+                <div class='dx-field'>
+                    <div class='dx-field-label'>Synchronization:</div>
+                    <div class='dx-field-value'>
+                        <dx-check-box [(value)]='hasSyncPermission'></dx-check-box>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-fieldset">
+                <div class='dx-field'>
+                    <div class='dx-field-label'>Patient Data:</div>
+                    <div class='dx-field-value'>
+                        <dx-check-box [(value)]='hasPatientDataPermission'></dx-check-box>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-fieldset">
+                <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true"></dx-button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <dx-load-panel shadingColor="rgba(0,0,0,0.4)" [(visible)]="isLoaderVisible" [showIndicator]="true" [showPane]="true"
+            [shading]="true" [message]="loaderMessage" [closeOnOutsideClick]="false">
+        </dx-load-panel>
+    </div>
+</div>

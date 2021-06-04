@@ -1,0 +1,16 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-dark bg-dark" style="background-color: #e3f2fd;">
+    <span class="navbar-brand mb-0 h1">Patient Portal</span>
+    <span class="mr-auto"></span>
+    <a routerLinkActive="active-link" routerLink="/scandoc"
+       class="nav-link">Scan Doc</a>
+    <a *ngIf="isTelehealthLinkVisible" routerLinkActive="active-link" routerLink="/telehealth" class="nav-link">TELEHEALTH</a>
+    <a *ngIf="isBleLinkVisible" routerLinkActive="active-link" routerLink="/ble" class="nav-link">BLE</a>
+    <a *ngIf="isChangePasswordVisible" routerLinkActive="active-link" routerLink="/changepassword" class="nav-link">CHANGEPASSWORD</a>
+    <a routerLinkActive="active-link" routerLink="/angrtc" class="nav-link">WEBRTC</a>
+    <button *ngIf="isLogoutLinkVisible" type="button" (click)="logout($event)" class="btn btn-sm btn-outline-light">
+      LOG OUT
+    </button>
+
+  </nav>
+</div>

@@ -1,0 +1,18 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-tabs 
+            [dataSource]="tabs"
+            [selectedIndex]="selectedTabIndex" 
+            (onItemClick)="onTabSelect($event)">
+        </dx-tabs>
+    </div>
+    <div class="col-md-12">
+        <selectable-list-category *ngIf="isTabVisible(0)"></selectable-list-category>
+        <selectable-list *ngIf="isTabVisible(1)"></selectable-list>
+        <template-type *ngIf="isTabVisible(2)"></template-type>
+        <admin-template *ngIf="isTabVisible(3)"></admin-template>
+        <template-mapping *ngIf="isTabVisible(4)"></template-mapping>
+        <keyword-icd-code-mapping [companyId]="companyId" *ngIf="isTabVisible(5)"></keyword-icd-code-mapping>
+        <phrase *ngIf="isTabVisible(6)"></phrase>
+    </div>
+</div>

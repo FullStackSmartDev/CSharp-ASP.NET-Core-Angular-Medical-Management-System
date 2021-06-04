@@ -1,0 +1,14 @@
+<dx-list *ngIf="isDragAndDropListShown" class="mt-2" height="100%" [dataSource]="listItems" itemTemplate="listItem" 
+    [allowItemReordering]="true" (onItemReordered)="onTemplatesReordered($event)">
+    <div *dxTemplate="let item of 'listItem'">
+        <div class="row">
+            <div class="col-md-1">
+                {{item.order}}
+            </div>
+            <div class="col-md-6">
+                {{item.title}}
+            </div>
+        </div>
+    </div>
+</dx-list>
+<div *ngIf="isOnlyOneItemInList">{{firstItemInList.title}}</div>

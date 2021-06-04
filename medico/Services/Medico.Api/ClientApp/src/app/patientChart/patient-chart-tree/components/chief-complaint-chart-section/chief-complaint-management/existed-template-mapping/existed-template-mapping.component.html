@@ -1,0 +1,28 @@
+<div class="row">
+    <div *ngIf="!isChiefComplaintSelected" class="col-3 mt-md-2">
+        <dx-select-box
+            #chiefComplaintSelectBox
+            [(value)]="selectedChiefComplaintId"
+            [dataSource]="chiefComplaintDataSource"
+            valueExpr="id" 
+            displayExpr="name" 
+            (onValueChanged)="onChiefComplaintChanged($event)"
+            placeholder="Search chief complaint"
+            [searchEnabled]="true">
+        </dx-select-box>
+    </div>
+</div>
+
+<div class="row">
+    <div *ngIf="isChiefComplaintSelected" class="col-md-12">
+        <template-keyword-mapping-form
+                [keywordsString]="allegations"
+                [mapping]="mapping"
+                [companyId]="companyId"
+                [isNewMapping]="false"
+                (onMappingSaved)="onTemplateKeywordMappingSaved()">
+        </template-keyword-mapping-form>
+    </div>
+</div>
+
+<button (click)="switchToChiefComplainSearch()" style="position:absolute; top: 530px;" *ngIf="isChiefComplaintSelected" class="btn btn-sm btn-outline-danger">CANCEL</button>

@@ -1,0 +1,9 @@
+body.mce-content-body  span[metadata]{
+    cursor: pointer;
+    border: 1px solid red;
+    padding: 2px;
+}
+
+body.mce-content-body {
+    line-height: 2em;
+}

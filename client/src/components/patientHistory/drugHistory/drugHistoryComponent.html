@@ -1,0 +1,218 @@
+<div class="row">
+  <div *ngIf="!isSignedOff" class="col-md-2">
+    <a href="" (click)="openDrugHistoryCreationForm($event)">Add Drug History</a>
+  </div>
+</div>
+<div *ngIf="isHistoryExist" class="row margin-top-15">
+  <div class="col-md-12">
+    <dx-data-grid [selectedRowKeys]="selectedDrugHistory" [hoverStateEnabled]="true" (onSelectionChanged)="onSelectedDrugHistory($event)"
+      [wordWrapEnabled]="true" #drugHistoryDataGrid [dataSource]="drugHistoryDataSource" [showBorders]="true"
+      [showRowLines]="true">
+
+      <dxo-remote-operations [paging]="true" [sorting]="true">
+      </dxo-remote-operations>
+
+      <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+      </dxo-paging>
+
+      <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+      </dxo-pager>
+
+      <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+      <dxi-column dataField="PatientId" dataType="string" [visible]="false"></dxi-column>
+      <dxi-column dataField="IsDelete" dataType="boolean" [visible]="false"></dxi-column>
+      <dxi-column dataField="Status" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Type" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Amount" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Use" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Route" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Frequency" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Length" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Duration" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Quit" cellTemplate="cellTemplate" dataType="boolean" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="StatusLength" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="StatusLengthType" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false">
+      </dxi-column>
+      <dxi-column dataField="CreateDate" dataType="date"></dxi-column>
+
+      <dxo-selection mode="single"></dxo-selection>
+
+      <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+        <span>
+          {{data.value === null ? "-" : data.value }}
+        </span>
+      </div>
+
+    </dx-data-grid>
+  </div>
+</div>
+<div *ngIf="!isHistoryExist" class="row margin-top-15">
+  <div class="col-md-2">
+    <h6>{{defaultHistoryValue}}</h6>
+  </div>
+</div>
+<dx-popup #createUpdateDrugHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+  title="Create / Update Drug History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+  (onHidden)="onCreateUpdatePopupHidden()">
+  <div *dxTemplate="let data of 'content'">
+    <dx-scroll-view [scrollByContent]="true">
+      <div class="row">
+        <div class="col-md-12">
+          <form (submit)="createUpdateDrugHistory($event)">
+            <dx-validation-group #drugHistoryValidationGroup>
+              <div class='dx-fieldset'>
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Drug Status:</div>
+                  <div class='dx-field-value'>
+                    <dx-select-box [(value)]='drugHistory.Status' [items]='statusDrugUse.values'>
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-select-box>
+                  </div>
+                </div>
+                <div *ngIf="!isNeverUseDrug">
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Type:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='drugHistory.Type' [items]='typeDrugs.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Amount:</div>
+                    <div class='dx-field-value'>
+                      <dx-number-box [(value)]='drugHistory.Amount' [showSpinButtons]='true' [min]='1' [max]='100'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-number-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Use:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='drugHistory.Use' [items]='useDrug.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Route:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='drugHistory.Route' [items]='useDrugRoute.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Frequency:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='drugHistory.Frequency' [items]='useFrequency.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Length:</div>
+                    <div class='dx-field-value'>
+                      <dx-number-box [(value)]='drugHistory.Length' [showSpinButtons]='true' [min]='1' [max]='100'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-number-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Duration:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='drugHistory.Duration' [items]='duration.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Drug Quit:</div>
+                    <div class='dx-field-value'>
+                      <dx-check-box [(value)]='quit'></dx-check-box>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="drugHistory.Quit" class="dx-fieldset">
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Drug Status Length:</div>
+                  <div class='dx-field-value'>
+                    <dx-number-box [(value)]='drugHistory.StatusLength' [showSpinButtons]='true' [min]='0' [max]='100'>
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-number-box>
+                  </div>
+                </div>
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Drug Status Length Type:</div>
+                  <div class='dx-field-value'>
+                    <dx-select-box [(value)]='drugHistory.StatusLengthType' [items]='duration.values'></dx-select-box>
+                  </div>
+                </div>
+              </div>
+              <div class="dx-fieldset">
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Drug Notes:</div>
+                  <div class='dx-field-value'>
+                    <dx-text-box [(value)]='drugHistory.Notes'></dx-text-box>
+                  </div>
+                </div>
+                <div class="dx-field">
+                  <div class="dx-field-label">Create Date:</div>
+                  <div class="dx-field-value">
+                    <dx-date-box [readOnly]="isNewDrugHistory" [(value)]="drugHistory.CreateDate" type="date">
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-date-box>
+                  </div>
+                </div>
+                <div class="dx-field">
+                  <div class="dx-field-label">Is Delete: </div>
+                  <div class="dx-field-value">
+                    <dx-check-box [(value)]="drugHistory.IsDelete">
+                    </dx-check-box>
+                  </div>
+                </div>
+              </div>
+              <div class="dx-fieldset">
+                <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true">
+                </dx-button>
+              </div>
+            </dx-validation-group>
+          </form>
+        </div>
+      </div>
+    </dx-scroll-view>
+  </div>
+</dx-popup>

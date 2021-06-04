@@ -1,0 +1,21 @@
+<div class="row ">
+    <div class="col-md-10 mt-md-2">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <dx-radio-group [dataSource]="dateFormats" [(value)]="selectedDateFormatId" valueExpr="id"
+                            layout="horizontal">
+                            <div *dxTemplate="let dateFormat of 'item'">
+                                <div>{{dateFormat.displayName}}: {{dateFormat.format}}</div>
+                            </div>
+                        </dx-radio-group>
+                    </td>
+                    <td>
+                        <button type="button" (click)="addSelectableItemGeneratedValue()" class="btn btn-sm btn-outline-secondary">Add</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-select-box class="mt-md-2" 
+            [(value)]="expressionId"
+            [dataSource]="expressionDataSource"
+            valueExpr="id" 
+            displayExpr="name"
+            (onValueChanged)="onExpressionChanged($event)"
+            placeholder="Search expression ..."
+            [searchEnabled]="true">
+        </dx-select-box>
+    </div>
+</div>

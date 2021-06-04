@@ -1,0 +1,59 @@
+<dx-popup
+    #chiefComplaintKeywordsPopup
+    class="popup"
+    [width]="900"
+    [height]="600"
+    [dragEnabled]="false"
+    titleTemplate="title"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'title'">
+        <div class="row">
+            <div class="col-md-11">
+                <dx-tabs 
+                    [dataSource]="tabs"
+                    [selectedIndex]="selectedTabIndex" 
+                    (onItemClick)="onTabSelect($event)">
+                </dx-tabs>
+            </div>
+            <div class="col-md-1 text-right">
+                <dx-button icon="close" (onClick)="hideRelatedChiefComplaints()"></dx-button>
+            </div>
+        </div>
+    </div>
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isTabVisible(0) || isTabVisible(1)" class="row">
+            <div class="col-md-3">
+                <p>Patient allegations:</p>
+            </div>
+            <div class="col-md-9">
+                <dx-text-area
+                    [height]="50"
+                    [(value)]="allegations"
+                    [readOnly]="true">
+                </dx-text-area>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(0)" class="row margin-top-15">
+            <div class="col-md-12">
+                <matched-chief-complaint-keywords
+                    (onMappedTemplatesAdded)="onMappedTemplatesAdded($event)"
+                    [allegations]="allegations">
+                </matched-chief-complaint-keywords>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(1)" class="row margin-top-15">
+            <div class="col-md-12">
+                <all-chief-complaint-keywords
+                    (onMappedTemplatesAdded)="onMappedTemplatesAdded($event)">
+                </all-chief-complaint-keywords>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(2)" class="row">
+            <div class="col-md-12">
+                <new-chief-complaint-mapping
+                    [allegations]="allegations">
+                </new-chief-complaint-mapping>
+            </div>
+        </div>
+    </div>
+</dx-popup>

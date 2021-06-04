@@ -1,0 +1,27 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <b>APPLICATION AVAILABLE ROLES</b>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [dataSource]="roleDataSource"
+            [showBorders]="true">
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column alignment="left" dataField="name" dataType="string" [filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+
+        </dx-data-grid>
+    </div>
+</div>

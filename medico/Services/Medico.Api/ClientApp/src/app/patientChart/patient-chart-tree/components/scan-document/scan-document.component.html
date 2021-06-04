@@ -1,0 +1,157 @@
+<div class="row">
+    <div class="col-md-10 pr-0">
+        <div style="height: 980px; width: 100%;">
+            <tui-image-editor></tui-image-editor>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="row" style="height:16%;" *ngIf="isTiff">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="next()">
+                    <i class="fa fa-chevron-circle-right"></i>&nbsp;&nbsp;Next
+                    <br>Page {{currentTiffPage + 1}} of {{tiffCanvas.length}}</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;" *ngIf="isTiff">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="previous()">
+                    <i class="fa fa-chevron-circle-left"></i>&nbsp;&nbsp;Previous
+                    <br>Page {{currentTiffPage + 1}} of {{tiffCanvas.length}}</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="zoomInImage()">
+                    <i class="fa fa-search-plus"></i>&nbsp;&nbsp;Zoom in</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="zoomOutImage()">
+                    <i class="fa fa-search-minus"></i>&nbsp;&nbsp;Zoom out</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="openGetImageForm()">
+                    <i class="fa fa-spinner"></i>&nbsp;&nbsp;Reset
+                </button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="openGetImageForm()">
+                    <i class="fa fa-sync"></i>&nbsp;&nbsp;Update</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="deleteDocument()">
+                    <i class="fa fa-trash"></i>&nbsp;&nbsp;Delete
+                </button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button [disabled]="!canOpenUploadImageForm" class="btn btn-outline-primary btn-imagetoolbar"
+                    (click)="openGetImageForm()">
+                    <i class="fa fa-desktop"></i>&nbsp;&nbsp;Get Image
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dx-popup *ngIf="canOpenUploadImageForm" #getImage class="popup" [width]="900" [height]="580" [dragEnabled]="false"
+    [showTitle]="true" title="Get Image" [closeOnOutsideClick]="false" [(visible)]="isGetImagePopupOpened">
+    <div class="row">
+        <div class="col-md-12">
+            <dx-form #scanDocumentForm [(formData)]="currentDocumentData" labelLocation="top">
+                <dxi-item [tabPanelOptions]="{ height: 450 }" itemType="tabbed">
+                    <dxi-tab [colCount]="12" title="File">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <dx-radio-group [items]="availableFileSources" [value]="availableFileSources[0]"
+                                    layout="horizontal" (onValueChanged)="onFileSourceChanged($event)">
+                                </dx-radio-group>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="tab-pane fade" class="show active" role="tabpanel" *ngIf="isPcFileSourceSelected">
+                                            <dx-file-uploader #fileUploader [multiple]="false" accept="*" [(value)]="value"
+                                                (onValueChanged)="fileUploaderValueChange($event)" uploadMode="useForm"
+                                                style="padding:0px;"></dx-file-uploader>
+                                        </div>
+                                        <div class="tab-pane fade" class="show active" role="tabpanel" *ngIf="isWeCameraFileSourceSelected">
+                                            <webcam [height]="300" [width]="300" (imageCapture)="handleImage($event)" [imageQuality]="1"
+                                                [trigger]="triggerObservable"></webcam>
+                                            <button class="btn btn-outline-primary" (click)="triggerSnapshot();">Take A Photo</button>
+                                        </div>
+                                        <!--Uncomment when scan functionality will be available -->
+                                        <!-- <div class="tab-pane fade" [ngClass]="{ 'show active': documentsource == 3 }" role="tabpanel" *ngIf="documentsource == 3">
+                                                <button class="btn btn-outline-primary" (click)="scanToJpg();">Scan Image</button>
+                                            </div> -->
+                                    </div>
+                                    <div class="col-md-6" style="border:2px dotted #0c0c0c;height:220px;">
+                                        <img [src]="previewImage" *ngIf="previewImage" style="width:100%;height:100%;" />
+                                        <div class="col-md-12 mt-2">
+                                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff"
+                                                (click)="begin()">&laquo;</button>
+                                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff"
+                                                (click)="previous()">&#8249;</button>
+                                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff"
+                                                (click)="next()">&#8250;</button>
+                                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff"
+                                                (click)="end()">&raquo;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dxi-tab>
+                    <dxi-tab [colCount]="12" title="Document">
+                        <dxi-item [colSpan]="4" dataField="documentType" editorType="dxSelectBox"
+                            [editorOptions]="{ items: associatedDocumentationListValues }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="4" dataField="documentName">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="4" dataField="documentSource" [editorOptions]="{ readOnly: 'true' }">
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="3" dataField="doucmentDate" editorType="dxDateBox">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="9" dataField="icdCode" editorType="dxSelectBox"
+                            [editorOptions]="{ dataSource: icdCodesDataSource, searchEnabled: true, displayExpr: 'name', valueExpr: 'id' }">
+                        </dxi-item>
+                    </dxi-tab>
+                    <dxi-tab [colCount]="12" title="Notes">
+                        <dxi-item [colSpan]="12" dataField="notes" template="notesTemplate"></dxi-item>
+                        <div class="text-right" *dxTemplate="let data of 'notesTemplate'">
+                            <dx-text-area class="mb-2" valueChangeEvent="keyup" [(value)]="currentDocumentData.notes" height="120">
+                            </dx-text-area>
+
+                            <button (click)="createUpdateMedicalRecord()" type="button" class="btn btn-sm btn-outline-secondary">SAVE MEDICAL RECORD</button>
+
+                            <phrase-suggestion-helper class="mt-2" [typedText]="currentDocumentData.notes"
+                                [companyId]="companyId" (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+                            </phrase-suggestion-helper>
+                        </div>
+                    </dxi-tab>
+                </dxi-item>
+            </dx-form>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4 offset-md-8 d-flex justify-content-between align-items-center">
+            <dx-radio-group [items]="formActions" [(value)]="formAction" layout="horizontal"></dx-radio-group>
+            <button type="button" (click)="save()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+        </div>
+    </div>
+</dx-popup>

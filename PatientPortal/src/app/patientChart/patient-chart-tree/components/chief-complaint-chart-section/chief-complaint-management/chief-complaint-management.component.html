@@ -1,0 +1,46 @@
+<dx-popup #chiefcomplaintManagementPopup
+    class="popup" [width]="1200" [height]="660" [dragEnabled]="false" titleTemplate="title"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'title'">
+        <div class="row">
+            <div class="col-md-11">
+                <dx-tabs [dataSource]="tabs" [selectedIndex]="selectedTabIndex" (onItemClick)="onTabSelect($event)"></dx-tabs>
+            </div>
+            <div class="col-md-1 text-right">
+                <dx-button icon="close" (onClick)="hide()"></dx-button>
+            </div>
+        </div>
+    </div>
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isTabVisible(0) || isTabVisible(1)" class="row">
+            <div class="col-md-3">
+                <p>Patient allegations:</p>
+            </div>
+            <div class="col-md-9">
+                <dx-text-area [height]="50" [(value)]="allegations" [readOnly]="true"></dx-text-area>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(0)" class="row mt-md-2">
+            <div class="col-md-12">
+                <map-keywords
+                    [companyId]="companyId"
+                    (templatesAdded)="onMappedTemplatesAdded($event)"
+                    [allegations]="allegations">
+                </map-keywords>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(1)" class="row margin-top-15">
+            <div class="col-md-12">
+                <chief-complaint-keywords
+                    [companyId]="companyId"
+                    (onMappedTemplatesAdded)="onMappedTemplatesAdded($event)">
+                </chief-complaint-keywords>
+            </div>
+        </div>
+        <div *ngIf="isTabVisible(2)" class="row">
+            <div class="col-md-12">
+                <new-template-mapping></new-template-mapping>
+            </div>
+        </div>
+    </div>
+</dx-popup>

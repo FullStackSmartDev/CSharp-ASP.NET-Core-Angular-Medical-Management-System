@@ -1,0 +1,67 @@
+<div class="row mt-md-2">
+    <div class="col-md-2">
+        <button type="button" (click)="openCategoryForm()" class="btn btn-sm btn-outline-secondary">NEW CATEGORY</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-8">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedCategories"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onCategorySelected($event)"
+            [wordWrapEnabled]="true"
+            #categoryDataGrid
+            [dataSource]="categoryDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column [width]="80+'%'" dataField="title" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column [width]="10+'%'" dataField="isActive" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column [width]="10+'%'" alignment="center" caption="Actions" cellTemplate="categoryActionsTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let category of 'categoryActionsTemplate'">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button (click)="deleteCategory(category.data, $event)" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    <button *ngIf="category.data.isActive" (click)="deactivateCategory(category.data, $event)" class="btn btn-outline-danger"><i class="fas fa-minus"></i></button>
+                    <button *ngIf="!category.data.isActive" (click)="activateCategory(category.data, $event)" class="btn btn-outline-secondary"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #categoryPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="CATEGORY" [closeOnOutsideClick]="false" 
+    [(visible)]="isCategoryPopupOpened"
+    (onHidden)="onCategoryPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isCategoryPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form [colCount]="4" #categoryForm [(formData)]="category" [height]="460">
+                        <dxi-item [colSpan]="3" dataField="title">
+                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [validationCallback]="validateTitleExistence">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="createUpdateCategory()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                </div>
+            </div>
+    </div>
+</dx-popup>

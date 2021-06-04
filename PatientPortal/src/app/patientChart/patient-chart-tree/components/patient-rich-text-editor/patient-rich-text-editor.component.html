@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-md-12">
+        <textarea id="{{editorId}}"></textarea>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <patient-selectable-root #patientSelectableRoot
+            (onSelectableItemValueChanged)="onSelectableItemValueChanged($event)"
+            [companyId]="companyId">
+        </patient-selectable-root>
+    </div>
+</div>

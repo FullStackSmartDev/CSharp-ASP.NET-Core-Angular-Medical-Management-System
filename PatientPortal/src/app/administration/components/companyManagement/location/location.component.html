@@ -1,0 +1,132 @@
+<div class="row mt-md-2">
+    <div class="col-md-3">
+        <button type="button" (click)="openLocationForm()" class="btn btn-sm btn-outline-secondary">NEW LOCATION</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid
+            #locationDataGrid
+            [selectedRowKeys]="selectedLocations"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onLocationSelected($event)"
+            [wordWrapEnabled]="true"
+            [dataSource]="locationDataSource"
+            [showBorders]="true">
+                
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations>
+                
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+                
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes"></dxo-pager>
+    
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+    
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column alignment="left" dataField="name" dataType="string" [filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+    
+            <dxi-column alignment="left" dataField="address" cellTemplate="addressTemplate" dataType="string"[filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+            <div class="text-left" *dxTemplate="let address of 'addressTemplate'">        
+                <span>{{getAddress(address.data)}}</span>
+            </div>
+    
+            <dxi-column alignment="center" cellTemplate="stateTemplate" dataField="state" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let state of 'stateTemplate'">        
+                <span>{{getState(state.data)}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="city" dataType="string" [filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+
+            <dxi-column alignment="center" cellTemplate="zipTemplate" dataField="zip"  dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let zip of 'zipTemplate'">        
+                <span *ngIf="isFiveDigitCode(zip.data.zipCodeType)">{{zip.data.zip | mask: validationMasks.fiveDigitZip}}</span>
+                <span *ngIf="isNineDigitCode(zip.data.zipCodeType)">{{zip.data.zip | mask: validationMasks.nineDigitZip}}</span>
+            </div>
+            
+            <dxi-column alignment="center" dataField="phone" dataType="string" cellTemplate="phoneTemplate" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let phone of 'phoneTemplate'">        
+                <span>{{phone.data.phone | mask: validationMasks.phone}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="fax" cellTemplate="faxTemplate" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <div class="text-center" *dxTemplate="let fax of 'faxTemplate'">        
+                <span>{{fax.data.fax | mask: validationMasks.phone}}</span>
+            </div>
+
+            <dxi-column alignment="center" dataField="isActive" dataType="boolean" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteLocationTemplate"></dxi-column>
+    
+            <div class="text-center" *dxTemplate="let location of 'deleteLocationTemplate'">        
+                <button type="button" (click)="deleteLocation(location.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+            </div>
+    
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #locationPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="LOCATION" [closeOnOutsideClick]="false" 
+    [(visible)]="isLocationPopupOpened" (onHidden)="onLocationPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isLocationPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #locationForm [(formData)]="location" [height]="460"
+                        (onFieldDataChanged)="onLocationFieldChanged($event)">
+                
+                        <dxi-item itemType="tabbed">
+                            <dxi-tab [colCount]="12" title="Base Info">
+                                <dxi-item [colSpan]="6" dataField="name">
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="6" [editorOptions]="{ height: '70' }" dataField="address" editorType="dxTextArea">
+                                    <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="6" [editorOptions]="{ height: '70' }" dataField="secondaryAddress" editorType="dxTextArea">
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="6" dataField="city">
+                                    <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="4" dataField="state" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: states}">
+                                    <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="4" dataField="zipCodeType" editorType="dxSelectBox"
+                                    [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value'  }">
+                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [colSpan]="4" dataField="zip"
+                                    [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: zipMask }">
+                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="6" dataField="phone" [editorOptions]="{ mask: validationMasks.phone}">
+                                    <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item [colSpan]="6" dataField="fax" [editorOptions]="{ mask: validationMasks.phone}">
+                                    <dxi-validation-rule type="required" message="Fax is required"></dxi-validation-rule>
+                                </dxi-item>
+                
+                                <dxi-item editorType="dxCheckBox" dataField="isActive"></dxi-item>
+                            </dxi-tab>
+                            <!-- <extra-fields-tab
+                                    *ngIf="isLocationSet"
+                                    #extraFieldsTab
+                                    [entityName]="tableNames.location"
+                                    [entityModel]="location"
+                                    (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                                </extra-fields-tab> -->
+                            </dxi-item>
+                        </dx-form>
+                    </div>
+                    <div class="col-md-12 text-right mt-md-2">
+                        <button type="button" (click)="createUpdateLocation()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                    </div>
+                </div>
+    </div>
+</dx-popup>

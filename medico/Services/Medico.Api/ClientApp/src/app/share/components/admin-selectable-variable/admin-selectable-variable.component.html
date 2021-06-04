@@ -1,0 +1,27 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-text-box class="mt-2" placeholder="Variable name ..." [(value)]="variableName"></dx-text-box>
+
+        <dx-select-box class="mt-2" [(value)]="variableType" [dataSource]="selectableVariableTypes" valueExpr="value"
+            displayExpr="name"
+            (onValueChanged)="resetPreviousInitialValue($event)">
+        </dx-select-box>
+
+        <dx-text-box *ngIf="isTextVariableSelected"
+            class="mt-2 mb-2"
+            placeholder="Variable initial value ..."
+            [(value)]="variableInitialValue">
+        </dx-text-box>
+
+        <dx-number-box *ngIf="isNumericVariableSelected"
+            class="mt-2 mb-2"
+            placeholder="Variable initial value ..."
+            [(value)]="variableInitialValue">
+        </dx-number-box>
+
+        <div class="text-right">
+            <button class="mt-2" type="button" (click)="addSelectableItemGeneratedValue()"
+            class="btn btn-sm btn-outline-secondary">Add</button>
+        </div>
+    </div>
+</div>

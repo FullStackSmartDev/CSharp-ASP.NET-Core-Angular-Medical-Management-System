@@ -1,0 +1,23 @@
+<dx-popup 
+    #detailedTemplatePreviewPopup
+    class="popup" 
+    [width]="800" 
+    [height]="600"
+    [visible]="true"
+    [showTitle]="true"
+    title="Preview mode for detailed template"
+    (onHidden)="onDetailedTemplatePreviewPopupHidden($event)">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div (click)="showSelectableItem($event)" id="detailed-template-preview" style="line-height: 2em;" [innerHtml]="detailedTemplateContent | safeHtml"></div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>
+<div class="row">
+    <div class="col-md-12">
+        <patient-selectable-root
+            #patientSelectableRoot
+            (onSelectableItemValueChanged)="onSelectableItemValueChanged($event)">
+        </patient-selectable-root>
+    </div>
+</div>

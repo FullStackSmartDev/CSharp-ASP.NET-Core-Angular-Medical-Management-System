@@ -1,0 +1,33 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-tabs [dataSource]="companyManagementTabs" [selectedIndex]="selectedTabIndex"
+            (onItemClick)="onTabSelect($event)">
+        </dx-tabs>
+    </div>
+    <div class="col-md-12 mt-md-1">
+        <!--Company info tab-->
+        <div *ngIf="isTabVisible(0)">
+            <company></company>
+        </div>
+
+        <!--Locations tab-->
+        <div *ngIf="isTabVisible(1)">
+            <location></location>
+        </div>
+
+        <!--Rooms tab-->
+        <div *ngIf="isTabVisible(2)">
+            <room></room>
+        </div>
+
+        <!--Employees tab-->
+        <div *ngIf="isTabVisible(3)">
+            <medico-application-user></medico-application-user>
+        </div>
+
+        <!--Permissions tab-->
+        <div *ngIf="isTabVisible(4)">
+            <role></role>
+        </div>
+    </div>
+</div>

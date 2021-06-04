@@ -1,0 +1,68 @@
+<div class="row">
+  <div *ngIf="!isSignedOff" class="col-md-2">
+    <button type="button" (click)="openAssessmentForm()" class="btn btn-sm btn-outline-secondary">ADD ASSESSMENT</button>
+  </div>
+</div>
+<div class="row mt-md-2">
+  <div class="col-md-12">
+    <dx-data-grid [selectedRowKeys]="selectedAssessments" [hoverStateEnabled]="true"
+      (onSelectionChanged)="onAssessmentSelected($event)" [wordWrapEnabled]="true" #assessmentsGrid
+      [dataSource]="assessments" [showBorders]="true" [showRowLines]="true">
+
+      <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+      <dxi-column [width]="5 +'%'" dataField="order" dataType="number"></dxi-column>
+      <dxi-column dataField="diagnosis" dataType="string"></dxi-column>
+      <dxi-column dataField="notes" dataType="string"></dxi-column>
+
+      <dxi-column *ngIf="!isSignedOff" alignment="center" width="15%" caption="Delete" cellTemplate="deleteHistoryTemplate"></dxi-column>
+        <div class="text-center" *dxTemplate="let history of 'deleteHistoryTemplate'">
+            <button type="button" (click)="deleteAssessment(history.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+        </div>
+
+      <dxo-selection mode="single"></dxo-selection>
+
+    </dx-data-grid>
+  </div>
+</div>
+<dx-popup #assessmentPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+  title="ASSESSMENT" [closeOnOutsideClick]="false" [(visible)]="isAssessmentPopupOpened"
+  (onHidden)="onAssessmentPopupHidden()">
+  <div *dxTemplate="let data of 'content'">
+    <div class="row">
+      <div class="col-md-12">
+        <dx-form [height]="460" #assessmentForm [colCount]="12" [(formData)]="assessment" (onFieldDataChanged)="onAssessmentFieldChanged($event)">
+
+          <dxi-item [colSpan]="3" [label]="{text: 'Order'}" dataField="order" editorType="dxNumberBox"
+            [editorOptions]="{ min: orderNumberMinAvailableValue, max: orderNumberMaxAvailableValue, onKeyPress: onKeyPressInOrderNumberBox }">
+            <dxi-validation-rule type="required"></dxi-validation-rule>            
+          </dxi-item>
+
+          <dxi-item [colSpan]="9" [label]="{text: 'Search diagnosis'}" dataField="icdCode" editorType="dxSelectBox"
+            [editorOptions]="{ dataSource: icdCodesDataSource, searchEnabled: true, displayExpr: 'name', valueExpr: 'id' }">
+          </dxi-item>
+
+          <dxi-item [colSpan]="12" [label]="{text: 'Diagnosis'}" dataField="diagnosis" editorType="dxTextArea"
+            [editorOptions]="{ height: 120 }"> 
+            <dxi-validation-rule type="required"></dxi-validation-rule>
+          </dxi-item>
+
+          <dxi-item [colSpan]="12" [label]="{text: 'Notes'}" dataField="notes" template="notesTemplate"></dxi-item>
+
+          <div *dxTemplate="let data of 'notesTemplate'">
+            <dx-text-area valueChangeEvent="keyup" [(value)]="data.component.option('formData')[data.dataField]" height="120">
+            </dx-text-area>
+
+            <phrase-suggestion-helper class="mt-2" 
+              [typedText]="assessment.notes"
+              [companyId]="companyId"
+              (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+            </phrase-suggestion-helper>
+          </div>
+        </dx-form>
+      </div>
+      <div class="col-md-12 text-right mt-md-2">
+          <button type="button" (click)="createUpdateAssessment()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+      </div>
+    </div>
+  </div>
+</dx-popup>

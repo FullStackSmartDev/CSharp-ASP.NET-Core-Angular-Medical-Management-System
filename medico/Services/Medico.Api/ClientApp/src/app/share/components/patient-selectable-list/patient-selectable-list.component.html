@@ -1,0 +1,20 @@
+<div *ngIf="visible">
+    <div class="row">
+        <div class="col-md-12">
+            <dx-list [dataSource]="selectableItemValues" [height]="350" [selectionMode]="single"
+                [showSelectionControls]="true" (onSelectionChanged)="applySelectableItemValue($event)"
+                [(selectedItems)]="selectedSelectableItemValues">
+            </dx-list>
+        </div>
+    </div>
+    <div *ngIf="!isPreviewMode" class="row mt-2">
+        <div class="col-md-9">
+            <dx-text-area #selectableItemResultTextarea [(value)]="selectableItemResult" height="90">
+            </dx-text-area>
+        </div>
+        <div class="col-md-3 text-right">
+            <button type="button" (click)="saveSelectbleItemChanges()"
+                class="btn btn-sm btn-outline-secondary">APPLY</button>
+        </div>
+    </div>
+</div>

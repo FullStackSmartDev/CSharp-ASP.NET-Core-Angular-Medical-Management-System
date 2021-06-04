@@ -1,0 +1,53 @@
+<dx-popup #addTemplatesPopup class="popup" [width]="600" [height]="500"
+    [dragEnabled]="false" [showTitle]="false" [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="areMappedTemplatesExist" class="row" class="mt-md-2">
+            <h6>HPI Templates</h6>
+            <dx-list itemTemplate="listItem"
+                [dataSource]="templates.hpi"
+                [selectionMode]="multiple"
+                [showSelectionControls]="true"
+                [(selectedItemKeys)]="selectedHpiTemplates"
+                [height]="100">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.reportTitle}}</div>
+                    </div>
+            </dx-list>
+
+            <h6 class="mt-md-1">PE Templates</h6>
+            <dx-list itemTemplate="listItem" 
+                [dataSource]="templates.pe"
+                [selectionMode]="multiple"
+                [showSelectionControls]="true"
+                [(selectedItemKeys)]="selectedPeTemplates"
+                [height]="100">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.reportTitle}}</div>
+                    </div>
+            </dx-list>
+
+            <h6 class="mt-md-1">ROS Templates</h6>
+            <dx-list itemTemplate="listItem"
+                [dataSource]="templates.ros"
+                [selectionMode]="multiple"
+                [showSelectionControls]="true"
+                [(selectedItemKeys)]="selectedRosTemplates"
+                [height]="100">
+                    <div *dxTemplate="let item of 'listItem'">
+                        <div>{{item.reportTitle}}</div>
+                    </div>
+            </dx-list>
+        </div>
+        <div *ngIf="!areMappedTemplatesExist" class="row" class="mt-md-2">
+            <h6>There are no mapped templates</h6>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-8 text-left">
+                <button *ngIf="areMappedTemplatesExist" type="button" (click)="addTemplates()" class="btn btn-sm btn-outline-primary">ADD TEMPLATES TO PATIENT CHART TREE</button>
+            </div>
+            <div class="col-md-4 text-right">
+                <button type="button" (click)="cancelAddingTemplates()" class="btn btn-sm btn-outline-danger">CANCEL</button>
+            </div>
+        </div>
+    </div>
+</dx-popup>

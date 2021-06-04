@@ -1,0 +1,8 @@
+<dx-button [text]='syncBtnText' [type]='syncBtnType' (onClick)='synchronizeData()'></dx-button>
+<div class="row">
+    <div class="col-md-12">
+        <dx-load-panel shadingColor="rgba(0,0,0,0.4)" [(visible)]="isLoaderVisible" [showIndicator]="true" [showPane]="true"
+            [shading]="true" [message]="loaderMessage" [closeOnOutsideClick]="false">
+        </dx-load-panel>
+    </div>
+</div>

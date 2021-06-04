@@ -1,0 +1,76 @@
+<div *ngIf="isDocumentNodeFormShown">
+    <div *ngIf="!isLibraryManagement && !isEditMode" class="row mb-2">
+        <div class="col-md-12">
+            <div class="dx-field">
+                <div class="dx-field-label">Import from library:</div>
+                <div class="dx-field-value">
+                    <dx-switch #switch [(value)]="importMode"></dx-switch>
+                </div>
+            </div>
+            <hr />
+        </div>
+    </div>
+
+    <div *ngIf="!importMode" class="row">
+        <div class="col-md-12">
+            <dx-form #patientChartDocumentForm [(formData)]="patientChartDocumentNode"
+                [height]="isEditMode ? 460 : 380">
+                <dxi-item [label]="{text: 'Document Title'}" dataField="title" editorType="dxTextBox">
+                    <dxi-validation-rule type="required" message="Document title is required"></dxi-validation-rule>
+                    <dxi-validation-rule type="custom" [validationCallback]="validateTitleExistence">
+                    </dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item *ngIf="!isEditMode" [label]="{text: 'Create Document Based On'}" dataField="isBasedOn"
+                    editorType="dxCheckBox"></dxi-item>
+
+                <dxi-item *ngIf="!isEditMode && patientChartDocumentNode.isBasedOn"
+                    [label]="{text: 'Select Based On Document'}" dataField="basedOnDocumentId" editorType="dxSelectBox"
+                    [editorOptions]="{ displayExpr: 'name', valueExpr: 'id', dataSource: patientChartDocumentsDataSource }">
+                    <dxi-validation-rule type="required" message="Select based on document"></dxi-validation-rule>
+                </dxi-item>
+            </dx-form>
+        </div>
+
+        <div class="col-md-12 mt-md-2 text-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <button *ngIf="isPatientChartDocumentSyncIconVisible"
+                    [disabled]="patientChartDocumentWithVersion.version === patientChartDocumentWithVersion.libraryPatientChartDocumentNodeVersion"
+                    (click)="syncWithLibraryDocument()"
+                    class="btn {{patientChartDocumentWithVersion.version === patientChartDocumentWithVersion.libraryPatientChartDocumentNodeVersion ? 'btn-outline-primary' : 'btn-outline-danger' }}">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                <button type="button" (click)="createPatientChartDocument()"
+                    class="btn btn-outline-secondary">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="importMode" class="row">
+        <div class="col-md-12">
+            <dx-list *ngIf="documentsToImport.length" [dataSource]="documentsToImport" [height]="380"
+                [searchEnabled]="true" keyExpr="id" searchExpr="name" searchMode="contains" selectionMode="multiple"
+                [showSelectionControls]="true" [(selectedItems)]="selectedDocumentsToImport">
+                <div *dxTemplate="let data of 'item'">
+                    <div>{{data.name}}</div>
+                </div>
+            </dx-list>
+            <div *ngIf="!documentsToImport.length">There are no any templates to import</div>
+            <div class="row mt-md-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-sm btn-outline-danger text-left"
+                                (click)="cancelImporting()">CANCEL</button>
+                        </div>
+                        <div *ngIf="documentsToImport.length && selectedDocumentsToImport.length"
+                            class="col-md-6 text-right">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                (click)="importSelectedDocuments()">IMPORT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

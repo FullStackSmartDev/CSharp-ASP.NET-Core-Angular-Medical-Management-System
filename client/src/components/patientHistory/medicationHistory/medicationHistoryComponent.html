@@ -1,0 +1,173 @@
+<div class="row">
+        <div *ngIf="!isSignedOff" class="col-md-2">
+          <a href="" (click)="openMedicationHistoryCreationForm($event)">Add Medication History</a>
+        </div>
+      </div>
+      <div *ngIf="isHistoryExist" class="row margin-top-15">
+        <div class="col-md-12">
+          <dx-data-grid 
+            [selectedRowKeys]="selectedMedicationHistory" 
+            [hoverStateEnabled]="true" 
+            (onSelectionChanged)="onSelectedMedicationHistory($event)"
+            [wordWrapEnabled]="true" 
+            #medicationHistoryDataGrid 
+            [dataSource]="medicationHistoryDataSource" 
+            [showBorders]="true"
+            [showRowLines]="true">
+      
+            <dxo-remote-operations [paging]="true" [sorting]="true">
+            </dxo-remote-operations>
+      
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+            </dxo-paging>
+      
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="Medication" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="Route" dataType="string"cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="Dose" dataType="number" cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="Units" dataType="string" cellTemplate="cellTemplate"[allowSorting]="false"></dxi-column>
+            <dxi-column dataField="DoseSchedule" dataType="string" cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="Prn" dataType="boolean" cellTemplate="cellTemplate" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="MedicationStatus" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+            <dxi-column width="10%" dataField="CreatedDate" dataType="date"></dxi-column>
+      
+            <dxo-selection mode="single"></dxo-selection>
+
+            <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+                <span>
+                  {{data.value ? data.value : "-" }}
+                </span>
+            </div>
+      
+          </dx-data-grid>
+        </div>
+      </div>
+      <div *ngIf="!isHistoryExist" class="row margin-top-15">
+        <div class="col-md-2">
+            <h6>{{defaultHistoryValue}}</h6>
+        </div>
+      </div>
+      <dx-popup #createUpdateMedicationHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+        title="Create / Update Medication History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+        (onHidden)="onCreateUpdatePopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+          <dx-scroll-view [scrollByContent]="true">
+            <div class="row">
+              <div class="col-md-12">
+                <form (submit)="createUpdateMedicationHistory($event)">
+                  <dx-validation-group #medicationHistoryValidationGroup>
+                    <div class="dx-fieldset">
+                        <div class="dx-field">
+                            <div class="dx-field-label">Search Medication:</div>
+                            <div class="dx-field-value">
+                                <dx-lookup
+                                    #medicationLookup 
+                                    [dataSource]="medicationDataSource"
+                                    valueExpr="Id"
+                                    displayExpr="NonProprietaryName"
+                                    placeholder="Search Medications..."
+                                    (onValueChanged)="medicationChanged($event)">
+                                </dx-lookup>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Medication:</div>
+                            <div class="dx-field-value">
+                                <dx-text-area [(value)]="medicationHistory.Medication" [height]="90">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-area>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Dose:</div>
+                            <div class="dx-field-value">
+                                <dx-number-box [(value)]="medicationHistory.Dose">
+                                </dx-number-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Units:</div>
+                            <div class="dx-field-value">
+                                <dx-select-box 
+                                    [searchEnabled]="true"
+                                    [(value)]='medicationHistory.Units'
+                                    [items]='mED_Units.values'>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Route:</div>
+                            <div class="dx-field-value">
+                                <dx-select-box 
+                                    [searchEnabled]="true" 
+                                    [(value)]='medicationHistory.Route'
+                                    [items]='mED_Route.values'>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">SIG:</div>
+                            <div class="dx-field-value">
+                                <dx-select-box
+                                    [(value)]='medicationHistory.DoseSchedule' 
+                                    [items]='mED_DoseSchedule.values'>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">PRN:</div>
+                            <div class="dx-field-value">
+                                <dx-check-box [(value)]='medicationHistory.Prn'>
+                                </dx-check-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Medication Status:</div>
+                            <div class="dx-field-value">
+                                <dx-select-box 
+                                    [(value)]='medicationHistory.MedicationStatus'
+                                    [items]='mED_Status.values'>
+                                </dx-select-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Notes:</div>
+                            <div class="dx-field-value">
+                                <dx-text-area [(value)]="medicationHistory.Notes" [height]="90">
+                                </dx-text-area>
+                            </div>
+                        </div>
+                        <div *ngIf="!isNewMedicationHistory" class="dx-field">
+                            <div class="dx-field-label">Is Delete: </div>
+                            <div class="dx-field-value">
+                                <dx-check-box [(value)]="medicationHistory.IsDelete">
+                                </dx-check-box>
+                            </div>
+                        </div>
+                        <div class="dx-field">
+                            <div class="dx-field-label">Create Date:</div>
+                            <div class="dx-field-value">
+                                <dx-date-box [readOnly]="isNewMedicationHistory" [(value)]="medicationHistory.CreatedDate" type="date">
+                                    <dx-validator>
+                                      <dxi-validation-rule type="required"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-date-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dx-fieldset">
+                        <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                    </div>
+                  </dx-validation-group>
+                </form>
+              </div>
+            </div>
+          </dx-scroll-view>
+        </div>
+      </dx-popup>

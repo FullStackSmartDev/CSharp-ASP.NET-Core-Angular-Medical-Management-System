@@ -1,0 +1,95 @@
+<div *ngIf="!isSignedOff">
+    <div class="d-flex align-items-center">
+        <div class="mr-4" *ngIf="hasDefaultTemplate">
+            <dx-tabs
+                [width]="200"
+                [dataSource]="templateModes"
+                [selectedIndex]="selectedModeIndex" 
+                (onItemClick)="onTemplateModeSelected($event.itemData)">
+            </dx-tabs>
+        </div>
+
+        <button (click)="savePatientChart()" class="btn btn-outline-secondary mr-2">
+            <i class="fas fa-save"></i> Save
+        </button>
+
+        <button *ngIf="isDetailedTemplateShown" (click)="calculateExpressions()" class="btn btn-outline-secondary mr-auto">
+            <i class="fas fa-calculator"></i> Calculate expressions
+        </button>
+
+        <a *ngIf="isDetailedTemplate" id="previous-template-trigger" 
+            class="text-decoration-none text-secondary mr-3" href=""
+            (click)="togglePreviousDetailedContentPopover($event)">
+            <i class="fas fa-file-medical"></i> Check Previous Template
+        </a>
+
+        <a *ngIf="isDetailedTemplate && isRosTemplate" 
+            id="duplicate-words-warning-trigger" href=""
+            class="text-decoration-none text-secondary" 
+            (click)="toggleDuplicateWordsWarning($event)">
+            <i class="fas fa-clone"></i> Check Duplicate Words
+        </a>
+    </div>
+
+    <hr/>
+
+    <div *ngIf="isDetailedTemplateShown" class="row mt-md-2">
+        <div id="detailed-template-editor" class="col-md-12">
+            <patient-template-editor
+                [companyId]="companyId"
+                [detailedTemplateContent]="templateContent.detailedTemplateHtml"
+                (onContentChanged)="onDetailedContentChanged($event)">
+            </patient-template-editor>
+        </div>
+    </div>
+
+    <div *ngIf="isDefaultTemplateShown" class="row mt-md-2">
+        <div class="col-md-12">
+            <patient-rich-text-editor
+                #defaultRichTextEditor
+                [initialContent]="templateContent.defaultTemplateHtml"
+                (onEditorChange)="onDefaultContentChanged($event)"
+                (onEditorReady)="onDefaultContentReady($event)">
+            </patient-rich-text-editor>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isSignedOff" class="row">
+    <div class="col-md-12">
+        <div [innerHtml]="templateResult | safeHtml"></div>
+    </div>
+</div>
+
+<dx-popover
+    target="#duplicate-words-warning-trigger"
+    [width]="800"
+    position="bottom"
+    [showTitle]="false"
+    [(visible)]="isDuplicateWordsWarningVisible">
+    <div *dxTemplate="let data = model of 'content'">
+        <div *ngIf="duplicateWords.length">
+            <h6>These words already exist in HPI templates:</h6>
+            <p>
+                {{duplicateWordsText}}
+            </p>
+        </div>
+        <div *ngIf="!duplicateWords.length">
+            Duplicate words were not found 
+        </div>
+    </div>
+</dx-popover>
+
+<dx-popover
+    target="#previous-template-trigger"
+    [width]="800"
+    position="bottom"
+    [showTitle]="false"
+    [(visible)]="isPreviousDetailedContentVisible">
+    <div *dxTemplate="let data = model of 'content'">
+        <div *ngIf="doesTemplateHistoryExist" [innerHtml]="templateHistory.detailedContent | safeHtml"></div>
+        <div *ngIf="!doesTemplateHistoryExist">
+            The previous template was not found
+        </div>
+    </div>
+</dx-popover>

@@ -1,0 +1,21 @@
+<div class="row mt-md-1">
+    <div class="col-md-2">
+        <dx-tree-view [dataSource]="adminModelTree" (onItemClick)="selectAdminSection($event)">
+        </dx-tree-view>
+    </div>
+    <div *ngIf="isAdminSectionOpened(adminSectionNames[0])" class="col-md-10">
+        <company-management></company-management>
+    </div>
+    <div *ngIf="isAdminSectionOpened(adminSectionNames[1])" class="col-md-10">
+        <template-management></template-management>
+    </div>
+    <div *ngIf="isAdminSectionOpened(adminSectionNames[2])" class="col-md-10">
+        <medication-management></medication-management>
+    </div>
+    <div *ngIf="isAdminSectionOpened(adminSectionNames[3])" class="col-md-10">
+        <patient-chart-management></patient-chart-management>
+    </div>
+    <!-- <div *ngIf="isAdminSectionOpened(adminSectionNames[2])" class="col-md-10">
+        <extra-field-management></extra-field-management>
+    </div> -->
+</div>

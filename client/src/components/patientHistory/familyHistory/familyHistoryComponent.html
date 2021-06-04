@@ -1,0 +1,138 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openFamilyHistoryCreationForm($event)">Add Family History</a>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedFamilyHistory" 
+        [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onSelectedFamilyHistory($event)"
+        [wordWrapEnabled]="true" 
+        #familyHistoryDataGrid 
+        [dataSource]="familyHistoryDataSource" 
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="PatientId" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="Diagnosis" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="FamilyMember" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="FamilyStatus" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column width="15%" dataField="CreatedDate" dataType="date"></dxi-column>
+        <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+
+        <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+            <span>
+              {{data.value ? data.value : "-" }}
+            </span>
+          </div>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row margin-top-15">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #createUpdateFamilyHistoryPopup class="popup" [width]="600" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Family History" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateFamilyHistory($event)">
+              <dx-validation-group #familyHistoryValidationGroup>
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div class="dx-field-label">Search diagnosis:</div>
+                        <div class="dx-field-value">
+                            <dx-lookup
+                                #icdCodeLookup
+                                [dataSource]="icdCodeDataSource"
+                                valueExpr="Id"
+                                displayExpr="Name"
+                                placeholder="Search diagnosis..." 
+                                (onValueChanged)="diagnosisChanged($event)">
+                            </dx-lookup>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Diagnosis:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="familyHistory.Diagnosis" [height]="90">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Family Member:</div>
+                        <div class="dx-field-value">
+                            <dx-select-box [(value)]='familyHistory.FamilyMember' [items]='family.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Family member is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Family Status:</div>
+                        <div class="dx-field-value">
+                            <dx-select-box [(value)]='familyHistory.FamilyStatus' [items]='familyStatus.values'>
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Family status is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Notes:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="familyHistory.Notes" [height]="90">
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewFamilyHistory" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                          <dx-check-box [(value)]="familyHistory.IsDelete">
+                          </dx-check-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Create Date:</div>
+                        <div class="dx-field-value">
+                          <dx-date-box [readOnly]="isNewFamilyHistory" [(value)]="familyHistory.CreatedDate" type="date">
+                            <dx-validator>
+                              <dxi-validation-rule type="required"></dxi-validation-rule>
+                            </dx-validator>
+                          </dx-date-box>
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button text="Save" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>

@@ -1,0 +1,120 @@
+<div class="row mt-md-2">
+    <div class="col-md-2">
+        <button type="button" (click)="openSelectableListForm()" class="btn btn-sm btn-outline-secondary">NEW LIST</button>
+    </div>
+    <div class="col-md-2 offset-md-4 text-right">
+        <div class="btn-group btn-group-sm" role="group">
+            <button (click)="openSelectableListImportManagementPopup()" class="btn btn-outline-secondary">
+                <i class="fas fa-upload"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-8">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedSelectableLists"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onSelectableListSelected($event)"
+            [wordWrapEnabled]="true"
+            #selectableListDataGrid
+            [dataSource]="selectableListDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column alignment="left" dataField="title" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column alignment="left" dataField="category" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column alignment="center" dataType="boolean" dataField="isActive" [allowSorting]="false" [allowFiltering]="false">
+            </dxi-column>
+
+            <dxi-column alignment="center" caption="Actions" cellTemplate="selectableListActionsTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let selectableList of 'selectableListActionsTemplate'">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button (click)="deleteSelectableList(selectableList.data, $event)" class="btn btn-outline-danger">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                    <button *ngIf="selectableList.data.isActive" (click)="deactivateSelectableList(selectableList.data, $event)"
+                        class="btn btn-outline-danger"><i class="fas fa-minus"></i>
+                    </button>
+                    
+                    <button *ngIf="!selectableList.data.isActive" (click)="activateSelectableList(selectableList.data, $event)"
+                        class="btn btn-outline-secondary">
+                        <i class="fas fa-plus"></i>
+                    </button>
+
+                    <button *ngIf="selectableList.data.librarySelectableListId"
+                        [disabled]="selectableList.data.version === selectableList.data.librarySelectableListVersion"
+                        (click)="syncWithLibrarySelectableList(selectableList.data, $event)"
+                        [ngClass]="(selectableList.data.version === selectableList.data.librarySelectableListVersion) ? 'btn btn-outline-primary' : 'btn btn-outline-danger'">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #selectableListPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="SELECTABLE LIST" [closeOnOutsideClick]="false" 
+    [(visible)]="isSelectableListPopupOpened" (onHidden)="onSelectableListPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isSelectableListPopupOpened" class="row">
+            <div class="col-md-12">
+                <dx-form [colCount]="2" #selectableListForm [height]="460" [(formData)]="selectableList">
+        
+                    <dxi-item [colSpan]="2" dataField="title">
+                        <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                        <dxi-validation-rule type="custom" [validationCallback]="validateTitleExistence">
+                        </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="2" [label]="{text: 'Category'}" dataField="categoryId" editorType="dxSelectBox"
+                        [editorOptions]="{ searchEnabled: true, displayExpr: 'name', valueExpr: 'id', dataSource: categoryDataSource}">
+                        <dxi-validation-rule type="required" message="Category is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="2" [template]="'selectableListTemplate'"></dxi-item>
+
+                    <div *dxTemplate="let data of 'selectableListTemplate'">
+                        <selectabe-list-values
+                            [selectableListValues]="selectableListValues">
+                        </selectabe-list-values>
+                    </div>
+                </dx-form>
+            </div>
+            <div class="col-md-12 text-right mt-md-2">
+                <button type="button" (click)="createUpdateSelectableList()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+            </div>
+        </div>
+    </div>
+</dx-popup>
+
+<!-- import library popup -->
+<dx-popup class="popup" [width]="800" [height]="580" [showTitle]="true" title="Import from library"
+    [closeOnOutsideClick]="false" [(visible)]="isSelectableListImportFormVisible">
+    <selectable-list-import *ngIf="isSelectableListImportFormVisible" 
+        [companyId]="companyId" 
+        (onSelectableListImportApplied)="onSelectableListImportApplied()"
+        (onSelectableListImportCanceled)="onSelectableListImportCanceled()">
+    </selectable-list-import>
+</dx-popup>

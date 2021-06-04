@@ -1,0 +1,17 @@
+<div *ngIf="!doesContentContainSelectableItems">
+    There is no any selectable item in the detailed content. Please, switch to manual mode.
+</div>
+<div *ngIf="doesContentContainSelectableItems" #selectableItemsEditor tabindex="0" class="row m-0 selectable-editor-container">
+    <div [innerHtml]="templateContent | safeHtml" class="col-8 p-4 border border-right-0"></div>
+    <div class="col-4 p-4 border">
+        <div class="row">
+            <div class="col-md-12">
+                <patient-selectable-root
+                    #patientSelectableRoot
+                    (onSelectableItemValueChanged)="onSelectableItemValueChanged($event)"
+                    [companyId]="companyId">
+                </patient-selectable-root>
+            </div>
+        </div>
+    </div>
+</div>

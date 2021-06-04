@@ -1,0 +1,20 @@
+<div class="row mt-md-1">
+    <div class="col-md-2">
+        <dx-tree-view [dataSource]="libraryItemsTree" (onItemClick)="selectLibraryItem($event)">
+            <div *dxTemplate="let itemData of 'item'">
+                <span [ngClass]="{'selected': isLibraryItemOpened(itemData.name)}" >{{itemData.text}}</span>
+            </div>
+        </dx-tree-view>
+    </div>
+    <library-template-type *ngIf="isLibraryItemOpened(libraryItemNames[0])" class="col-md-10"></library-template-type>
+
+    <library-template *ngIf="isLibraryItemOpened(libraryItemNames[1])" class="col-md-10"></library-template>
+
+    <library-selectable-list-category *ngIf="isLibraryItemOpened(libraryItemNames[2])" class="col-md-10"></library-selectable-list-category>
+
+    <library-selectable-list *ngIf="isLibraryItemOpened(libraryItemNames[3])" class="col-md-10"></library-selectable-list>
+
+    <library-patient-chart-document *ngIf="isLibraryItemOpened(libraryItemNames[4])" class="col-md-10"></library-patient-chart-document>
+
+    <library-expressions *ngIf="isLibraryItemOpened(libraryItemNames[5])" class="col-md-10"></library-expressions>
+</div>

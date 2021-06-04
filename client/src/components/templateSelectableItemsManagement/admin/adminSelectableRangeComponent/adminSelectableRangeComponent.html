@@ -1,0 +1,19 @@
+<div class="row margin-top-10">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <dx-number-box [width]="70" [showSpinButtons]="true" [(value)]="minRangeValue"></dx-number-box>
+                    </td>
+                    <td>
+                        <dx-number-box [width]="70" [showSpinButtons]="true" [(value)]="maxRangeValue"></dx-number-box>
+                    </td>
+                    <td>
+                        <span class="action" (click)="addSelectableItemGeneratedValue()">Add</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

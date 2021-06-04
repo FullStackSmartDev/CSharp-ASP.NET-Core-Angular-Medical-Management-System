@@ -1,0 +1,30 @@
+<div (click)="onChiefComplaintAllegationsClick($event)" class="chief-complaint-allegations">
+    <b>{{appointmentAllegationsString ? appointmentAllegationsString : 'Allegations were not specified during appointment creation'}}</b>
+</div>
+<dx-popup class="popup" [(visible)]="isAllegationsPopupOpened"
+    [width]="400" 
+    [height]="400" 
+    [showTitle]="true" 
+    [title]="'Allegations'"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isAllegationsPopupOpened">
+            <div class="row">
+                <div class="col-md-12">
+                    <dx-list
+                        [items]="appointmentAllegationStringList"
+                        [height]="270"
+                        [showSelectionControls]="true"
+                        selectionMode="multiple"
+                        [(selectedItems)]="selectedAllegations">
+                    </dx-list>
+                </div>
+            </div>
+            <div *ngIf="addingAllegationsEnabled" class="row margin-top-10">
+                <div class="col-md-12 text-right">
+                    <dx-button text="ADD" (onClick)="addToAllegationSet()"></dx-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</dx-popup>

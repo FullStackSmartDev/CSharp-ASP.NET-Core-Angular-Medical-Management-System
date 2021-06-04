@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-6">
+        <dx-select-box
+            #referenceTableSelectBox
+            [dataSource]="referenceTableDataSource"
+            valueExpr="id" 
+            displayExpr="name" 
+            (onValueChanged)="onReferenceTableSelected($event)"
+            [searchEnabled]="true">
+        </dx-select-box>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-md-6">
+        <dx-list [dataSource]="expressionReferenceTables"
+            [allowItemDeleting]="!isSignedOff">
+            <div *dxTemplate="let data of 'item'">
+                <div>{{data.name}}</div>
+            </div>
+        </dx-list>
+    </div>
+</div>

@@ -1,0 +1,205 @@
+<div class="row">
+  <div *ngIf="!isSignedOff" class="col-md-2">
+    <a href="" (click)="openAlcoholHistoryCreationForm($event)">Add Alcohol History</a>
+  </div>
+</div>
+<div *ngIf="isHistoryExist" class="row margin-top-15">
+  <div class="col-md-12">
+    <dx-data-grid 
+        [selectedRowKeys]="selectedAlcoholHistory"
+        [hoverStateEnabled]="true"
+        (onSelectionChanged)="onSelectedAlcoholHistory($event)"
+        [wordWrapEnabled]="true" 
+        #alcoholHistoryDataGrid 
+        [dataSource]="alcoholHistoryDataSource"
+        [showBorders]="true"
+        [showRowLines]="true">
+
+      <dxo-remote-operations [paging]="true" [sorting]="true">
+      </dxo-remote-operations>
+
+      <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+      </dxo-paging>
+
+      <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+      </dxo-pager>
+
+      <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+      <dxi-column dataField="PatientId" dataType="string" [visible]="false"></dxi-column>
+      <dxi-column dataField="IsDelete" dataType="boolean" [visible]="false"></dxi-column>
+      <dxi-column dataField="Status" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Type" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Amount" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Use" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Frequency" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Length" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Duration" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Quit" cellTemplate="cellTemplate" dataType="boolean" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="StatusLength" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="StatusLengthType" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="Notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+      <dxi-column dataField="CreateDate" dataType="date"></dxi-column>
+
+      <dxo-selection mode="single"></dxo-selection>
+
+      <div class="text-center" *dxTemplate="let data of 'cellTemplate'">
+        <span>
+          {{data.value === null ? "-" : data.value }}
+        </span>
+      </div>
+
+    </dx-data-grid>
+  </div>
+</div>
+<div *ngIf="!isHistoryExist" class="row margin-top-15">
+  <div class="col-md-2">
+    <h6>{{defaultHistoryValue}}</h6>
+  </div>
+</div>
+<dx-popup #createUpdateAlcoholHistoryPopup class="popup" 
+    [width]="600"
+    [height]="500" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Alcohol History" 
+    [closeOnOutsideClick]="false" 
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+    <dx-scroll-view [scrollByContent]="true">
+      <div class="row">
+        <div class="col-md-12">
+          <form (submit)="createUpdateAlcoholHistory($event)">
+            <dx-validation-group #alcoholHistoryValidationGroup>
+              <div class='dx-fieldset'>
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Alcohol Status:</div>
+                  <div class='dx-field-value'>
+                    <dx-select-box [(value)]='alcoholHistory.Status' [items]='statusEtohUse.values'>
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-select-box>
+                  </div>
+                </div>
+                <div *ngIf="!isNeverDrank">
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Type:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='alcoholHistory.Type' [items]='typeEtoh.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Amount:</div>
+                    <div class='dx-field-value'>
+                      <dx-number-box [(value)]='alcoholHistory.Amount' [showSpinButtons]='true' [min]='1' [max]='100'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-number-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Use:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='alcoholHistory.Use' [items]='useAlcohol.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Frequency:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='alcoholHistory.Frequency' [items]='useFrequency.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Length:</div>
+                    <div class='dx-field-value'>
+                      <dx-number-box [(value)]='alcoholHistory.Length' [showSpinButtons]='true' [min]='1' [max]='100'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-number-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Duration:</div>
+                    <div class='dx-field-value'>
+                      <dx-select-box [(value)]='alcoholHistory.Duration' [items]='duration.values'>
+                        <dx-validator>
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-select-box>
+                    </div>
+                  </div>
+                  <div class='dx-field'>
+                    <div class='dx-field-label'>Alcohol Quit:</div>
+                    <div class='dx-field-value'>
+                      <dx-check-box [(value)]='quit'></dx-check-box>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="alcoholHistory.Quit" class="dx-fieldset">
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Alcohol Status Length:</div>
+                  <div class='dx-field-value'>
+                    <dx-number-box [(value)]='alcoholHistory.StatusLength' [showSpinButtons]='true' [min]='0' [max]='100'>
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-number-box>
+                  </div>
+                </div>
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Alcohol Status Length Type:</div>
+                  <div class='dx-field-value'>
+                    <dx-select-box [(value)]='alcoholHistory.StatusLengthType' [items]='duration.values'></dx-select-box>
+                  </div>
+                </div>
+              </div>
+              <div class="dx-fieldset">
+                <div class='dx-field'>
+                  <div class='dx-field-label'>Alcohol Notes:</div>
+                  <div class='dx-field-value'>
+                    <dx-text-box [(value)]='alcoholHistory.Notes'></dx-text-box>
+                  </div>
+                </div>
+                <div class="dx-field">
+                  <div class="dx-field-label">Create Date:</div>
+                  <div class="dx-field-value">
+                    <dx-date-box [readOnly]="isNewAlcoholHistory" [(value)]="alcoholHistory.CreateDate" type="date">
+                      <dx-validator>
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-date-box>
+                  </div>
+                </div>
+                <div class="dx-field">
+                  <div class="dx-field-label">Is Delete: </div>
+                  <div class="dx-field-value">
+                    <dx-check-box [(value)]="alcoholHistory.IsDelete">
+                    </dx-check-box>
+                  </div>
+                </div>
+              </div>
+              <div class="dx-fieldset">
+                <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true">
+                </dx-button>
+              </div>
+            </dx-validation-group>
+          </form>
+        </div>
+      </div>
+    </dx-scroll-view>
+  </div>
+</dx-popup>

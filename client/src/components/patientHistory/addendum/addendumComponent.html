@@ -1,0 +1,84 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openCreateAddendumForm()">New Addendum</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedAddendums"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onAddendumSelected($event)"
+            [wordWrapEnabled]="true" 
+            #addendumDataGrid
+            [dataSource]="addendumDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations 
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="AdmissionId" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column dataField="Description" dataType="string"></dxi-column>
+            <dxi-column [width]="10+'%'" dataField="CreatedDate" [allowFiltering]="false" dataType="date"></dxi-column>
+            <dxi-column [width]="10+'%'" caption="Delete Addendum" cellTemplate="deleteAddendumTemplate"></dxi-column>
+
+            <div *dxTemplate="let template of 'deleteAddendumTemplate'">
+                <div class="text-center margin-top-5">
+                  <dx-button type="danger" text="Delete" (onClick)="deleteAddendum($event, template.data.Id)"></dx-button>
+                </div>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup
+    #createUpdateAddendumPopup
+    class="popup"
+    [width]="500"
+    [height]="350"
+    [dragEnabled]="false"
+    [showTitle]="true" title="Create / Update Addendum"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        #addendumCreationForm
+                        [(formData)]="addendum">
+
+                        <dxi-item editorType="dxTextArea" [editorOptions]="{ height: 150 }" [colSpan]="2" dataField="Description">
+                            <dxi-validation-rule type="required" message="Description is required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item editorType="dxDateBox" [editorOptions]="{ disabled: this.isNewAddendum }" dataField="CreatedDate">
+                            <dxi-validation-rule type="required" message="Created Date is required"></dxi-validation-rule>
+                        </dxi-item>
+
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-left margin-top-10">
+                    <dx-button (onClick)="createUpdateAddendum()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

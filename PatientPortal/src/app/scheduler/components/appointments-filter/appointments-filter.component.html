@@ -1,0 +1,57 @@
+<div class="row mt-md-1">
+    <div class="col-md-12">
+        <dx-form #appointmentsFilterForm [(formData)]="filter" [colCount]="7">
+
+            <dxi-item [colSpan]="2" dataField="physician" editorType="dxSelectBox"
+                [editorOptions]="{ width: '100%', height: '30' }" [template]="'physicianLookupTemplate'">
+            </dxi-item>
+
+            <dxi-item [colSpan]="2" dataField="location" editorType="dxSelectBox"
+                [editorOptions]="{ width: '100%', height: '30' }" [template]="'locationLookupTemplate'">
+            </dxi-item>
+
+            <dxi-item [colSpan]="2" dataField="patient" editorType="dxSelectBox"
+                [editorOptions]="{ width: '100%', height: '30' }" [template]="'patientLookupTemplate'">
+            </dxi-item>
+
+            <div *dxTemplate="let data of 'physicianLookupTemplate'">
+                <dx-select-box #physicianSelectBox
+                    [showClearButton]="true"
+                    (onValueChanged)="filterChanged($event)"
+                    [(value)]="data.component.option('formData')[data.dataField]"
+                    [searchEnabled]="true"
+                    [dataSource]="physianDataSource"
+                    valueExpr="id"
+                    displayExpr="name"
+                    placeholder="Select physician">
+                </dx-select-box>
+            </div>
+
+            <div *dxTemplate="let data of 'locationLookupTemplate'">
+                <dx-select-box #locationSelectBox
+                    [showClearButton]="true"
+                    [(value)]="data.component.option('formData')[data.dataField]"
+                    (onValueChanged)="filterChanged($event)" 
+                    searchEnabled="true"
+                    [dataSource]="locationDataSource"
+                    valueExpr="id" 
+                    displayExpr="name"
+                    placeholder="Select location">
+                </dx-select-box>
+            </div>
+
+            <div *dxTemplate="let data of 'patientLookupTemplate'">
+                <dx-select-box #patientSelectBox
+                    [showClearButton]="true"
+                    (onValueChanged)="filterChanged($event)"
+                    [(value)]="data.component.option('formData')[data.dataField]"
+                    searchEnabled="true"
+                    [dataSource]="patientDataSource"
+                    valueExpr="id"
+                    displayExpr="name"
+                    placeholder="Select patient">
+                </dx-select-box>
+            </div>
+        </dx-form>
+    </div>
+</div>

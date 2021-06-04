@@ -1,0 +1,60 @@
+1. Cloning repository https://gitlab.com/Sunches/gmp.git
+			
+2. Database update:
+   MSSQL Server 2014 (or higher) with "Full Text Search" feature have to be installed
+   
+   - open solution file gmp/medico/Medico.sln in Visual Studio 2017
+     and build solution. The solution should be successfully built without any errors 
+				  
+   ASP.NET identity:
+   - navigate to package manager console, select "Medico.Identity" as a default
+     project and also make this project as a "Startup project" in solution explorer
+     and execute "update-database" command see screenshot https://monosnap.com/file/G15xvxgJxAbOOVj7GsyvLUGetlIzKM
+				
+   Application Data:
+   - navigate to package manager console, select "Medico.Data" as a default
+     project and also make this project as a "Startup project" in solution explorer 
+     and execute "update-database" command see screenshot https://monosnap.com/file/pNTgGObKrZ49sO4kMCEltUlOd4key0
+				  
+3. API activation:
+  - make Medico.Api project as a start up project and run application
+    (CTRL + F5) https://monosnap.com/file/HstDmlXuM5W0SnufuiDMMRyRGha45h
+				  
+  - using fiddler https://www.telerik.com/fiddler or postman https://www.getpostman.com/ execute this http request:
+				
+    GET http://localhost:5000/api/init/88952d80-62dc-4bfc-aa9e-8f87b0cce7aa HTTP/1.1
+    Content-Type: application/json
+    Host: localhost:5000
+    Content-Length: 0
+				
+4. Some data - avoids manually creation in administration:
+  - navigate to sql folder and execute sql scripts in the folowing order:
+  	- company.sql
+	- location.sql
+	- room.sql
+	- selectableListCategory.sql
+	- selectableList.sql
+	- template.sql
+	- patient.sql
+	- patientInsurance.sql
+	- aspNetUsers.sql
+	- applicationUser.sql
+	- aspNetUserRoles.sql
+					
+	Initial user passwords and emails: 
+				
+	email: superadmin@mail.com password: Tdejw2kfZs$S9+s6
+				
+	email: melissa@medicoinfotech.com password: )7SNLz+ZK784tgF5 stage: \Qyx:eG>'w_}9cH>
+	email: isabel@medicoinfotech.com password: E253r^U:'^<AS9fX
+	email: rob@medicoinfotech.com password: %t3-<rKx="!Ne?b) stage: 8(aZ9}D5*A?MEU5-
+	email: glenn@medicoinfotech.com password: K<ZKq4GwA?y{#rc_
+			
+5. Run client app:
+  - navigate to medico/Services/Medico.Api/ClientApp and execute ng serve command
+  - open http://localhost:4200/ in the web browser
+  - use super admin creadentials
+				
+				  
+				  
+			 			

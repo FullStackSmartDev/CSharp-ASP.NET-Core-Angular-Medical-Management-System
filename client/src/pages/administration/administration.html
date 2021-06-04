@@ -1,0 +1,20 @@
+<ion-content padding>
+    <div class="row">
+        <div class="col-md-2">
+            <dx-tree-view 
+                id="patient-data-treeview"
+                [dataSource]="administrationModelTree"
+                (onItemClick)="selectAdministrationSection($event)">
+            </dx-tree-view>
+        </div>
+        <div *ngIf="isAdminSectionOpened(adminSectionNames[0])" class="col-md-10">
+            <company-administration></company-administration>
+        </div>
+        <div *ngIf="isAdminSectionOpened(adminSectionNames[1])" class="col-md-10">
+            <template-management></template-management>
+        </div>
+        <div *ngIf="isAdminSectionOpened(adminSectionNames[2])" class="col-md-10">
+            <extra-field-management></extra-field-management>
+        </div>
+    </div>
+</ion-content>

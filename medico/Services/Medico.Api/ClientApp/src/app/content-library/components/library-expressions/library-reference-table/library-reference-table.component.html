@@ -1,0 +1,66 @@
+<div class="row">
+    <div *ngIf="!isReferenceTableFormVisible" class="col-md-6">
+        <dx-data-grid width="100%" [showBorders]="true"
+            id="gridContainer" [dataSource]="referenceTableDataSource" [allowColumnReordering]="true"
+            [columnHidingEnabled]="false" [hoverStateEnabled]="true"
+            (onSelectionChanged)="onReferenceTableChanged($event)">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]="true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false">
+            </dxi-column>
+
+            <dxi-column [allowSorting]="false" dataField="title" dataType="string"
+                [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+    <div *ngIf="isReferenceTableFormVisible" class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 mt-md-2">
+                <dx-data-grid width="100%" 
+                    [showBorders]="true"
+                    [dataSource]="referenceTableRecords" 
+                    [columnHidingEnabled]="false" 
+                    [hoverStateEnabled]="true"
+                    (onRowInserted)="onNewRecordInsertedInRefTable($event)"
+                    (onRowUpdated)="onRecordUpdatedInRefTable($event)"
+                    (onInitNewRow)="initNewRefTableRecord($event)"
+                    (onRowRemoved)="onRecordRemovedFromRefTable($event)">
+
+                    <dxo-editing mode="row" [allowUpdating]="true"
+                        [allowAdding]="true"
+                        [allowDeleting]="true">
+                    </dxo-editing>
+
+                    <ng-container *ngFor="let headerColumn of referenceTableHeader; let i = index" >
+                        <dxi-column alignment="left" [dataField]="headerColumn.title" [dataType]="headerColumn.type" [visible]="headerColumn.visible">
+                        </dxi-column>
+                    </ng-container>
+
+                </dx-data-grid>
+            </div>
+        </div>
+        <div class="row mt-md-2">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-sm btn-outline-danger text-left"
+                            (click)="switchToReferenceTablesDataGrid()">BACK TO LIST</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

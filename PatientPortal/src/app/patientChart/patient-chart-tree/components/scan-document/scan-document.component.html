@@ -1,0 +1,154 @@
+<div class="row">
+    <div class="col-md-10 pr-0">
+        <div style="height: 980px; width: 100%;">
+            <tui-image-editor></tui-image-editor>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="row" style="height:16%;" *ngIf="isTiff">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="next()">
+                    <i class="fa fa-chevron-circle-right"></i>&nbsp;&nbsp;Next
+                    <br>Page {{currentTiffPage + 1}} of {{tiffCanvas.length}}</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;" *ngIf="isTiff">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="previous()">
+                    <i class="fa fa-chevron-circle-left"></i>&nbsp;&nbsp;Previous
+                    <br>Page {{currentTiffPage + 1}} of {{tiffCanvas.length}}</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="zoomInImage()">
+                    <i class="fa fa-search-plus"></i>&nbsp;&nbsp;Zoom in</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="zoomOutImage()">
+                    <i class="fa fa-search-minus"></i>&nbsp;&nbsp;Zoom out</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="openGetImageForm()">
+                    <i class="fa fa-spinner"></i>&nbsp;&nbsp;Reset
+                </button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="openGetImageForm()">
+                    <i class="fa fa-sync"></i>&nbsp;&nbsp;Update</button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button class="btn btn-outline-primary btn-imagetoolbar" (click)="deleteDocument()">
+                    <i class="fa fa-trash"></i>&nbsp;&nbsp;Delete
+                </button>
+            </div>
+        </div>
+        <div class="row" style="height:16%;">
+            <div class="col-md-12">
+                <button [disabled]="!canOpenUploadImageForm" class="btn btn-outline-primary btn-imagetoolbar" (click)="openGetImageForm()">
+                    <i class="fa fa-desktop"></i>&nbsp;&nbsp;Get Image
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dx-popup *ngIf="canOpenUploadImageForm" #getImage class="popup" [width]="900" [height]="800" [dragEnabled]="false" [showTitle]="true" title="Get Image"
+    [closeOnOutsideClick]="false" [(visible)]="isGetImagePopupOpened">
+    <div>
+        <div class="row ml-0 mr-0">
+            <div class="col-md-12 mb-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="dx-field">
+                            <div class="dx-field-label"> Image Type</div>
+                            <div class="dx-field-value">
+                                <dx-radio-group [items]="templateStates" [value]="templateStates[0]" layout="horizontal" (onValueChanged)="onTemplateStateChanged($event)">
+                                </dx-radio-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="tab-pane fade" [ngClass]="{ 'show active': documentsource == 1 }" role="tabpanel" *ngIf="documentsource == 1">
+                            <dx-file-uploader #fileUploader [multiple]="false" accept="*" [(value)]="value" (onValueChanged)="fileUploaderValueChange($event)"
+                                uploadMode="useForm" style="padding:0px;"></dx-file-uploader>
+                        </div>
+                        <div class="tab-pane fade" [ngClass]="{ 'show active': documentsource == 2 }" role="tabpanel" *ngIf="documentsource == 2">
+                            <webcam [height]="300" [width]="300" (imageCapture)="handleImage($event)" [imageQuality]="1" [trigger]="triggerObservable"></webcam>
+                            <button class="btn btn-outline-primary" (click)="triggerSnapshot();">Take A Photo</button>
+                        </div>
+                        <div class="tab-pane fade" [ngClass]="{ 'show active': documentsource == 3 }" role="tabpanel" *ngIf="documentsource == 3">
+                            <button class="btn btn-outline-primary" (click)="scanToJpg();">Scan Image</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="border:2px dotted #0c0c0c;height:220px;">
+                        <img src="{{previewImage}}" *ngIf="previewImage" style="width:100%;height:100%;" />
+                        <div class="col-md-12 mt-2">
+                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff" (click)="begin()">&laquo;</button>
+                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff" (click)="previous()">&#8249;</button>
+                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff" (click)="next()">&#8250;</button>
+                            <button class="btn btn-outline-primary" [hidden]="!isCurrentMultiTiff" (click)="end()">&raquo;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+
+            </div>
+            <div class="col-md-12">
+                <form (submit)="save($event)">
+                    <dx-form #scanDocumentForm [(formData)]="currentDocumentData" labelLocation="top" validationGroup="customerData">
+                        <dxi-item itemType="group" [colCount]="2">
+                            <dxi-item itemType="group">
+                                <dxi-item [label]="{text: 'Document Type'}" dataField="documentType" editorType="dxSelectBox" [editorOptions]="{ items: associatedDocumentationListValues }">
+                                    <dxi-validation-rule type="required">
+                                    </dxi-validation-rule>
+                                </dxi-item>
+                                <dxi-item [label]="{text: 'Icd Code'}" dataField="icdCode" editorType="dxSelectBox" [editorOptions]="{ dataSource: icdCodesDataSource, searchEnabled: true, displayExpr: 'name', valueExpr: 'id' }">
+                                </dxi-item>
+                            </dxi-item>
+                            <dxi-item itemType="group">
+                                <dxi-item [label]="{text: 'Document Name'}" dataField="documentName">
+                                    <dxi-validation-rule type="required">
+                                    </dxi-validation-rule>
+                                </dxi-item>
+                                <dxi-item [label]="{text: 'Document Date'}" dataField="doucmentDate" editorType="dxDateBox" [editorOptions]="{ width: '100%'}">
+                                    <dxi-validation-rule type="required">
+                                    </dxi-validation-rule>
+                                </dxi-item>
+                                <dxi-item [label]="{text: 'Document Source'}" dataField="documentSource" [editorOptions]="{ readOnly: 'true', value: documentSourceData }"></dxi-item>
+                            </dxi-item>
+
+                            <dxi-item itemType="group">
+                                <dx-radio-group [items]="configOptions" [value]="configOptions[1]" layout="horizontal" (onValueChanged)="onOptionsStateChanged($event)">
+                                </dx-radio-group>
+                            </dxi-item>
+
+                            <dxi-item itemType="group">
+                                <dxi-item [colSpan]="3" itemType="button" horizontalAlignment="right" [buttonOptions]="{
+                                        text: 'Save',
+                                        stylingMode: 'outlined',
+                                        type: 'success',
+                                        useSubmitBehavior: true
+                                    }">
+                                </dxi-item>
+                            </dxi-item>
+                        </dxi-item>
+                    </dx-form>
+                </form>
+            </div>
+        </div>
+    </div>
+</dx-popup>

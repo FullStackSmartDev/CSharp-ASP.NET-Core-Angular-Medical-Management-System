@@ -1,0 +1,15 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-form #templateListSectionForm [(formData)]="templateListSection" [height]="460">
+            <dxi-item [label]="{text: 'Template List Type'}" dataField="templateTypeId" editorType="dxSelectBox" 
+                [editorOptions]="{ displayExpr: 'name', valueExpr: 'id', dataSource: templateTypeDataSource }">
+                <dxi-validation-rule type="required" message="Template type is required"></dxi-validation-rule>
+                <dxi-validation-rule type="custom" [validationCallback]="validateTemplateListExistenceInPatientChart"></dxi-validation-rule>
+            </dxi-item>
+        </dx-form>
+    </div>
+
+    <div class="col-md-12 text-right mt-md-2">
+        <button type="button" (click)="createUpdateTemplateListSection()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+    </div>
+</div>

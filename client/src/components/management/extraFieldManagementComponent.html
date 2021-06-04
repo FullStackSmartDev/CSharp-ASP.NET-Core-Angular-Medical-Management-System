@@ -1,0 +1,91 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openExtraFieldCreationForm()">New Extra Field</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 margin-top-10">
+        <dx-data-grid
+            #extraFieldsDataGrid
+            [selectedRowKeys]="selectedExtraFields" 
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onExtraFieldSelected($event)"
+            [wordWrapEnabled]="true"  
+            [dataSource]="extraFieldsDataSource" 
+            [showBorders]="true">
+
+            <dxo-remote-operations
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging 
+                [pageSize]="applicationConfiguration.defaultPageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true"
+                [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="RelatedEntityName" [filterOperations]="['contains', '=', 'startswith']" dataType="string"></dxi-column>
+            <dxi-column dataField="Type" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column dataField="Title" [filterOperations]="['contains', '=', 'startswith']" dataType="string"></dxi-column>
+            <dxi-column dataField="Name" [visible]="false" dataType="string"></dxi-column>
+            <dxi-column dataField="ShowInList" dataType="boolean" [allowSorting]="false"></dxi-column>
+            <dxi-column dataField="IsActive" dataType="boolean" [allowSorting]="false"></dxi-column>
+
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteExtraFieldTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let extraField of 'deleteExtraFieldTemplate'">        
+                <span class="action delete-action" (click)="deleteExtraField(extraField.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #createUpdateExtraFieldPopup 
+    class="popup" [width]="500" [height]="360" [dragEnabled]="false" [showTitle]="true"
+    title="Save Extra Field" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCloseExtraFieldCreationForm()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        #extraFieldCreationForm
+                        [(formData)]="extraField">
+
+                        <dxi-item dataField="RelatedEntityName" editorType="dxSelectBox" [editorOptions]="relatedEntityNameEditorOptions">
+                            <dxi-validation-rule type="required" message="Related entity name is required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item dataField="Type" editorType="dxSelectBox" [editorOptions]="extraFieldTypeEditorOptions">
+                            <dxi-validation-rule type="required" message="Type is required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item dataField="Title">
+                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            <dxi-validation-rule 
+                                *ngIf="isNewExtraField" 
+                                type="custom"
+                                [validationCallback]="validateGeneratedName">
+                            </dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item dataField="ShowInList" editorType="dxCheckBox"></dxi-item>
+                        <dxi-item dataField="IsActive" editorType="dxCheckBox"></dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 margin-top-15 text-left">
+                    <dx-button (onClick)="createUpdateExtraField()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

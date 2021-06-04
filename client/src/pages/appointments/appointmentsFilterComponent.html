@@ -1,0 +1,70 @@
+<div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                  <dx-form
+                      #appointmentsFilterForm
+                      [(formData)]="filter"
+                      [colCount]="7">
+    
+                      <dxi-item [colSpan]="2" dataField="Physician" editorType="dxLookup" [editorOptions]="{ width: '100%', height: '30' }" [template]="'physicianLookupTemplate'">
+                      </dxi-item>
+    
+                      <dxi-item [colSpan]="2" dataField="Location" editorType="dxLookup" [editorOptions]="{ width: '100%', height: '30' }" [template]="'locationLookupTemplate'">
+                      </dxi-item>
+    
+                      <dxi-item [colSpan]="2" dataField="Patient" editorType="dxLookup" [editorOptions]="{ width: '100%', height: '30' }" [template]="'patientLookupTemplate'">
+                      </dxi-item>
+
+                      <dxi-item [editorOptions]="{ width: '100%', height: '30' }" [template]="'syncTemplate'">
+                      </dxi-item>
+    
+                      <div *dxTemplate="let data of 'physicianLookupTemplate'">
+                        <dx-lookup
+                            #physicianLookup
+                            (onValueChanged)="filterChanged($event)"
+                            [(value)]="data.component.option('formData')[data.dataField]"
+                            [showClearButton]="true"
+                            applyValueMode="instantly" 
+                            [dataSource]="physianDataSource"
+                            valueExpr="PhysicianId"
+                            displayExpr="Name"
+                            placeholder="Select physician...">
+                        </dx-lookup>
+                      </div>
+    
+                      <div *dxTemplate="let data of 'locationLookupTemplate'">
+                        <dx-lookup
+                            #locationLookup
+                            [(value)]="data.component.option('formData')[data.dataField]"
+                            (onValueChanged)="filterChanged($event)"
+                            [showClearButton]="true" 
+                            applyValueMode="instantly" 
+                            [dataSource]="locationDataSource" 
+                            valueExpr="LocationId" 
+                            displayExpr="LocationName"
+                            placeholder="Select location...">
+                        </dx-lookup>
+                      </div>
+
+                      <div *dxTemplate="let data of 'patientLookupTemplate'">
+                        <dx-lookup
+                            #patientLookup
+                            (onValueChanged)="filterChanged($event)"
+                            [(value)]="data.component.option('formData')[data.dataField]"
+                            [showClearButton]="true" 
+                            applyValueMode="instantly" 
+                            [dataSource]="patientDataSource" 
+                            valueExpr="PatientId" 
+                            displayExpr="Name"
+                            placeholder="Select patient...">
+                        </dx-lookup>
+                      </div>
+                      <div *dxTemplate="let data of 'syncTemplate'">
+                        <sync-component></sync-component>
+                      </div>
+                  </dx-form>
+                </div>
+            </div>
+        </div>
+</div>

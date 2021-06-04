@@ -1,0 +1,219 @@
+<div *ngIf="canRenderComponents">
+    <div class="row mt-md-1">
+        <div class="col-md-12">
+            <appointments-filter (onFilterChanged)="onFilterChanged($event)"
+                [startDate]="startDate"
+                [endDate]="endDate">
+            </appointments-filter>
+        </div>
+    </div>
+    
+    <div class="row mt-md-2">
+        <div class="col-md-12">
+            <dx-scheduler #appointmentScheduler
+                (onAppointmentAdded)="onAppointmentAdded()"
+                (onAppointmentUpdated)="onAppointmentUpdated()"
+                (onAppointmentDeleted)="onAppointmentDeleted()"
+                [startDayHour]="appConfiguration.startWorkingHour"
+                [endDayHour]="appConfiguration.endWorkingHour" 
+                [dataSource]="appointmentDataSource"
+                [views]="schedulerAvailableViews"
+                [firstDayOfWeek]="0"
+                [currentDate]="currentDate"
+                [crossScrollingEnabled]="true" 
+                (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+                (onAppointmentDeleting)="onAppointmentDeleting($event)"
+                [showAllDayPanel]="false"
+                height="50vh"
+                appointmentTemplate="appointment-template"
+                appointmentTooltipTemplate="tooltip-template">
+                
+                <div *dxTemplate="let appointment of 'appointment-template'">
+                    <div>
+                        <span>{{appointment.patientFirstName}} {{appointment.patientLastName}}</span><br/>
+                        <span>{{appointment.physicianFirstName}} {{appointment.physicianLastName}}</span>
+                    </div>
+                </div>
+    
+                <div *dxTemplate="let appointment of 'tooltip-template'">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-4 text-left">
+                                    <b>TIME:</b>
+                                </div>
+                                <div class="col-md-8 text-left">
+                                    {{appointment.startDate | time}} --- {{appointment.endDate | time}}
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <b>PHYSICIAN:</b>
+                                </div>
+                                <div class="col-md-8 text-left">
+                                    {{appointment.physicianFirstName}} {{appointment.physicianLastName}}
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <b>PATIENT:</b>
+                                </div>
+                                <div class="col-md-8 text-left">
+                                    {{appointment.patientFirstName}} {{appointment.patientLastName}}
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <b>CHART:</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <i (click)="hideSchedulerTooltip($event)" class="fa fa-times"></i><br/><br/>
+                            <i (click)="deleteAppointment($event, appointment)" class="fa fa-trash"></i><br/>
+                            <i (click)="navigateToPatientChartFromScheduler($event, appointment)" class="fa fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <span *ngIf="!appointment.admissionId" class="badge badge-secondary">{{appointment.appointmentStatus}}</span>
+                            <span *ngIf="appointment.admissionId && !appointment.signingDate" class="badge badge-danger">{{appointment.appointmentStatus}}</span>
+                            <span *ngIf="appointment.admissionId && appointment.signingDate" class="badge badge-success">{{appointment.appointmentStatus}}</span>
+                        </div>
+                    </div>
+                </div>
+            </dx-scheduler>
+        </div>
+    </div>
+    
+    <div class="row mt-md-2">
+        <div class="col-md-12">
+            <dx-data-grid #appointmentsGrid 
+                [showBorders]="true"
+                [dataSource]="appointmentGridDataSource"
+                [hoverStateEnabled]="true" 
+                [selectedRowKeys]="selectedAppointment"
+                (onSelectionChanged)="navigateToPatientChart($event)"
+                height="33vh">
+    
+                <dxo-scrolling mode="virtual" ></dxo-scrolling>
+                <dxo-grouping #expand [autoExpandAll]="false"></dxo-grouping>
+
+                <dxi-column format="shortDate" [groupIndex]="0" dataType="date" dataField="date" [visible]="false"></dxi-column>
+
+                <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="patient" cellTemplate="patientNameTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="dateOfBirth" type="date" cellTemplate="patientDoBTemplate">
+                </dxi-column>
+                <dxi-column [allowSorting]="false" dataField="lastVisit" cellTemplate="lastVisitTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="physician" cellTemplate="physicianNameTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="nurse" cellTemplate="nurseNameTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="startTime" cellTemplate="startDateTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" dataField="endTime" cellTemplate="endDateTemplate"></dxi-column>
+                <dxi-column [allowSorting]="false" caption="Location" dataField="locationName"></dxi-column>
+                <dxi-column [allowSorting]="false" caption="Room" dataField="roomName"></dxi-column>
+                <dxi-column alignment="center" [allowSorting]="false" caption="Status" cellTemplate="appointmentStatusTemplate"></dxi-column>
+                <dxi-column alignment="center" caption="Admissions" cellTemplate="previousAdmissionTemplate"></dxi-column>
+                <dxi-column alignment="center" caption="Allegations" cellTemplate="allegationsStatusTemplate"></dxi-column>
+    
+                <dxo-remote-operations [paging]="true">
+                </dxo-remote-operations>
+    
+                <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+                </dxo-paging>
+    
+                <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+                </dxo-pager>
+    
+                <div *dxTemplate="let appointment of 'lastVisitTemplate'">
+                    <patient-last-visit [previousAppointmentDate]="appointment.data.previousAppointmentDate"
+                        [startDate]="appointment.data.startDate">
+                    </patient-last-visit>
+                </div>
+    
+                <div *dxTemplate="let appointment of 'nurseNameTemplate'">
+                    {{appointment.data.nurseFirstName}} {{appointment.data.nurseLastName}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'physicianNameTemplate'">
+                    {{appointment.data.physicianFirstName}} {{appointment.data.physicianLastName}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'patientNameTemplate'">
+                    {{appointment.data.patientFirstName}} {{appointment.data.patientLastName}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'patientDoBTemplate'">
+                    {{appointment.data.patientDateOfBirth | date}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'startDateTemplate'">
+                    {{appointment.data.startDate | time}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'endDateTemplate'">
+                    {{appointment.data.endDate | time}}
+                </div>
+    
+                <div *dxTemplate="let appointment of 'previousAdmissionTemplate'">
+                    <span *ngIf="appointment.data.totalNumberOfPatientAppointments === 1" class="badge badge-danger">
+                        NOT FOUND
+                    </span>
+                    <span *ngIf="appointment.data.totalNumberOfPatientAppointments > 1"
+                        class="badge badge-primary"
+                        (click)="showPreviousAdmissions($event, appointment.data.patientId, appointment.data.startDate)">
+                        SHOW PREVIOUS
+                    </span>
+                </div>
+    
+                <div *dxTemplate="let appointment of 'allegationsStatusTemplate'">
+                    <span *ngIf="!appointment.data.allegations" class="badge badge-danger">NOT SET</span>
+                    <span *ngIf="appointment.data.allegations" class="badge badge-primary">SET</span>
+                </div>
+
+                <div *dxTemplate="let appointment of 'appointmentStatusTemplate'">
+                    <span *ngIf="!appointment.data.admissionId" class="badge badge-secondary">{{appointment.data.appointmentStatus}}</span>
+                    <span *ngIf="appointment.data.admissionId && !appointment.data.signingDate" class="badge badge-danger">{{appointment.data.appointmentStatus}}</span>
+                    <span *ngIf="appointment.data.admissionId && appointment.data.signingDate" class="badge badge-success">{{appointment.data.appointmentStatus}}</span>
+                </div>
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+    </div>
+    <dx-popup 
+        class="popup" [(visible)]="isAdmissionPopupVisible" [width]="600" [height]="400" 
+        [showTitle]="true" title="Patient Previous Admissions" [closeOnOutsideClick]="false">
+        <div *dxTemplate="let data of 'content'">
+            <dx-scroll-view [scrollByContent]="true">
+              <div class="list-container">
+                <dx-list 
+                  [items]="patientPreviousAdmissions" 
+                  height="100%"
+                  selectionMode="single"
+                  (onSelectionChanged)="onPreviousAdmissionSelected($event)">
+                  <div *dxTemplate="let item of 'item'">
+                    <div class="row">
+                      <div class="col-md-3 text-left">
+                        {{item.startDate | date}}
+                      </div>
+                      <div class="col-md-2 text-left">
+                        <span *ngIf="!item.admissionId" class="badge badge-secondary">{{item.appointmentStatus}}</span>
+                        <span *ngIf="item.admissionId && !item.signingDate" class="badge badge-danger">{{item.appointmentStatus}}</span>
+                        <span *ngIf="item.admissionId && item.signingDate" class="badge badge-success">{{item.appointmentStatus}}</span>
+                      </div>
+                      <div class="col-md-4 text-center">
+                        {{item.locationName}}
+                      </div>
+                      <div class="col-md-3 text-left">
+                        {{item.physicianFirstName + " " + item.physicianLastName}}
+                      </div>
+                    </div>
+                  </div>
+                </dx-list>
+            </div>
+            </dx-scroll-view>
+        </div>
+      </dx-popup>
+      <dx-popup class="popup" [(visible)]="isManageAllegationsPopupVisible" [width]="900" 
+        [height]="600" [showTitle]="true" title="Manage Allegations" [closeOnOutsideClick]="false">
+        <div *dxTemplate="let data of 'content'">
+            <appointment-allegations *ngIf="isManageAllegationsPopupVisible" 
+                [allegationsString]="allegationsString">
+            </appointment-allegations>
+        </div>
+      </dx-popup>
+</div>

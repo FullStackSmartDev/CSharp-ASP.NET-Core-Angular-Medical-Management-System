@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-12">
+        <patient-selectable-list
+            #patientSelectableList
+            (onSelectableItemChanged)="onChildSelectableItemsValuesChanged($event)"
+            [companyId]="companyId">
+        </patient-selectable-list>
+        <patient-selectable-range
+            (onSelectableItemChanged)="onChildSelectableItemsValuesChanged($event)" 
+            #patientSelectableRange>
+        </patient-selectable-range>
+        <patient-selectable-date 
+            (onSelectableItemChanged)="onChildSelectableItemsValuesChanged($event)"
+            #patientSelectableDate>
+        </patient-selectable-date>
+    </div>
+</div>

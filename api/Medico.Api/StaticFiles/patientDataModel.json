@@ -1,0 +1,479 @@
+﻿{
+    "patientRoot": {
+        "id": "ffcd1285-f253-b09e-d231-1711a9d952e7",
+        "nodeType": 1,
+        "name": "patientData",
+        "title": "Patient Data",
+        "isVisible": true,
+        "roles": "physician",
+        "parentId": null,
+        "children": [
+            {
+                "id": "706d678f-96a7-61ac-978b-24ef139d0c1e",
+                "nodeType": 4,
+                "name": "demographic",
+                "title": "Demographic",
+                "isVisible": true,
+                "roles": "physician",
+                "parentId": "ffcd1285-f253-b09e-d231-1711a9d952e7",
+                "children": [
+                    {
+                        "id": "0aeb7f72-4b7b-5311-6202-63fcbf68dc2c",
+                        "nodeType": 3,
+                        "name": "patientInsurance",
+                        "title": "Patient Insurance",
+                        "isVisible": true,
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "706d678f-96a7-61ac-978b-24ef139d0c1e",
+                        "roles": "physician",
+                        "template": "<div class='dx-field-label'>{{this.label}}</div><div class='dx-field-value'><dx-autocomplete placeholder='Select a patient' [(value)]='firstName' [dataSource]='this.names' (onValueChanged)='this.updateEmployeeInfo($event)'></dx-autocomplete></div>",
+                        "templateViewModelJsonString": "{\"label\":\"Select first name\", \"placeholder\": \"Select first name\", \"names\":[\"alexis\", \"victor\"], \"updateEmployeeInfo\":\" function($event){ console.log($event) }\"}",
+                        "children": []
+                    },
+                    {
+                        "id": "ec92e1a8-4a5e-0bfd-322a-d437bb9a3fbf",
+                        "nodeType": 3,
+                        "name": "patientDemographic",
+                        "title": "Patient Demographic",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "706d678f-96a7-61ac-978b-24ef139d0c1e",
+                        "children": [],
+                        "template": "<div class='row'><div class='col-md-6'><div class='form'><div class='dx-fieldset'><div class='dx-field'><div class='dx-field-label'>First Name:</div><div class='dx-field-value'><dx-text-box [(value)]='nodeData.nodeValue.FirstName'></dx-text-box></div></div><div class='dx-field'><div class='dx-field-label'>Last Name:</div><div class='dx-field-value'><dx-text-box [(value)]='nodeData.nodeValue.LastName'></dx-text-box></div></div><div class='dx-field'><div class='dx-field-label'>Date Of Birth:</div><div class='dx-field-value'><dx-date-box [(value)]='nodeData.nodeValue.DateOfBirth' type='date'></dx-date-box></div></div><div class='dx-field'><div class='dx-field-label'>Gender:</div><div class='dx-field-value'><dx-select-box [(value)]='nodeData.nodeValue.Gender' [dataSource]='genderEnum' valueExpr='id' displayExpr='name'></dx-select-box></div></div><div class='dx-field'><dx-button [text]='savePatientDemographicBtnText' [type]='savePatientDemographicBtnType' (onClick)='savePatientDemographic()'></dx-button></div></div></div></div></div>",
+                        "templateViewModelJsonString": "{\"genderEnum\":[{ \"id\": 1, \"name\": \"Male\" }, { \"id\": 2, \"name\": \"Female\"}], \"savePatientDemographicBtnText\":\"Save patient demographic\", \"savePatientDemographicBtnType\": \"normal\", \"savePatientDemographic\":\"function(){this.dataService.update(this.tableNames.patientDemographic, this.nodeData.nodeValue) }\"}"
+                    },
+                    {
+                        "id": "c8231405-813d-b66d-78ea-14dcab88a080",
+                        "nodeType": 2,
+                        "name": "patientAdmission",
+                        "title": "Patient Admission",
+                        "storeDataType": "persistentDataStore",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "parentId": "706d678f-96a7-61ac-978b-24ef139d0c1e"
+                    }
+                ]
+            },
+            {
+                "id": "139fce09-f13d-7781-2d9e-407a097907f8",
+                "nodeType": 4,
+                "name": "company",
+                "title": "Company",
+                "isVisible": true,
+                "roles": "physician",
+                "parentId": "ffcd1285-f253-b09e-d231-1711a9d952e7",
+                "children": [
+                    {
+                        "id": "1b44b884-2f67-84d0-78ae-3599cb0974dd",
+                        "nodeType": 2,
+                        "name": "companyData",
+                        "title": "Company Data",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "139fce09-f13d-7781-2d9e-407a097907f8"
+                    },
+                    {
+                        "id": "bb3577ce-1f0b-9bf5-7db3-e134ef13b3f8",
+                        "nodeType": 2,
+                        "name": "locatioData",
+                        "title": "Location Data",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "139fce09-f13d-7781-2d9e-407a097907f8"
+                    },
+                    {
+                        "id": "7ac3d3be-334d-d852-e0a6-f2fa78a55c79",
+                        "nodeType": 2,
+                        "name": "userData",
+                        "title": "User Data",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "139fce09-f13d-7781-2d9e-407a097907f8"
+                    },
+                    {
+                        "id": "5f036d9f-18ad-e013-6bab-66e6e847a431",
+                        "nodeType": 2,
+                        "name": "userPermissions",
+                        "title": "User Permissions",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "139fce09-f13d-7781-2d9e-407a097907f8"
+                    },
+                    {
+                        "id": "903bda4c-4c9e-90b9-b27b-6d2b3eae97ce",
+                        "nodeType": 2,
+                        "name": "appConfiguration",
+                        "title": "App Configuration",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "139fce09-f13d-7781-2d9e-407a097907f8"
+                    }
+                ]
+            },
+            {
+                "id": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7",
+                "nodeType": 4,
+                "name": "historyAndPhysical",
+                "title": "History And Physical",
+                "isVisible": true,
+                "roles": "physician",
+                "parentId": "ffcd1285-f253-b09e-d231-1711a9d952e7",
+                "children": [
+                    {
+                        "id": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                        "nodeType": 2,
+                        "name": "patientHistory",
+                        "title": "Patient History",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7",
+                        "children": [
+                            {
+                                "id": "ca25ceaf-5f2b-d384-4b1e-8c42b3bed3b7",
+                                "title": "Tobaco History",
+                                "name": "tobacoHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/tobaccoHistory/tobaccoHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/tobaccoHistory/tobaccoHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "bbaab92b-1c68-a062-6fc4-c663f77637d9",
+                                "title": "Drug History",
+                                "name": "drugHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/drugHistory/drugHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/drugHistory/drugHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "65257e6d-f638-0cd6-09c1-4e63fea85b44",
+                                "title": "Alcohol History",
+                                "name": "alcoholHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/alcoholHistory/alcoholHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/alcoholHistory/alcoholHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "9d78af46-93da-a4d9-f18b-26359b46dc1a",
+                                "title": "Previous Medical History",
+                                "name": "previousMedicalHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/previousMedicalHistory/previousMedicalHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/previousMedicalHistory/previousMedicalHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "ebe51265-258d-0e44-3f52-75f4e22b41db",
+                                "title": "Previous Surgical History",
+                                "name": "previousSurgicalHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/previousSurgicalHistory/previousSurgicalHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/previousSurgicalHistory/previousSurgicalHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "ea430551-f775-0dcb-4482-c39ba8dd61e2",
+                                "title": "Family History",
+                                "name": "familyHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/familyHistory/familyHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/familyHistory/familyHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "c28e6572-a1a4-8e33-7cdb-f6ad22c1658d",
+                                "title": "Education",
+                                "name": "education",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/education/education.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/education/education.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "8dbfca90-e165-19c7-2782-569bdb0aa1fe",
+                                "title": "Occupational History",
+                                "name": "occupationalHistory",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/occupationalHistory/occupationalHistory.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/occupationalHistory/occupationalHistory.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "9299b50a-bff7-436c-7473-08deb5efdbe3",
+                                "title": "Allergies",
+                                "name": "allergies",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/allergies/allergies.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/allergies/allergies.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            },
+                            {
+                                "id": "865c3dde-18c3-da87-0321-16e2056a09c0",
+                                "title": "Medications",
+                                "name": "medications",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "templateUrl": "./assets/json/patientHistory/medications/medications.html",
+                                "templateViewModelUrl": "./assets/json/patientHistory/medications/medications.json",
+                                "children": [],
+                                "parentId": "91d5dd27-2e8e-c459-873e-ebf6e62835b1",
+                                "storeDataType": "historicalDataStore"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "f90c12a7-d19f-8695-4399-07d16b59cb4a",
+                        "nodeType": 2,
+                        "name": "chiefComplaint",
+                        "title": "Chief Complaint",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [
+                            {
+                                "id": "57d57c9f-d298-f804-8f59-56f7ba927c0a",
+                                "nodeType": 3,
+                                "name": "hxHpiPain",
+                                "title": "HX HPI Pain",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "parentId": "f90c12a7-d19f-8695-4399-07d16b59cb4a",
+                                "storeDataType": "historicalDataStore",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"hx\", \"templateName\": \"hpiPain\"}"
+                            },
+                            {
+                                "id": "4e860d0f-f7b8-998f-8f85-b6f498015594",
+                                "nodeType": 3,
+                                "name": "hxHpiCopd",
+                                "title": "HX HPI COPD",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "parentId": "4e860d0f-f7b8-998f-8f85-b6f498015594",
+                                "storeDataType": "historicalDataStore",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"hx\", \"templateName\": \"hpiCopd\"}"
+                            }
+                        ],
+                        "parentId": "ffcd1285-f253-b09e-d231-1711a9d952e7"
+                    },
+                    {
+                        "id": "5eb895f1-4c39-fba4-e70c-91a48f2c9ee2",
+                        "nodeType": 3,
+                        "name": "vitalSigns",
+                        "title": "Vital Signs",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "historicalDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7",
+                        "template": "<vital-signs [patientConfigurationNodeDataModel]='nodeData'></vital-signs>"
+                    },
+                    {
+                        "id": "71bbf322-c43c-ec41-6c98-0611594b420b",
+                        "nodeType": 2,
+                        "name": "reviewOfSystems",
+                        "title": "Review Of Systems",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [
+                            {
+                                "id": "a21bda4b-ee0b-4e10-878e-f47bd6ed3823",
+                                "nodeType": 2,
+                                "name": "rosintegumentry",
+                                "title": "Integumentry",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "71bbf322-c43c-ec41-6c98-0611594b420b",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"ros\", \"templateName\": \"integumentry\"}"
+                            }
+                        ],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7"
+                    },
+                    {
+                        "id": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                        "nodeType": 2,
+                        "name": "physicalExams",
+                        "title": "Physical Exams",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [
+                            {
+                                "id": "8f0764f5-c10f-40f6-8f5a-a0a2faa87080",
+                                "nodeType": 2,
+                                "name": "physicalExamGeneral",
+                                "title": "General",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"general\"}"
+                            },
+                            {
+                                "id": "954113be-0068-9599-2e3a-f9d3991e9e6f",
+                                "nodeType": 2,
+                                "name": "physicalExamNeurological",
+                                "title": "Neurological",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"neurological\"}"
+                            },
+                            {
+                                "id": "2a7947f0-176a-3d63-3397-67254d34aec7",
+                                "nodeType": 2,
+                                "name": "physicalExamHead",
+                                "title": "Head",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"head\"}"
+                            },
+                            {
+                                "id": "4d90d719-0139-0f78-dec3-ac04cdfc063a",
+                                "nodeType": 2,
+                                "name": "physicalExamEye",
+                                "title": "Eye",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"eye\"}"
+                            },
+                            {
+                                "id": "2adcb7eb-b687-611f-7799-565bad1e64cf",
+                                "nodeType": 2,
+                                "name": "physicalExamNose",
+                                "title": "Nose",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"nose\"}"
+                            },
+                            {
+                                "id": "24f30ace-890b-ea3d-39c1-68475a367688",
+                                "nodeType": 2,
+                                "name": "physicalExamEar",
+                                "title": "Ear",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"ear\"}"
+                            },
+                            {
+                                "id": "2e4445a9-ef86-1609-9fcb-b267052031d7",
+                                "nodeType": 2,
+                                "name": "physicalExamThroat",
+                                "title": "Throat",
+                                "isVisible": true,
+                                "roles": "physician",
+                                "children": [],
+                                "storeDataType": "historicalDataStore",
+                                "parentId": "6fac01f8-5f16-5eeb-32ed-b4e8eb72d0d7",
+                                "template": "<paragraph-template [templateType]='templateType' [templateName]='templateName' [patientConfigurationNodeDataModel]='nodeData'></paragraph-template>",
+                                "templateViewModelJsonString": "{\"templateType\":\"physicalExam\", \"templateName\": \"throat\"}"
+                            }
+                        ],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7"
+                    },
+                    {
+                        "id": "874b0541-502c-030b-1175-8f6497b3c78d",
+                        "nodeType": 2,
+                        "name": "assessment",
+                        "title": "Assessment",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7"
+                    },
+                    {
+                        "id": "de169177-2643-5dbf-948f-755991f6d57a",
+                        "nodeType": 2,
+                        "name": "mdm",
+                        "title": "MDM",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7"
+                    },
+                    {
+                        "id": "abccb09e-4d04-3051-d414-2e5a7492940f",
+                        "nodeType": 2,
+                        "name": "plan",
+                        "title": "Plan",
+                        "isVisible": true,
+                        "roles": "physician",
+                        "children": [],
+                        "storeDataType": "persistentDataStore",
+                        "parentId": "0df67882-b7ca-3f30-6d0f-8395a05b3cb7"
+                    }
+                ]
+            }
+        ]
+    }
+}

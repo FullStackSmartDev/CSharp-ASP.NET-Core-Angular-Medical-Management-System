@@ -1,0 +1,175 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div *ngIf="!isSignedOff" class="card-header">
+                <a href="" (click)="openBaseVitalSignsCreationForm($event)">{{ isNewBaseVitalSigns ? 'Fill Vital Signs'
+                    : 'Modify Vital Signs' }}</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Weight, lbs</th>
+                            <th scope="col">Height, inches</th>
+                            <th scope="col">BMI, %</th>
+                            <th scope="col">Dominant Hand</th>
+                            <th scope="col">Oxygen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ baseVitalSigns.Weight ? baseVitalSigns.Weight : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.Height ? baseVitalSigns.Height : 'not set' }}</td>
+                            <td>{{ bmi ? bmi : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.DominantHand ? baseVitalSigns.DominantHand : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.OxygenUse || baseVitalSigns.OxygenAmount ?
+                                baseVitalSigns.OxygenAmount + ' / ' + baseVitalSigns.OxygenUse : 'not set' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-bordered margin-top-15">
+                    <thead>
+                        <tr>
+                            <th scope="col">Location</th>
+                            <th scope="col">Calf, cm</th>
+                            <th scope="col">Thigh, cm</th>
+                            <th scope="col">Forearm, cm</th>
+                            <th scope="col">Bicep, cm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Right</th>
+                            <td>{{ baseVitalSigns.RightCalf ? baseVitalSigns.RightCalf : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.RightThigh ? baseVitalSigns.RightThigh : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.RightForearm ? baseVitalSigns.RightForearm : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.RightBicep ? baseVitalSigns.RightBicep : 'not set' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Left</th>
+                            <td>{{ baseVitalSigns.LeftCalf ? baseVitalSigns.LeftCalf : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.LeftThigh ? baseVitalSigns.LeftThigh : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.LeftForearm ? baseVitalSigns.LeftForearm : 'not set' }}</td>
+                            <td>{{ baseVitalSigns.LeftBicep ? baseVitalSigns.LeftBicep : 'not set' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+</div>
+<dx-popup #createUpdateBaseVitalSignsPopup class="popup" [width]="500" [height]="500" [dragEnabled]="false" [showTitle]="true"
+    [title]="isNewBaseVitalSigns ? 'Fill Vital Signs' : 'Modify Vital Signs'" [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened"
+    (onDisposing)="onCreateUpdatePopupDisposing()"
+    (onShowing)="onCreateUpdatePopupShowing()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div class="row">
+                <div class="col-md-12">
+                    <form (submit)="createUpdateBaseVitalSigns($event)">
+                        <div class='dx-fieldset'>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Weight, lbs:</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.Weight">
+                                    </dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Height, inches</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.Height"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class='dx-field'>
+                                <div class='dx-field-label'>Dominant Hand</div>
+                                <div class='dx-field-value'>
+                                    <dx-select-box [(value)]='baseVitalSignsCopy.DominantHand' [items]='dominantHand'>
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                            <div class="dx-fieldset-header">Left</div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Bicep, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.LeftBicep"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Forearm, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.LeftForearm"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Thigh, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.LeftThigh"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Calf, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.LeftCalf"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-fieldset-header">Right</div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Bicep, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.RightBicep"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Forearm, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.RightForearm"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Thigh, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.RightThigh"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class="dx-field">
+                                <div class="dx-field-label">Calf, cm</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.RightCalf"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class='dx-field'>
+                                <div class='dx-field-label'>Is Oxygen Use :</div>
+                                <div class='dx-field-value'>
+                                    <dx-check-box [(value)]='isOxygenUse'></dx-check-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="isOxygenUse" class="dx-fieldset">
+                            <div class="dx-field">
+                                <div class="dx-field-label">Amount, lpm :</div>
+                                <div class="dx-field-value">
+                                    <dx-number-box [(value)]="baseVitalSignsCopy.OxygenAmount"></dx-number-box>
+                                </div>
+                            </div>
+                            <div class='dx-field'>
+                                <div class='dx-field-label'>Use:</div>
+                                <div class='dx-field-value'>
+                                    <dx-select-box [(value)]='baseVitalSignsCopy.OxygenUse' [items]='oxygenUse.values'>
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dx-fieldset">
+                            <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true">
+                            </dx-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

@@ -1,0 +1,93 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openTemplateLookupItemCreationForm()">New Lookup Item</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-8">
+        <dx-data-grid [selectedRowKeys]="selectedLookupItems"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onLookupItemSelected($event)"
+            [wordWrapEnabled]="true"
+            #lookupItemDataGrid
+            [dataSource]="lookupItemsDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="TemplateLookupItem_Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column alignment="left" caption="Lookup Item" dataField="TemplateLookupItem_Title" dataType="string"
+                [filterOperations]="applicationConfiguration.searchConfiguration">
+            </dxi-column>
+
+            <dxi-column alignment="left" caption="Category" dataField="TemplateLookupItemCategory_Title" dataType="string"
+                [filterOperations]="applicationConfiguration.searchConfiguration">
+            </dxi-column>
+
+            <dxi-column caption="Is Active" alignment="center" dataType="boolean" dataField="TemplateLookupItem_IsActive">
+            </dxi-column>
+
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteLookupItemTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let lookupItem of 'deleteLookupItemTemplate'">
+                <span class="action delete-action" (click)="deleteLookupItem(lookupItem.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup 
+    #createUpdateTemplateTypePopup 
+    class="popup" [width]="700" [height]="650" [dragEnabled]="false" [showTitle]="true"
+    title="Create / Update Lookup Item" [closeOnOutsideClick]="false" 
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isCreateUpdatePopupOpened" class="row">
+            <div class="col-md-12">
+                <dx-form
+                    [colCount]="2"
+                    #lookupItemCreationForm
+                    [(formData)]="lookupItem"
+                    (onFieldDataChanged)="onLookupItemFieldChanged($event)">
+        
+                    <dxi-item [colSpan]="2" dataField="Title">
+                        <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                        <dxi-validation-rule *ngIf="isNewLookupItem" type="custom" [validationCallback]="validateGeneratedName">
+                        </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="2" [label]="{text: 'Category'}" dataField="TemplateLookupItemCategoryId" editorType="dxLookup"
+                        [editorOptions]="{ displayExpr: 'Title', valueExpr: 'Id', dataSource: categoryDataSource}">
+                        <dxi-validation-rule type="required" message="Category is required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="2" [template]="'LookupItemTemplateListTemplate'"></dxi-item>
+        
+                    <dxi-item dataField="IsActive"></dxi-item>
+
+                    <div *dxTemplate="let data of 'LookupItemTemplateListTemplate'">
+                        <lookup-item-list
+                            [lookupItemListJsonString]="jsonValues"
+                            (onLookupItemListChanged)="onLookupItemListChanged($event)">
+                        </lookup-item-list>
+                    </div>
+                </dx-form>
+            </div>
+            <div class="col-md-12 text-left margin-top-15">
+                <dx-button (onClick)="createUpdateLookupItem()" text="SAVE" type="default"></dx-button>
+            </div>
+        </div>
+    </div>
+</dx-popup>

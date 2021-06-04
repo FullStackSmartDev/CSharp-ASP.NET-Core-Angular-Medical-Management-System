@@ -1,0 +1,24 @@
+<div class="container-fluid">
+    <nav class="navbar navbar-dark bg-dark" style="background-color: #e3f2fd;">
+        <span class="navbar-brand mb-0 h1">MEDICO</span>
+        <div class="navbar-brand w-25">
+            <company-switcher *ngIf="isCompanySwitcherVisible"></company-switcher>      
+        </div>
+        <span class="mr-auto"></span>
+        <!-- <a  routerLinkActive="active-link" routerLink="/video-chat"
+            class="nav-link">VIDEO CHAT</a>  -->
+        <a *ngIf="isAppointmentsLinkVisible" routerLinkActive="active-link" routerLink="/appointments"
+            class="nav-link">APPOINTMENTS</a>
+        <a *ngIf="isPatientsLinkVisible" routerLinkActive="active-link" routerLink="/patients-management"
+            class="nav-link">PATIENTS</a>
+        <a *ngIf="isAdministrationLinkVisible" routerLinkActive="active-link" routerLink="/administration"
+            class="nav-link">ADMINISTRATION</a>
+        <a *ngIf="isCompaniesManagementLinkVisible" routerLinkActive="active-link" routerLink="/companies-management"
+            class="nav-link">COMPANIES</a>
+        <a *ngIf="isCompaniesManagementLinkVisible" routerLinkActive="active-link" routerLink="/library"
+            class="nav-link">LIBRARY</a>
+        <button *ngIf="isLogoutLinkVisible" type="button" (click)="logout($event)" class="btn btn-sm btn-outline-light">
+            LOG OUT
+        </button>
+    </nav>
+</div>

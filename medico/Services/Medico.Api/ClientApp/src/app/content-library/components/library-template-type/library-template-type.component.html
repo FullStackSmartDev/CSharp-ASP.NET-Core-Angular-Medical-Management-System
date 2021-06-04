@@ -1,0 +1,71 @@
+<div class="row">
+    <div class="mt-md-2 col-md-2">
+        <button type="button" (click)="openTemplateTypeForm()" class="btn btn-sm btn-outline-secondary">NEW TEMPLATE TYPE</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-8">
+        <dx-data-grid #templateTypeDataGrid
+            [selectedRowKeys]="selectedTemplateTypes"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onTemplateTypeSelected($event)"
+            [wordWrapEnabled]="true"
+            [dataSource]="templateTypeDataSource"
+            [showBorders]="true"
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging  [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column dataField="title" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column dataField="isActive" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+
+            <dxi-column dataField="isPredefined" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+
+            <dxi-column alignment="center" caption="Actions" cellTemplate="actionsTemplateTypeTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let templateType of 'actionsTemplateTypeTemplate'">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button *ngIf="!templateType.data.isPredefined" (click)="deleteTemplateType(templateType.data, $event)" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    <button *ngIf="templateType.data.isActive" (click)="deactivateTemplateType(templateType.data, $event)" class="btn btn-outline-danger"><i class="fas fa-minus"></i></button>
+                    <button *ngIf="!templateType.data.isActive" (click)="activateTemplateType(templateType.data, $event)" class="btn btn-outline-secondary"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #templateTypePopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="TEMPLATE TYPE" [closeOnOutsideClick]="false" [(visible)]="isTemplateTypePopupOpened"
+    (onHidden)="onTemplateTypePopupHidden()">
+    <div id="template-type-form-popup" *dxTemplate="let data of 'content'">
+            <div *ngIf="isTemplateTypePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form [colCount]="4" [height]="460" #templateTypeForm [(formData)]="templateType">
+                    
+                        <dxi-item [colSpan]="3" [editorOptions]="{ readOnly: !isNewTemplateType &&  templateType.isPredefined }" dataField="title">
+                            <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [validationCallback]="validateTitleExistence">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="createUpdateTemplateType()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                </div>
+            </div>
+    </div>
+</dx-popup>

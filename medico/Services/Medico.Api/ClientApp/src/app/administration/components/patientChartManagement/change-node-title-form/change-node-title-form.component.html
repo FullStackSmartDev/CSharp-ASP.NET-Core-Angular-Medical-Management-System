@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-form #changeTitleNodeForm [(formData)]="node" [height]="460">
+            <dxi-item dataField="title">
+                <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+            </dxi-item>
+        </dx-form>
+    </div>
+
+    <div class="col-md-12 text-right mt-md-2">
+        <button type="button" (click)="updateNodeTitle()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+    </div>
+</div>

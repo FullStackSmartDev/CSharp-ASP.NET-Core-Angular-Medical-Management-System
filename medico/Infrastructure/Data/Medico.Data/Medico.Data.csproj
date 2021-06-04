@@ -1,0 +1,160 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190703000522_Initial.cs" />
+    <Compile Remove="Migrations\20190704211814_RoomView_View.cs" />
+    <Compile Remove="Migrations\20190704213234_Room_Table.cs" />
+    <Compile Remove="Migrations\20190704213510_RoomView_View.cs" />
+    <Compile Remove="Migrations\20190705204918_Room_Table_RoomView_View.cs" />
+    <Compile Remove="Migrations\20190705205239_RoomView_View.cs" />
+    <Compile Remove="Migrations\20190705224543_MedicoApplicationUser_Table.cs" />
+    <Compile Remove="Migrations\20190705231612_MedicoApplicationUser_Table.cs" />
+    <Compile Remove="Migrations\20190706103036_MedicoApplicationUser_Table.cs" />
+    <Compile Remove="Migrations\20190706230450_test.cs" />
+    <Compile Remove="Migrations\20190708071430_SelectableList_Table.cs" />
+    <Compile Remove="Migrations\20190708071748_SelectableList_Table.cs" />
+    <Compile Remove="Migrations\20190708072750_SelectableListView_View.cs" />
+    <Compile Remove="Migrations\20190709221510_TemplateType_Table.cs" />
+    <Compile Remove="Migrations\20190711231925_Template_Table.cs" />
+    <Compile Remove="Migrations\20190716014658_ChiefComplaint_ChiefComplaintTemplate_Keyword_ChiefComplaintRelatedKeyword_ChiefComplaintKeyword_Tables.cs" />
+    <Compile Remove="Migrations\20190719010841_Patient_PatientInsurance_Admission_Appointment_SignatureInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190719011331_Patient_PatientInsurance_Admission_Appointment_SignatureInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190719011734_Patient_PatientInsurance_Admission_Appointment_SignatureInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190719050256_Patient_PatientInsurance_Appointment_Admission_SignatureInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190726122746_SelectableListTrackItem_Table.cs" />
+    <Compile Remove="Migrations\20190730015027_MedicalHistory_SurgicalHistory_Tables.cs" />
+    <Compile Remove="Migrations\20190730191833_EducationHistory_Table.cs" />
+    <Compile Remove="Migrations\20190730235759_OccupationalHistory_Table.cs" />
+    <Compile Remove="Migrations\20190731025004_AllergyMedication_Tables.cs" />
+    <Compile Remove="Migrations\20190919205635_Replace_Medication_Name_View_With_Medication_Name_Table.cs" />
+    <Compile Remove="Migrations\20190919225006_Fulltext_search_index_MedicationName_Table.cs" />
+    <Compile Remove="Migrations\20190927113905_MedicationClass_MedicationClassMedicationName_MedicationItemInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190927120751_MedicationClass_MedicationClassMedicationName_MedicationItemInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190927121235_MedicationClass_MedicationClassMedicationName_MedicationItemInfo_Tables.cs" />
+    <Compile Remove="Migrations\20190927190108_T.cs" />
+    <Compile Remove="Migrations\20190927223739_MedicationPrescription_Table.cs" />
+    <Compile Remove="Migrations\20191012152006_MedicationsUpdateItem_Table.cs" />
+    <Compile Remove="Migrations\20191013130545_Fill_NdcCode_Table.cs" />
+    <Compile Remove="Migrations\20191022211457_Add_ZipCodeType_Column_To_Patient_Table.cs" />
+    <Compile Remove="Migrations\20191026143729_AllegationsNotesStatus.cs" />
+    <Compile Remove="Migrations\20191110190105_test.cs" />
+    <Compile Remove="Migrations\20191115011601_VitalSignsNotes_Table.cs" />
+    <Compile Remove="Migrations\20191115011700_VitalSignsNotes_Table.cs" />
+    <Compile Remove="Migrations\20191225155507_PatientChartConfig_Table.cs" />
+    <Compile Remove="Migrations\20191225155739_PatientChartConfig_Table.cs" />
+    <Compile Remove="Migrations\20191228215627_test.cs" />
+    <Compile Remove="Migrations\20200101191414_test.cs" />
+    <Compile Remove="Migrations\20200101191742_test.cs" />
+    <Compile Remove="Migrations\20200208144817_Add_PatientChartNodeDocument_Table.cs" />
+    <Compile Remove="Migrations\20200208145225_Add_PatientChartNodeDocument_Table.cs" />
+    <Compile Remove="Migrations\20200208151841_Add_PatientChartNodeDocument_Table.cs" />
+    <Compile Remove="Migrations\20200208154655_Add_PatientChartNodeDocument_Table.cs" />
+    <Compile Remove="Migrations\20200208154746_Add_PatientChartDocumentNode_Table.cs" />
+    <Compile Remove="Migrations\20200209110302_Add_PatientChartNodeDocument_Table.cs" />
+    <Compile Remove="Migrations\20200216123621_Create_Patient_Chart_Document_Nodes_For_Companies.cs" />
+    <Compile Remove="Migrations\20200224062734_LibrarySelectableList_LibraryTemplate_Tables.cs" />
+    <Compile Remove="Migrations\20200224062734_LibrarySelectableList_LibraryTemplate_Tables.Designer.cs" />
+    <Compile Remove="Migrations\20200227215353_Library_Support.cs" />
+    <Compile Remove="Migrations\20200227230539_Library_Support.cs" />
+    <Compile Remove="Migrations\20200227231432_Library_Support.cs" />
+    <Compile Remove="Migrations\20200229104215_Library_Support.cs" />
+    <Compile Remove="Migrations\20200229110152_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229111959_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229112223_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229115320_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229115925_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229121135_Seed_Data_Library_Content.cs" />
+    <Compile Remove="Migrations\20200229151811_Library_Support.cs" />
+    <Compile Remove="Migrations\20200307161416_Library_Support.cs" />
+    <Compile Remove="Migrations\20200308085109_Library_Support.cs" />
+    <Compile Remove="Migrations\20200308085109_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200310190010_Library_Support.cs" />
+    <Compile Remove="Migrations\20200310190010_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200310201807_Library_Support.cs" />
+    <Compile Remove="Migrations\20200310201807_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200310202131_Library_Support.cs" />
+    <Compile Remove="Migrations\20200310202131_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200310203402_Library_Support.cs" />
+    <Compile Remove="Migrations\20200310203402_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200319232600_gfg.cs" />
+    <Compile Remove="Migrations\20200319232600_gfg.Designer.cs" />
+    <Compile Remove="Migrations\20200321000618_Drop_CategoryName_And_SelectableListName_From_CategorySelectableList_View.cs" />
+    <Compile Remove="Migrations\20200321000618_Drop_CategoryName_And_SelectableListName_From_CategorySelectableList_View.Designer.cs" />
+    <Compile Remove="Migrations\20200321113239_Library_Support.cs" />
+    <Compile Remove="Migrations\20200321113239_Library_Support.Designer.cs" />
+    <Compile Remove="Migrations\20200321113401_Drop_CategoryName_And_SelectableListName_From_CategorySelectableList_View.cs" />
+    <Compile Remove="Migrations\20200321113401_Drop_CategoryName_And_SelectableListName_From_CategorySelectableList_View.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Migrations\MedicoContextModelSnapshot.cs~RF193594f1.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Migrations\MedicoContextModelSnapshot.cs~RF193594f1.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Migrations\MedicoContextModelSnapshot.cs~RF193594f1.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.hosting.abstractions\2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.entityframeworkcore\2.2.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.abstractions\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Domain\Medico.Domain\Medico.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="SqlScripts\cptCodes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\icd10Codes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\Medication.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\medicationClasses.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\medicationClassesNames.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\medicationItemsInfo.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\medicationNames.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SqlScripts\ndcCodes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

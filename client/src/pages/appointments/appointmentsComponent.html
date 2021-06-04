@@ -1,0 +1,157 @@
+<ion-content padding>
+  <appointments-filter (onFilterChanged)="onFilterChanged($event)" [startDate]="startDate" [endDate]="endDate"></appointments-filter>
+  <div class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-scheduler 
+        #appointmentScheduler
+        (onAppointmentAdded)="onAppointmentAdded($event)"
+        (onAppointmentUpdated)="onAppointmentUpdated($event)"
+        (onAppointmentClick)="onAppointmentClick($event)"
+        [startDayHour]="applicationConfiguration.startWorkingHour" 
+        [endDayHour]="applicationConfiguration.endWorkingHour"
+        [dataSource]="appointmentDataSource"
+        [views]="schedulerAvailableViews" 
+        [currentView]="currentAppointmentView"
+        [firstDayOfWeek]="0"
+        [currentDate]="currentDate"
+        [crossScrollingEnabled]="true" 
+        [height]="400"
+        (onOptionChanged)="appointmentSchedulerOptionChanged()"
+        (onAppointmentFormCreated)="onAppointmentFormCreated($event)"
+        [showAllDayPanel]="false">
+        
+        <dxo-editing [allowDeleting]="false" dateCellTemplate="dateCellTemplate"></dxo-editing>
+        <div *dxTemplate="let data of 'dateCellTemplate'">
+          <day-busyness [daySchedulerInfo]="data"></day-busyness>
+        </div>
+      </dx-scheduler>
+    </div>
+  </div>
+  <div class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid
+        #appointmentsGrid
+        [showBorders]="true" id="gridContainer" 
+        [dataSource]="appointmentGridDataSource"
+        [hoverStateEnabled]="true" 
+        [selectedRowKeys]="selectedAppointment"
+        (onSelectionChanged)="onAppointmentChanged($event)">
+
+        <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="Patient" cellTemplate="patientNameTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="DateOfBirth" type="date" cellTemplate="patientDoBTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="LastVisit" cellTemplate="lastVisitTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="Physician" cellTemplate="physicianNameTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="Nurse" cellTemplate="nurseNameTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="StartTime" cellTemplate="startDateTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="EndTime" cellTemplate="endDateTemplate"></dxi-column>
+        <dxi-column [allowSorting]="false" caption="Location" dataField="LocationName"></dxi-column>
+        <dxi-column [allowSorting]="false" caption="Room" dataField="RoomName"></dxi-column>
+        <dxi-column [allowSorting]="false" dataField="AppointmentStatus" dataType="string"></dxi-column>
+        <dxi-column caption="Previous Admissions" cellTemplate="previousAdmissionTemplate"></dxi-column>
+
+        <dxo-remote-operations [paging]="true">
+        </dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+        </dxo-pager>
+
+        <div *dxTemplate="let appointment of 'lastVisitTemplate'">
+          <appointment-last-visit [patientId]="appointment.data.PatientId" [startDate]="appointment.data.StartDate">
+          </appointment-last-visit>
+        </div>
+
+        <div *dxTemplate="let appointment of 'nurseNameTemplate'">
+          {{appointment.data.NurseFirstName}} {{appointment.data.NurseLastName}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'physicianNameTemplate'">
+          {{appointment.data.PhysicianFirstName}} {{appointment.data.PhysicianLastName}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'patientNameTemplate'">
+          {{appointment.data.PatientFirstName}} {{appointment.data.PatientLastName}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'patientDoBTemplate'">
+          {{appointment.data.PatientDateOfBirth | date}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'startDateTemplate'">
+          {{appointment.data.StartDate | time}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'endDateTemplate'">
+          {{appointment.data.EndDate | time}}
+        </div>
+
+        <div *dxTemplate="let appointment of 'previousAdmissionTemplate'">
+          <div class="text-center">
+            <dx-button
+              [ngClass]="hasPatientPreviousAdmissions(appointment.data.Id, appointment.data.PatientId) ? 'dx-button-success' : 'dx-button-danger'"
+              icon="card" 
+              (onClick)="showPreviousAdmissions($event, appointment.data.PatientId, appointment.data.StartDate)">
+            </dx-button>
+          </div>
+        </div>
+        <dxo-selection mode="single"></dxo-selection>
+      </dx-data-grid>
+    </div>
+  </div>
+  <dx-popup 
+    class="popup" 
+    [(visible)]="isAdmissionPopupVisible"
+    [width]="600" 
+    [height]="400" 
+    [showTitle]="true" 
+    title="Patient Previous Admissions"
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+          <div class="list-container">
+            <dx-list 
+              [items]="patientPreviousAdmissions" 
+              height="100%"
+              selectionMode="single"
+              (onSelectionChanged)="onPreviousAdmissionSelected($event)">
+              <div *dxTemplate="let item of 'item'">
+                <div class="row">
+                  <div class="col-md-2 text-right">
+                    {{item.StartDate | date}}
+                  </div>
+                  <div class="col-md-2 text-right">
+                    {{item.AppointmentStatus}}
+                  </div>
+                  <div class="col-md-3 text-right">
+                    {{item.LocationName}}
+                  </div>
+                  <div class="col-md-3 text-right">
+                    {{item.PhysicianFirstName + " " + item.PhysicianLastName}}
+                  </div>
+                </div>
+              </div>
+            </dx-list>
+        </div>
+        </dx-scroll-view>
+    </div>
+  </dx-popup>
+  <dx-popup 
+    class="popup" 
+    [(visible)]="isManageAllegationsPopupVisible"
+    [width]="900" 
+    [height]="600" 
+    [showTitle]="true" 
+    title="Manage Allegations" 
+    [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+          <appointment-allegations *ngIf="isManageAllegationsPopupVisible" 
+            [appointmentData]="appointmentData">
+          </appointment-allegations>
+        </dx-scroll-view>
+    </div>
+  </dx-popup>
+</ion-content>

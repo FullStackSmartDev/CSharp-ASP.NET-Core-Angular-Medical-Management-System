@@ -1,0 +1,10 @@
+<div class = row>
+    <div *ngIf="rtcService.connected && !joined" class = "offset-md-4 col-md-4 mt-2">
+        <dx-text-box [(value)]="userName"></dx-text-box>
+        <button class="btn btn-outline-primary mt-2" [disabled]="!userName || userName === ''" (click)="connect()">Connect</button>
+    </div>
+    <div *ngIf="joined" class = "offset-md-4 col-md-4 mt-2">
+        <button class="btn btn-outline-danger mt-2" (click)="disconnect()">Disconnect</button>
+    </div>
+</div>
+<video-member *ngFor="let user of users;trackBy: trackByFn" [user]="user" style="margin-left: 12px"></video-member>

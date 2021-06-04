@@ -1,0 +1,73 @@
+<div>
+    <div *ngIf="isPatientChartHeaderReady" class="row">
+        <div class="col-md-12">
+            <div class="d-flex h6">
+                <div class="p-2 bg-white">{{dateOfService | date}}</div>
+                <div class="p-2 bg-secondary text-white border-white border-right">{{patientName}}</div>
+                <div class="p-2 bg-secondary text-white border-white border-left border-right">{{patientDateOfBirth | date}}
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-left border-right">{{patientDateOfBirth | age}}</div>
+                <div class="p-2 bg-secondary text-white border-white border-left border-right">
+                    <span class="text-uppercase">height, </span><span>inch:
+                    </span><span>{{patientVitalSigns.height}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left">
+                    <span class="text-uppercase">weight, </span><span>lbs:
+                    </span><span>{{patientVitalSigns.weight}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left">
+                    <span class="text-uppercase">bmi, </span><span>%: </span><span>{{patientVitalSigns.bmi}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left">
+                    <span class="text-uppercase">pulse: </span><span>{{patientVitalSigns.pulse | notSet}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left">
+                    <span class="text-uppercase">bp:
+                    </span><span>{{patientVitalSigns.bloodPressure.systolic | notSet}} /
+                        {{patientVitalSigns.bloodPressure.diastolic | notSet}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left">
+                    <span class="text-uppercase">resp: </span><span>{{patientVitalSigns.resp | notSet}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-right border-left w-auto">
+                    <span class="text-uppercase">O2 SAT, </span><span>%:
+                    </span><span>{{patientVitalSigns.o2Sat | notSet}}</span>
+                </div>
+                <div class="p-2 bg-secondary text-white border-white border-left">
+                    <ng-container *ngIf="isPatientHaveAllergies">
+                        <div>
+                            <span class="text-uppercase">Allergies</span>
+                            <span id="allergies" (click)="togglePatientAllergiesPopover()" class="pl-2">
+                                <i [ngClass]="isPatientAllergiesPopoverVisible ? 'dx-icon-chevronup' : 'dx-icon-chevrondown'"></i>
+                            </span>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="!isPatientHaveAllergies">
+                        <span>{{allergiesDefaultValue}}</span>
+                    </ng-container>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div *ngIf="!isPatientChartHeaderReady" class="row">
+        <div class="col-md-12 text-left">
+            <b>Loading...</b>
+        </div>
+    </div>
+</div>
+<dx-popover target="#allergies" position="bottom" [width]="300" [showTitle]="false"
+    [(visible)]="isPatientAllergiesPopoverVisible">
+    <div *dxTemplate="let data = model of 'content'">
+        <div *ngIf="!patientAllergies.length">
+            <h6>Patient have no allergies.</h6>
+        </div>
+        <div *ngIf="patientAllergies.length">
+            <div class="text-left margin-top-5"
+                *ngFor="let allergy of patientAllergies; let i = index">
+                <p>{{allergy}}</p>
+            </div>
+        </div>
+    </div>
+</dx-popover>

@@ -1,0 +1,227 @@
+<div *ngIf="canRenderComponent">
+    <div class="row mt-md-2">
+        <div class="col-md-2">
+            <button type="button" (click)="openUserForm()" class="btn btn-sm btn-outline-secondary">NEW EMPLOYEE</button>
+        </div>
+    </div>
+    <div class="row mt-md-2">
+        <div class="col-md-12">
+            <dx-data-grid 
+                [selectedRowKeys]="selectedUsers"
+                [hoverStateEnabled]="true"
+                (onSelectionChanged)="onUserSelected($event)"
+                [wordWrapEnabled]="true" 
+                #userGrid
+                [dataSource]="userDataSource"
+                [showBorders]="true">
+    
+                <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+    
+                <dxo-pager 
+                    [showPageSizeSelector]="true" 
+                    [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+                </dxo-pager>
+    
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+    
+                <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+    
+                <dxi-column alignment="left" dataField="firstName" dataType="string" [filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+    
+                <dxi-column alignment="left" dataField="lastName" dataType="string" [filterOperations]="searchConfiguration.availableFilters"></dxi-column>
+    
+                <dxi-column alignment="center" cellTemplate="dateTemplate" dataField="dateOfBirth" dataType="date" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+                
+                <dxi-column alignment="center" cellTemplate="ssnTemplate" dataField="ssn" dataType="string"></dxi-column>
+                <div class="text-center" *dxTemplate="let ssn of 'ssnTemplate'">        
+                    <span>{{ssn.data.ssn | mask: validationMasks.ssn}}</span>
+                </div>
+    
+                <dxi-column alignment="center" cellTemplate="stateTemplate" dataField="state" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+    
+                <dxi-column alignment="center" dataField="city" dataType="string"></dxi-column>
+    
+                <dxi-column alignment="center" cellTemplate="employeeTypeTemplate" dataField="employeeType" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+    
+                <dxi-column caption="Role" alignment="center" dataField="roleName" dataType="string" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+    
+                <dxi-column alignment="center" [allowSorting]="false" [allowFiltering]="false" dataField="isActive" dataType="boolean"></dxi-column>
+    
+                <dxi-column alignment="center" caption="Reset password" cellTemplate="resetPasswordTemplate"></dxi-column>
+    
+                <dxi-column alignment="center" caption="Delete" cellTemplate="deleteUserTemplate"></dxi-column>
+    
+                <div class="text-center" *dxTemplate="let user of 'deleteUserTemplate'">        
+                    <button type="button" (click)="deleteUser(user.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+                </div>
+    
+                <div class="text-center" *dxTemplate="let user of 'resetPasswordTemplate'">        
+                    <button type="button" (click)="openResetPasswordPopup(user.data, $event)" class="btn btn-sm btn-outline-primary">RESET </button>
+                </div>
+    
+                <div class="text-center" *dxTemplate="let employeeType of 'employeeTypeTemplate'">        
+                    {{ getEmployeeType(employeeType) }}
+                </div>
+    
+                <div class="text-center" *dxTemplate="let state of 'stateTemplate'">        
+                    {{ getState(state) }}
+                </div>
+    
+                <div class="text-center" *dxTemplate="let date of 'dateTemplate'">        
+                    {{ date.value | localDate }}
+                </div>
+    
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+    </div>
+    <dx-popup
+        #userPopup
+        class="popup"
+        [width]="1000"
+        [height]="710"
+        [dragEnabled]="false"
+        [showTitle]="true" title="EMPLOYEE"
+        [closeOnOutsideClick]="false"
+        [(visible)]="isUserPopupOpened"
+        (onHidden)="onUserPopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <dx-scroll-view [scrollByContent]="true">
+                <div *ngIf="isUserPopupOpened" class="row">
+                    <div class="col-md-12">
+                        <dx-form #userForm [(formData)]="user"
+                            (onFieldDataChanged)="onUserFieldChanged($event)"> 
+                            <dxi-item itemType="tabbed">
+                                <dxi-tab [colCount]="2" title="Base Info">
+                                    <dxi-item dataField="firstName">
+                                        <dxi-validation-rule type="required" message="First Name is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="lastName">
+                                        <dxi-validation-rule type="required" message="Last Name is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="middleName"></dxi-item>
+    
+                                    <dxi-item [editorOptions]="{ readOnly: !isNewUser }" dataField="email">
+                                        <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="email" message="Email has incorrect format"></dxi-validation-rule>
+                                        <dxi-validation-rule *ngIf="isNewUser" type="custom" message="Email is already existed in company" [validationCallback]="validateEmailExistence">
+                                    </dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item *ngIf="isNewUser" dataField="password">
+                                        <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="custom" [message]="passwordFormatValidationMessage" [validationCallback]="validatePasswordComplexity">
+                                        </dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item *ngIf="isNewUser" dataField="passwordCopy">
+                                        <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+                                        <dxi-validation-rule type="compare" message="Password and Password Copy do not match" [comparisonTarget]="passwordComparison"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="gender" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: genderValues}">
+                                        <dxi-validation-rule type="required" message="Gender is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="dateOfBirth" editorType="dxDateBox">
+                                        <dxi-validation-rule type="required" message="Date Of Birth is required"></dxi-validation-rule>
+                                    </dxi-item>
+                        
+                                    <dxi-item [editorOptions]="{ height: '70' }" dataField="address" editorType="dxTextArea">
+                                        <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                                    </dxi-item>
+                    
+                                    <dxi-item [editorOptions]="{ height: '70' }" dataField="secondaryAddress" editorType="dxTextArea">
+                                    </dxi-item>
+                    
+                                    <dxi-item dataField="city">
+                                        <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                                    </dxi-item>
+                                    
+                                    <dxi-item dataField="state" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: states}">
+                                        <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                                    </dxi-item>
+                        
+                                    <dxi-item dataField="zipCodeType" editorType="dxSelectBox"
+                                        [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value'  }">
+                                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="zip"
+                                        [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: zipMask }">
+                                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                                    </dxi-item>
+                        
+                                    <dxi-item dataField="primaryPhone" [editorOptions]="{ mask: validationMasks.phone }">
+                                        <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="secondaryPhone" [editorOptions]="{ mask: validationMasks.phone }">
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="ssn" [editorOptions]="{ mask: validationMasks.ssn }">
+                                        <dxi-validation-rule type="required" message="SSN is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="employeeType" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: employeeTypes}">
+                                        <dxi-validation-rule type="required" message="Employee Type is required"></dxi-validation-rule>
+                                    </dxi-item>
+    
+                                    <dxi-item dataField="role" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'id', dataSource: roleDataSource }">
+                                        <dxi-validation-rule type="required" message="Select role"></dxi-validation-rule>
+                                    </dxi-item>
+                        
+                                    <dxi-item editorType="dxCheckBox" dataField="isActive"></dxi-item>
+                                </dxi-tab>
+    
+                                <dxi-tab [colCount]="2" title="Name Info">
+                                    <dxi-item [label]="{ text: 'Prefix' }" dataField="namePrefix" editorType="dxSelectBox" [editorOptions]="{ items: namePrefixes }"></dxi-item>
+                                    <dxi-item [label]="{ text: 'Suffix' }" dataField="nameSuffix" editorType="dxSelectBox" [editorOptions]="{ items: nameSuffixes }"></dxi-item>
+                                </dxi-tab>
+                                <!-- <extra-fields-tab
+                                    *ngIf="isEmployeeSet"
+                                    #extraFieldsTab
+                                    [entityName]="tableNames.employee"
+                                    [entityModel]="employeeData"
+                                    (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                                </extra-fields-tab> -->
+                            </dxi-item>
+                        </dx-form>
+                    </div>
+                    <div class="col-md-12 text-right mt-md-2">
+                        <button type="button" (click)="createUpdateUser()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                    </div>
+                </div>
+            </dx-scroll-view>
+        </div>
+    </dx-popup>
+    <dx-popup #userResetRasswordPopup class="popup" [width]="400" [height]="350" [dragEnabled]="false"
+        [showTitle]="true" title="Reset Password" [closeOnOutsideClick]="false" [(visible)]="isResetPasswordPopupOpened"
+        (onHidden)="onResetPassworPopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isResetPasswordPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #resetPasswordForm [(formData)]="resetPasswordModel" labelLocation="top">
+                        <dxi-item dataField="oldPassword">
+                            <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" message="Password is not valid" [validationCallback]="validatePassword"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item editorType="dxTextBox" dataField="newPassword">
+                            <dxi-validation-rule type="required" message="New password is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [message]="passwordFormatValidationMessage" [validationCallback]="validatePasswordComplexity"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item editorType="dxTextBox" [label]="{text: 'Repeat New Password'}" dataField="newPasswordCopy">
+                            <dxi-validation-rule type="required" message="New Password Copy is required"></dxi-validation-rule>
+                            <dxi-validation-rule type="compare" message="New Password and New Password Copy do not match" [comparisonTarget]="resetPasswordComparison"></dxi-validation-rule>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="resetUserPassword()" class="btn btn-sm btn-outline-secondary">RESET</button>
+                </div>
+            </div>
+        </div>
+    </dx-popup>
+</div>

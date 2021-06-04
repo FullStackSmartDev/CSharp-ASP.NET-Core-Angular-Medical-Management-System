@@ -1,0 +1,85 @@
+<div *ngIf="!allegationsString">
+    You didn't enter any allegations.<br/>
+    Please, return back to the appointment form and type some allegations.<br/>
+    Allegations should be separated by comma.
+</div>
+<div *ngIf="allegationsString">
+    <div class="row">
+        <div class="col-md-12">
+            <dx-list #allegationsList 
+                [height]="150" 
+                [items]="allegations"
+                [showSelectionControls]="true"
+                selectionMode="single" 
+                (onSelectionChanged)="onAllegationSelected($event)">
+            </dx-list>
+        </div>
+    </div>
+    <div *ngIf="!mappedIcdCodes.length && selectedAllegation">
+        There are no any mapped icd codes to allegation: <b>{{selectedAllegation}}</b>
+    </div>
+    <div *ngIf="mappedIcdCodes.length" class="row mt-md-1">
+        <div class="col-md-12">
+            <dx-data-grid height="320" [hoverStateEnabled]="true" [wordWrapEnabled]="true" #mappedIcdCodesDataGrid
+                [dataSource]="mappedIcdCodes" [showBorders]="true">
+
+                <!-- <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations> -->
+
+                <!-- <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging> -->
+
+                <!-- <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes"></dxo-pager> -->
+
+                <!-- <dxo-filter-row [visible]="true"></dxo-filter-row> -->
+
+                <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+                <dxi-column [allowSorting]="false" [width]="10+'%'" dataField="code" dataType="string"></dxi-column>
+                <dxi-column [allowSorting]="false" caption="Description" dataField="name" dataType="string">
+                </dxi-column>
+                <dxi-column [width]="15+'%'" alignment="center" caption="Delete Map"
+                    cellTemplate="deleteMappedCodeTemplate"></dxi-column>
+
+                <div class="text-center" *dxTemplate="let icdCode of 'deleteMappedCodeTemplate'">
+                    <button type="button" (click)="deleteMappedIcdCode(icdCode.data, $event)"
+                        class="btn btn-sm btn-outline-danger">DELETE MAP</button>
+                </div>
+
+                <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+        </div>
+    </div>
+    <div *ngIf="selectedAllegation" class="row mt-md-2">
+        <div class="col-md-12 text-right">
+            <button type="button" (click)="openMappingForm()" class="btn btn-sm btn-outline-primary">New Map</button>
+        </div>
+    </div>
+</div>
+<dx-popup #allegationPopup class="popup" [width]="900" [height]="220" 
+    [dragEnabled]="false" 
+    [showTitle]="true"
+    title="Mapping"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isAllegationPopupOpened"
+    (onHidden)="onAllegationPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isAllegationPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #allegationForm [(formData)]="newAllegationIcdCodeMapping">
+
+                        <dxi-item [label]="{text: 'Allegation'}" dataField="keywordValue" [editorOptions]="{ readOnly: true }"></dxi-item>
+
+                        <dxi-item [label]="{text: 'Select ICD Codes'}" dataField="icdCodeId" editorType="dxSelectBox"
+                            [editorOptions]="{searchEnabled: true, displayExpr: 'name', valueExpr: 'id', dataSource: icdCodesDataSource}">
+                            <dxi-validation-rule type="custom" [validationCallback]="validateMappingExistence"></dxi-validation-rule>
+                        </dxi-item>
+
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="createAllegationIcdCodeMapping()" class="btn btn-sm btn-outline-primary">SAVE</button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>

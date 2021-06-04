@@ -1,0 +1,90 @@
+<div class="row mt-2">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header text-left" style="height: 7vh">
+                PATIENT CHART TREE
+            </div>
+            <div class="card-body" style="height: 73vh">
+                <dx-tree-view width="100%" height="100%"
+                    #treeView [dataSource]="patientChartTreeView"
+                    (onItemContextMenu)="openPatientChartContextMenu($event)"
+                    (onItemClick)="selectPatientChartNode($event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <i (click)="deactivatePatientChartNode($event, data)" *ngIf="data.isActive" class="dx-icon-plus active-node"></i>
+                        <i (click)="activatePatientChartNode($event, data)" *ngIf="!data.isActive" class="dx-icon-close not-active-node"></i>
+                        <span style="padding: 5%;">{{data.text}}</span>
+                    </div>
+                </dx-tree-view>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="height: 7vh">
+                PATIENT CHART TREE ITEM
+            </div>
+            <div class="card-body" style="height: 73vh">
+                <drag-and-drop-list
+                    [listItems]="patientChartNodesToReorder" 
+                    (onOrderChanged)="reorderPatientChartChildrenNodes($event)">
+                </drag-and-drop-list>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dx-context-menu
+    #contextMenu
+    [dataSource]="[]" 
+    [width]="200"  
+    (onItemClick)="onPatientChartContextMenuClick($event)"
+    [position]="{ my: 'top', at: 'bottom' }">
+</dx-context-menu>
+
+<dx-popup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="CREATE / EDIT PATIENT CHART TREE ITEM" [closeOnOutsideClick]="false" 
+    [(visible)]="isPatientChartNodeManagementPopupOpened"
+    (onHidden)="onPatientChartNodeManagementPopupOpenedHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <section-node-form
+            *ngIf="isSectionNodeFormVisible"
+            [patientChartContextMenuAction]="patientChartContextMenuAction"
+            (onSectionNodeEdited)="onPatientChartNodeEdited($event)"
+            (onSectionNodeAdded)="onPatientChartNodeAdded($event)">
+        </section-node-form>
+
+        <change-node-title-form *ngIf="isChangeNodeTitleFormVisible"
+            [patientChartContextMenuAction]="patientChartContextMenuAction"
+            (onTitleNodeEdited)="onTitleNodeEdited($event)">
+        </change-node-title-form>
+
+        <template-node-form
+            *ngIf="isTemplateNodeFormVisible"
+            [isLibraryManagement]="isLibraryManagement"
+            [patientChartContextMenuAction]="patientChartContextMenuAction"
+            [companyId]="companyId"
+            (onTemplateNodeEdited)="onPatientChartNodeEdited($event)"
+            (onTemplateNodeAdded)="onPatientChartNodeAdded($event)">
+        </template-node-form>
+
+        <template-list-node-form
+            *ngIf="isTemplateListNodeFormVisible"
+            [patientChartContextMenuAction]="patientChartContextMenuAction"
+            [companyId]="companyId"
+            [isLibraryManagement]="isLibraryManagement"
+            (onTemplateListNodeEdited)="onPatientChartNodeEdited($event)"
+            (onTemplateListNodeAdded)="onPatientChartNodeAdded($event)">
+        </template-list-node-form>
+
+        <document-node-form
+            *ngIf="isDocumentNodeFormVisible"
+            [companyId]="companyId"
+            [patientChartRootId]="patientChartRootId"
+            [isLibraryManagement]="isLibraryManagement"
+            [patientChartContextMenuAction]="patientChartContextMenuAction"
+            (onDocumentNodeEdited)="onPatientChartNodeEdited($event)"
+            (onDocumentNodeAdded)="onPatientChartNodeAdded($event)"
+            (onDocumentNodeSynchronized)="onDocumentNodeSynchronized($event)">
+        </document-node-form>
+    </div>
+</dx-popup>

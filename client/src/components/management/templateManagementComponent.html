@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-tabs 
+            [dataSource]="tabs"
+            [selectedIndex]="selectedTabIndex" 
+            (onItemClick)="onTabSelect($event)">
+        </dx-tabs>
+    </div>
+    <div class="margin-top-15 col-md-12">
+        <template-lookup-item-category-management *ngIf="isTabVisible(0)"></template-lookup-item-category-management>
+        <template-lookup-item-management *ngIf="isTabVisible(1)"></template-lookup-item-management>
+        <template-type-management *ngIf="isTabVisible(2)"></template-type-management>
+        <template-creation-component *ngIf="isTabVisible(3)"></template-creation-component>
+        <template-mapping-component *ngIf="isTabVisible(4)"></template-mapping-component>
+        <keyword-icd-code-map *ngIf="isTabVisible(5)"></keyword-icd-code-map>
+    </div>
+</div>

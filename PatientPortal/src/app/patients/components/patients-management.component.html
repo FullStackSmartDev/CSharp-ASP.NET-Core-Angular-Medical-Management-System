@@ -1,0 +1,292 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-2">
+                <button type="button" (click)="openPatientForm()" class="btn btn-sm btn-outline-secondary">NEW PATIENT</button>
+            </div>
+        </div>
+        <div class="row mt-md-2">
+            <div class="col-md-12">
+                <dx-data-grid 
+                    [selectedRowKeys]="selectedPatients"
+                    [hoverStateEnabled]="true"
+                    (onSelectionChanged)="onPatientSelected($event)"
+                    [wordWrapEnabled]="true" 
+                    #patientDataGrid
+                    [dataSource]="patientDataSource"
+                    [showBorders]="true">
+
+                    <dxo-remote-operations [sorting]="true" [filtering]="true" [paging]="true"></dxo-remote-operations>
+
+                    <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+                    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes"></dxo-pager>
+
+                    <dxi-column dataField="id" dataType="string" [allowEditing]="false" [visible]="false"></dxi-column>
+                    <dxi-column caption="Name" dataField="name"></dxi-column>
+                    <dxi-column caption="Date Of Birth" cellTemplate="dobTemplate"></dxi-column>
+                    <dxi-column caption="Phone Number" cellTemplate="phoneTemplate" dataType="string"></dxi-column>
+                    <dxi-column dataField="email" dataType="string"></dxi-column>
+
+                    <dxo-selection mode="single"></dxo-selection>
+
+                    <div class="text-left" *dxTemplate="let paient of 'dobTemplate'">
+                        <span> {{ paient.data.dateOfBirth | localDate }}</span>
+                    </div>
+
+                    <div class="text-left" *dxTemplate="let paient of 'phoneTemplate'">
+                        <span> {{ paient.data.phone | mask: validationMasks.phone }}</span>
+                    </div>
+
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                </dx-data-grid>
+            </div>
+        </div>
+    </div>
+</div>
+<dx-popup class="popup" [width]="900" [height]="650" [closeOnOutsideClick]="false"
+    [(visible)]="isPatientPopupOpened" (onHidden)="onPatientPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-tab-panel #tabPanel [height]="540" [dataSource]="patientDataTabs" [selectedIndex]="0">
+            <div class="p-1" *dxTemplate="let patientData of 'patient'">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <dx-form #patientForm [(formData)]="patient" labelLocation="top" [colCount]="4"
+                                            (onFieldDataChanged)="onPatientFieldChanged($event)">
+                                        <dxi-item dataField="id" [visible]="false"></dxi-item>
+
+                                        <dxi-item dataField="firstName"
+                                            [editorOptions]="{ width: '100%', height: '30' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="lastName"
+                                            [editorOptions]="{ width: '100%', height: '30' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="middleName"
+                                            [editorOptions]="{ width: '100%', height: '30' }">
+                                        </dxi-item>
+
+                                        <dxi-item dataField="dateOfBirth" editorType="dxDateBox"
+                                            [editorOptions]="{ width: '100%', height: '30' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="gender" editorType="dxSelectBox"
+                                            [editorOptions]="{ width: '100%', height: '30', items: gender, displayExpr: 'name', valueExpr: 'value' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="maritalStatus" editorType="dxSelectBox"
+                                            [editorOptions]="{ width: '100%', height: '30', items: maritalStatus, displayExpr: 'name', valueExpr: 'value' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item [label]="{text: 'SSN'}" dataField="ssn"
+                                            [editorOptions]="{ mask: validationMasks.ssn, useMaskedValue: false }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item [colSpan]="2" dataField="email">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                            <dxi-validation-rule type="email"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item [colSpan]="2" dataField="primaryAddress"
+                                            editorType="dxTextArea"
+                                            [editorOptions]="{ width: '100%', height: '50' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item [colSpan]="2" dataField="secondaryAddress"
+                                            editorType="dxTextArea"
+                                            [editorOptions]="{ width: '100%', height: '50' }">
+                                        </dxi-item>
+
+                                        <dxi-item dataField="city"
+                                            [editorOptions]="{ width: '100%', height: '30' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="zipCodeType" editorType="dxSelectBox"
+                                            [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value'  }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="zip"
+                                            [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: zipMask }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="state" editorType="dxSelectBox"
+                                            [editorOptions]="{ width: '100%', height: '30', items: states, displayExpr: 'name', valueExpr: 'value' }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="primaryPhone"
+                                            [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: validationMasks.phone }">
+                                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="secondaryPhone"
+                                            [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: validationMasks.phone }">
+                                        </dxi-item>
+
+                                    </dx-form>
+                                </div>
+                            </div>
+                            <div class="row mt-md-2">
+                                <div class="offset-md-10 col-md-2 text-right">
+                                    <div class="pull-right">
+                                        <button debounceClick (onDebounceClick)="createUpdatePatient()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="p-1" *dxTemplate="let patient of 'insurance'">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form (submit)="createUpdatePatientInsurance($event)">
+                            <div class="card">
+                                <div *ngIf="isNewInsurance" class="card-header">
+                                    <button type="button" (click)="copyFromPatient()" class="btn btn-sm btn-outline-secondary">COPY FROM PATIENT</button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <dx-form #insuranceForm [(formData)]="insurance" (onFieldDataChanged)="onPatientInsuranceFieldChanged($event)" labelLocation="top"
+                                                [colCount]="4">
+                                                <dxi-item dataField="id" [visible]="false"></dxi-item>
+
+                                                <dxi-item dataField="firstName"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="lastName"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="middleName"
+                                                    [editorOptions]="{ width: '100%', height: '30' }"></dxi-item>
+
+                                                <dxi-item dataField="dateOfBirth" editorType="dxDateBox"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="gender" editorType="dxSelectBox"
+                                                    [editorOptions]="{ width: '100%', height: '30', items: gender, displayExpr: 'name', valueExpr: 'value' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item [label]="{text: 'SSN'}" dataField="ssn"
+                                                    [editorOptions]="{ mask: validationMasks.ssn }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item [colSpan]="2" dataField="email">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                    <dxi-validation-rule type="email"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item [colSpan]="2" dataField="primaryAddress"
+                                                    editorType="dxTextArea"
+                                                    [editorOptions]="{ width: '100%', height: '50' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item [colSpan]="2" dataField="secondaryAddress"
+                                                    editorType="dxTextArea"
+                                                    [editorOptions]="{ width: '100%', height: '50' }">
+                                                </dxi-item>
+
+                                                <dxi-item dataField="city"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+                                                
+                                                <dxi-item dataField="zipCodeType" editorType="dxSelectBox"
+                                                    [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value'  }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="zip"
+                                                    [editorOptions]="{ width: '100%', height: '30', mask: zipMaskInsurance }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="state" editorType="dxSelectBox"
+                                                    [editorOptions]="{ width: '100%', height: '30', items: states, displayExpr: 'name', valueExpr: 'value' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="primaryPhone"
+                                                    [editorOptions]="{ width: '100%', height: '30', mask: validationMasks.phone }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item dataField="secondaryPhone"
+                                                    [editorOptions]="{ width: '100%', height: '30', mask: validationMasks.phone }">
+                                                </dxi-item>
+
+                                                <dxi-item dataField="caseNumber"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+
+                                                <dxi-item [label]="{text: 'RQID'}" dataField="rqId"
+                                                    [editorOptions]="{ width: '100%', height: '30' }">
+                                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                                </dxi-item>
+                                            </dx-form>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-md-2">
+                                        <div class="offset-md-10 col-md-2 text-right">
+                                            <div class="pull-right">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+        </dx-tab-panel>
+    </div>
+    <div class="row" *dxTemplate="let data of 'title'">
+        <div class="col-md-11">
+            <div class="d-inline-block text-left pr-3">
+                <b>NAME:</b> {{patient.firstName}} {{patient.lastName}}
+            </div>
+            <div class="d-inline-block text-left pr-3">
+                <b>DOB:</b>&nbsp;<span *ngIf="patient.dateOfBirth">{{ patient.dateOfBirth | date: 'short' }}</span>
+            </div>
+            <div class="d-inline-block text-left pr-3">
+                <b>GENDER:</b> {{ genderString }}
+            </div>
+            <div class="d-inline-block text-left">
+                <b>MRN:</b>
+            </div>
+        </div>
+        <div class="col-md-1 text-right">
+            <button type="button" (click)="closePatientForm()" class="btn btn-sm btn-outline-danger">
+                <div class="col-md-2 text-right"><i class="dx-icon dx-icon-close"></i></div>
+            </button>
+        </div>
+    </div>
+</dx-popup>

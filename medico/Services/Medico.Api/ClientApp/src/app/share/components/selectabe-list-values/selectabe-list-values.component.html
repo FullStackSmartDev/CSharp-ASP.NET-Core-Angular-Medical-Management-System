@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-data-grid 
+         #lookupItemsGrid
+         [dataSource]="selectableListValues"
+         height="350"
+         [showBorders]="true"
+         (onRowInserting)="onSelectableListValueInserting($event)"
+         (onRowUpdated)="onSelectableListValueUpdated($event)"
+         (onInitNewRow)="onInitNewSelectableListValue($event)"
+         (onRowRemoved)="onSelectableListValueRemoved($event)">
+ 
+         <dxo-editing 
+             mode="row"
+             [allowUpdating]="true"
+             [allowDeleting]="true"
+             [allowAdding]="true">
+         </dxo-editing>
+     
+         <dxi-column dataField="id" [visible]="false"></dxi-column>
+         <dxi-column dataType="string" dataField="value">
+             <dxi-validation-rule type="required"></dxi-validation-rule>
+             <dxi-validation-rule message="Selectable value already exists." type="custom" [validationCallback]="validateSelectableListValue" ></dxi-validation-rule>
+         </dxi-column>
+         <dxi-column dataType="boolean" dataField="isDefault"></dxi-column>
+         <dxi-column dataType="boolean" dataField="description" [visible]="false"></dxi-column>
+     </dx-data-grid>
+    </div>
+ </div>

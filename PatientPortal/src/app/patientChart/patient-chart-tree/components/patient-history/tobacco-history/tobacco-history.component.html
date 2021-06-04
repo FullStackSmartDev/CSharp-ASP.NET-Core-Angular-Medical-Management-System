@@ -1,0 +1,140 @@
+<div *ngIf="canRenderComponent" class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <button type="button" (click)="openTobaccoHistoryForm()" class="btn btn-sm btn-outline-secondary">ADD TOBACCO HISTORY</button>
+    </div>
+  </div>
+  <div *ngIf="isHistoryExist" class="row mt-md-2">
+    <div class="col-md-12">
+      <dx-data-grid [selectedRowKeys]="selectedTobaccoHistory" [hoverStateEnabled]="true" 
+        (onSelectionChanged)="onTobaccoHistorySelect($event)"
+        [wordWrapEnabled]="true" 
+        #tobaccoHistoryDataGrid
+        [dataSource]="tobaccoHistoryDataSource"
+        [showBorders]="true"
+        [showRowLines]="true">
+  
+        <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+  
+        <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+        </dxo-paging>
+  
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+        </dxo-pager>
+  
+        <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column dataField="patientId" dataType="string" [visible]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="status" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="type" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="amount" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="use" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="frequency" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="length" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="duration" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="quit" cellTemplate="cellTemplate" dataType="boolean" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="statusLength" cellTemplate="cellTemplate" dataType="number" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="left" dataField="notes" cellTemplate="cellTemplate" dataType="string" [allowSorting]="false"></dxi-column>
+        <dxi-column alignment="center" dataField="createDate" dataType="date"></dxi-column>
+
+        <dxi-column *ngIf="!isSignedOff" alignment="center" caption="Delete" cellTemplate="deleteHistoryTemplate"></dxi-column>
+        <div class="text-center" *dxTemplate="let history of 'deleteHistoryTemplate'">
+            <button type="button" (click)="deleteHistory(history.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+        </div>
+  
+        <dxo-selection mode="single"></dxo-selection>
+  
+        <div *dxTemplate="let data of 'cellTemplate'">
+          <value-component [value]="data.value"></value-component>
+        </div>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <div *ngIf="!isHistoryExist" class="row mt-md-2">
+    <div class="col-md-2">
+      <h6>{{defaultHistoryValue}}</h6>
+    </div>
+  </div>
+  <dx-popup #tobaccoHistoryPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="TOBACCO HISTORY" [closeOnOutsideClick]="false" [(visible)]="isTobaccoHistoryPopupOpened"
+    (onHidden)="onTobaccoHistoryPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div *ngIf="isTobaccoHistoryPopupOpened" class="row">
+          <div class="col-md-12">
+              <dx-form #tobaccoHistoryForm [height]="460" labelLocation="top" [(formData)]="tobaccoHistory" (onFieldDataChanged)="onTobaccoHistoryFieldChanged($event)">
+                <dxi-item itemType="tabbed" [tabPanelOptions]="{ height: 450 }">
+                  <dxi-tab [colCount]="12" title="Base Info">
+                        <dxi-item [colSpan]="9" [label]="{text: 'Status'}" dataField="status" editorType="dxSelectBox"
+                        [editorOptions]="{ items: statusTobaccoUseListValues }">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item [colSpan]="3" dataField="createDate" editorType="dxDateBox" [editorOptions]="{ width: '100%', readOnly: isNewTobaccoHistory }">
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Type'}" dataField="type" editorType="dxSelectBox"
+                            [editorOptions]="{ items: typeTobaccoListValues }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Amount'}" dataField="amount" editorType="dxNumberBox"
+                            [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Use'}" dataField="use" editorType="dxSelectBox"
+                            [editorOptions]="{ items: useTobaccoListValues }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Frequency'}" dataField="frequency" editorType="dxSelectBox"
+                            [editorOptions]="{ items: useFrequencyListValues }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Length'}" dataField="length" editorType="dxNumberBox"
+                            [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="3" [label]="{text: 'Duration'}" dataField="duration" editorType="dxSelectBox"
+                            [editorOptions]="{ items: durationListValues }">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected" [colSpan]="6" [label]="{text: 'Tobacco Quit'}" dataField="quit" editorType="dxCheckBox"></dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected && tobaccoHistory.quit" [colSpan]="6" [label]="{text: 'Tobacco Length'}" dataField="statusLength" editorType="dxNumberBox"
+                          [editorOptions]="{ min: 1, max: 100, showSpinButtons: true }">
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="!isDefaultHistoryValueSelected && tobaccoHistory.quit" [colSpan]="6" [label]="{text: 'Tobacco Status Length Type'}" dataField="statusLengthType" editorType="dxSelectBox"
+                          [editorOptions]="{ items: durationListValues }">
+                          <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+                  </dxi-tab>
+                  <dxi-tab [colCount]="12" title="Notes">
+                    <dxi-item [colSpan]="12" [label]="{text: 'Notes'}" dataField="notes" template="notesTemplate"></dxi-item>
+                    <div *dxTemplate="let data of 'notesTemplate'">
+                      <dx-text-area valueChangeEvent="keyup" [(value)]="tobaccoHistory.notes" height="120">
+                      </dx-text-area>
+
+                      <phrase-suggestion-helper class="mt-2" 
+                        [typedText]="tobaccoHistory.notes"
+                        [companyId]="companyId"
+                        (onPhraseSuggestionApplied)="onPhraseSuggestionApplied($event)">
+                      </phrase-suggestion-helper>
+                    </div>
+                  </dxi-tab>
+                </dxi-item>
+              </dx-form>
+          </div>
+
+          <div class="col-md-12 text-right mt-md-2">
+            <button type="button" (click)="createUpdateTobaccoHistory()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+          </div>
+        </div>
+    </div>
+  </dx-popup>
+  

@@ -1,0 +1,200 @@
+<!-- patch buttons -->
+
+<div *ngIf="false" class="row mt-md-2">
+    <div class="col-md-4">
+        <!-- set initial content for all existing templates -->
+        <button type="button" (click)="setInitialContentForDetailedTemplates()" class="btn btn-sm btn-outline-secondary">INITIAL CONTENT</button>
+    </div>
+    <div class="col-md-4">
+        <!-- update templates selectable track items -->
+        <button type="button" (click)="updateSelectableTrackItems()" class="btn btn-sm btn-outline-secondary">TRACK ITEMS</button>
+    </div>
+    <div class="col-md-4">
+        <!-- update templates selectable items metadata separators -->
+        <button type="button" (click)="updateTemplatesSelectableItemsMetadataSeparators()" class="btn btn-sm btn-outline-secondary">METADATA SEPARATOR</button>
+    </div>
+</div>
+
+<!-- patch buttons -->
+
+<div *ngIf="!isTemplateFormVisible" class="row">
+    <div *ngIf="templateType" class="col-md-4 mt-md-2">
+        <button type="button" (click)="switchToTemplateForm()" class="btn btn-sm btn-outline-secondary">NEW TEMPLATE</button>
+    </div>
+    <div class="col-md-4 mt-md-2">
+        <dx-select-box
+            #templateTypeSelectBox
+            [(value)]="selectedTemplateTypeId"
+            [dataSource]="templateTypeDataSource"
+            valueExpr="id" 
+            displayExpr="name" 
+            (onValueChanged)="onTemplateTypeChanged($event)"
+            placeholder="Search template type"
+            [searchEnabled]="true">
+        </dx-select-box>
+    </div>
+    <div *ngIf="templateType" class="col-md-4 mt-md-2">
+        <div class="text-right">
+            <button type="button" (click)="openTemplateOrderManagementPopup()" class="btn btn-sm btn-outline-secondary">CHANGE TEMPLATES ORDER</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="templateType" class="row mt-md-2">
+    <div *ngIf="!isTemplateFormVisible" class="col-md-12">
+        <dx-data-grid #templatesGrid width="100%" [selectedRowKeys]="selectedTemplates" [showBorders]="true" id="gridContainer"
+            [dataSource]="templateDataSource" [allowColumnReordering]="true" [columnHidingEnabled]="false"
+            [hoverStateEnabled]="true" (onSelectionChanged)="onTemplateChanged($event)">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]="true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false">
+            </dxi-column>
+
+            <dxi-column [width]="7+'%'" [allowFiltering]="false" [allowSorting]="false" caption="Order" dataField="templateOrder"
+                dataType="number">
+            </dxi-column>
+
+            <dxi-column [width]="25+'%'" [allowSorting]="false" dataField="title" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column [width]="25+'%'" [allowSorting]="false" dataField="reportTitle" dataType="string" [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column [allowSorting]="false" dataField="name" [visible]="false" dataType="string">
+            </dxi-column>
+
+            <dxi-column [width]="10+'%'" [allowSorting]="false" [allowFiltering]="false" dataField="isRequired" dataType="boolean">
+            </dxi-column>
+
+            <dxi-column [width]="10+'%'" [allowSorting]="false" [allowFiltering]="false" dataField="isHistorical" dataType="boolean">
+            </dxi-column>
+
+            <dxi-column [width]="10+'%'" [allowSorting]="false" [allowFiltering]="false" dataField="isActive" dataType="boolean">
+            </dxi-column>
+
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let template of 'deleteTemplate'">        
+                <button type="button" (click)="deleteTemplate(template.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+    <div *ngIf="isTemplateFormVisible" class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 mt-md-2">
+                <dx-form #templateForm [(formData)]="template">
+                    <dxi-item [tabPanelOptions]="{ deferRendering: false }" itemType="tabbed" [colSpan]="2">
+                        <dxi-tab title="Base Info">
+    
+                            <dxi-item [editorOptions]="{ width: '50%' }" dataField="title">
+                                <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                                <dxi-validation-rule *ngIf="isNewTemplate" type="custom" [validationCallback]="validateGeneratedName"></dxi-validation-rule>
+                            </dxi-item>
+
+                            <dxi-item [editorOptions]="{ width: '50%' }" dataField="reportTitle">
+                                <dxi-validation-rule type="required" message="Report Title is required"></dxi-validation-rule>
+                            </dxi-item>
+    
+                            <dxi-item [editorOptions]="{ width: '50%', dataSource: templateTypeDataSource, valueExpr: 'id', displayExpr: 'name' }" 
+                                [label]="{text: 'Template Type'}" 
+                                dataField="templateTypeId" 
+                                editorType="dxSelectBox">
+                               <dxi-validation-rule type="required" message="Template type is required"></dxi-validation-rule> 
+                            </dxi-item>
+    
+                            <dxi-item [editorOptions]="{ width: '10%' }" dataField="isRequired" editorType="dxCheckBox"></dxi-item>
+
+                            <dxi-item [editorOptions]="{ width: '10%' }" dataField="isHistorical" editorType="dxCheckBox"></dxi-item>
+
+                            <dxi-item [label]="{text: 'Order'}" dataField="templateOrder" editorType="dxNumberBox" [editorOptions]="{ width: '10%', readOnly: isOrderTextBoxReadonly, max: orderNumberMaxAvailableValue, min: orderNumberMinAvailableValue}"></dxi-item>
+                            <dxi-item [editorOptions]="{ width: '10%' }" dataField="isActive" editorType="dxCheckBox"></dxi-item>
+    
+                        </dxi-tab>
+    
+                        <dxi-tab title="Detailed Content">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <admin-selectable-root
+                                        [companyId]="companyId"
+                                        (onSelectableItemValueGenerated)="onSelectableItemValueGenerated($event)">
+                                    </admin-selectable-root>
+                                    <div class="text-left mt-md-2">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="showDetailedTemplatePreview()">PREVIEW MODE</button>
+                                    </div>
+                                    <detailed-template-preview
+                                        *ngIf="isDetailedTemplatePreviewVisible"
+                                        (detailedTemplatePreviewHidden)="onDetailedTemplatePreviewHidden()"
+                                        [detailedTemplateContent]="detailedRichTextEditor.content"
+                                        [companyId]="companyId">
+                                    </detailed-template-preview>
+                                </div>
+                                <div class="col-md-9">
+                                    <admin-rich-text-editor
+                                        [initialContent]="template.detailedTemplateHtml"
+                                        #detailedRichTextEditor>
+                                    </admin-rich-text-editor>
+                                </div>
+                            </div>
+                        </dxi-tab>
+    
+                        <dxi-tab title="Default Content">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <dx-check-box class="margin-top-15" text="Enable default template" [(value)]="isDefaultTemplateEnabled"></dx-check-box>
+                                </div>
+                                <div *ngIf="isDefaultTemplateEnabled" class="col-md-9">
+                                    <admin-rich-text-editor
+                                        [initialContent]="template.defaultTemplateHtml"
+                                        #defaultRichTextEditor>
+                                    </admin-rich-text-editor>
+                                </div>
+                            </div>
+                        </dxi-tab>
+                    </dxi-item>
+                </dx-form>
+            </div>
+        </div>
+        <div class="row mt-md-2">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-sm btn-outline-danger text-left" (click)="switchToTemplatesDataGrid()">CANCEL</button>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="saveTemplate()">SAVE</button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order management popup -->
+<dx-popup class="popup" [width]="800" [height]="580" [showTitle]="true" title="Change template order"
+    [closeOnOutsideClick]="false" [(visible)]="isTemplateOrderFormVisible">
+    <div id="order-management-form" *dxTemplate="let data of 'content'">
+        <dx-list [dataSource]="templates" itemTemplate="listItem" [allowItemReordering]="true" (onItemReordered)="onTemplatesReordered($event)">
+            <div *dxTemplate="let item of 'listItem'">
+                <div class="row">
+                    <div class="col-md-1">
+                        {{item.templateOrder}}
+                    </div>
+                    <div class="col-md-11">
+                        {{item.title}}
+                    </div>
+                </div>
+            </div>
+        </dx-list>
+    </div>
+</dx-popup>

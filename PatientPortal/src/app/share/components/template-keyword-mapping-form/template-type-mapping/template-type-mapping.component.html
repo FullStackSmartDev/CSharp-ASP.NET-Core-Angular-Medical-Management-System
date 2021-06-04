@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-10">
+                <dx-select-box 
+                    [(value)]="selectedTemplateId"
+                    searchEnabled="true"
+                    [dataSource]="templateDataSource"
+                    valueExpr="id" 
+                    displayExpr="reportTitle">
+                </dx-select-box>
+            </div>
+            <div class="col-md-2 text-right">
+                <dx-button icon="plus" (onClick)="addNewTemplate()">
+                </dx-button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <dx-list [dataSource]="templates" itemTemplate="data" [height]="90"
+            [allowItemDeleting]="true" [itemDeleteMode]="'toggle'">
+            <div *dxTemplate="let item of 'data'">
+                <div>{{item.reportTitle}}</div>
+            </div>
+        </dx-list>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="row">
+    <div class="col-md-7">
+        <div *ngIf="!isSignedOff">
+            <button type="button" (click)="openVisionVitalSignsForm()" class="btn btn-sm btn-outline-secondary">ADD VITAL SIGNS</button>
+        </div>
+        <dx-data-grid class="mt-3" [selectedRowKeys]="selectedVisionVitalSigns" [hoverStateEnabled]="true"
+            (onSelectionChanged)="onSelectedVisionVitalSigns($event)" 
+            [wordWrapEnabled]="true" 
+            #visionVitalSignsDataGrid
+            [dataSource]="visionVitalSignsDataSource" 
+            [showBorders]="true" 
+            [showRowLines]="true">
+
+            <dxo-remote-operations [paging]="true" [sorting]="true"></dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column dataField="patientId" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column [width]="30+'%'" alignment="center" dataField="createDate" caption="Date"
+                cellTemplate="dateTemplate" dataType="string" [allowSorting]="true">
+            </dxi-column>
+
+            <dxi-column [width]="15+'%'" alignment="center" dataField="os" caption="OS"
+                cellTemplate="visionTemplate" dataType="string" [allowSorting]="false">
+            </dxi-column>
+
+            <dxi-column [width]="15+'%'" alignment="center" dataField="od" caption="OD"
+                cellTemplate="visionTemplate" dataType="string" [allowSorting]="false">
+            </dxi-column>
+
+            <dxi-column [width]="15+'%'" alignment="center" dataField="ou" caption="OU"
+                cellTemplate="visionTemplate" dataType="string" [allowSorting]="false">
+            </dxi-column>
+
+            <dxi-column [width]="15+'%'" alignment="center" dataField="withGlasses" dataType="boolean" [allowSorting]="false">
+            </dxi-column>
+
+            <dxo-selection mode="single"></dxo-selection>
+
+            <div class="text-center" *dxTemplate="let d of 'dateTemplate'">
+                <span>{{d.displayValue | date}}</span>
+            </div>
+
+            <div class="text-center" *dxTemplate="let d of 'visionTemplate'">
+                <span>{{getVisionValue(d.displayValue)}}</span>
+            </div>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #visionVisionVitalSignsPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    [title]="'Vision Vital Signs'" [closeOnOutsideClick]="false" [(visible)]="isVisionVitalSignsPopupOpened"
+    (onHidden)="onVisionVitalSignsPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <div class="row">
+            <div class="col-md-12">
+                <dx-form #visionVitalSignsForm [height]="460" [(formData)]="visionVitalSigns" [colCount]="12" labelLocation="top">
+                    <dxi-item [label]="{text: 'OS'}" [colSpan]="3" dataField="os" editorType="dxNumberBox">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+                    <dxi-item [label]="{text: 'OD'}" [colSpan]="3" dataField="od"editorType="dxNumberBox">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+                    <dxi-item [label]="{text: 'OU'}" [colSpan]="3" dataField="ou" editorType="dxNumberBox">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+                    <dxi-item [label]="{text: 'With Glasses'}" [colSpan]="3" dataField="withGlasses" editorType="dxCheckBox">
+                    </dxi-item>
+                </dx-form>
+            </div>
+            <div class="col-md-12 text-right mt-md-2">
+                <button type="button" (click)="createUpdateVisionVitalSigns()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+            </div>
+        </div>
+    </div>
+</dx-popup>

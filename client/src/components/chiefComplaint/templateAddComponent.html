@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-md-9">
+        <dx-lookup #templateLookup
+            [dataSource]="templateDataSource" 
+            [showPopupTitle]="false"
+            valueExpr="Id" 
+            displayExpr="ReportTitle" 
+            [placeholder]="placeholderMessage"
+            (onValueChanged)="templateChanged($event)">
+        </dx-lookup>
+    </div>
+    <div class="col-md-3 text-right">
+        <dx-button icon="plus" (onClick)="addTemplate()">
+        </dx-button>
+    </div>
+</div>

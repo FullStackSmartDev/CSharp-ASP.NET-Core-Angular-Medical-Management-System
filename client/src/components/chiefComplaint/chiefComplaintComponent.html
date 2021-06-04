@@ -1,0 +1,139 @@
+<div class="row margin-top-15">
+  <div *ngIf="!isSignedOff" class="col-md-10">
+    <div class="card">
+      <div class="card-header">
+        <chief-complaint-allegations
+          [appointmentAllegations]="appointmentAllegations"
+          [allegationSet]="currentPatientAllegationSet"
+          [addingAllegationsEnabled]="isPatientAllegationsCreationFormVisible">
+        </chief-complaint-allegations>
+      </div>
+    </div>
+    <div class="card margin-top-15">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-8 vcenter">
+            <div>{{ isPatientAllegationsSetsEmpty ? "Add Chief Complaint" : "Patient Chief Complaints"}}</div> 
+          </div>
+          <div *ngIf="!isPatientAllegationsCreationFormVisible" class="col-md-4 text-right">
+            <dx-button icon="plus" (onClick)="addAllegationSet($event)"></dx-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="patientChiefComplaint.patientAllegationsSets.length" class="row margin-top-10">
+    <div class="col-md-10">
+        <dx-data-grid
+          [wordWrapEnabled]="true"
+          [dataSource]="patientChiefComplaint.patientAllegationsSets" 
+          [showBorders]="true"
+          [selectedRowKeys]="selectedPatientAllegationsSets"
+          [hoverStateEnabled]="true"
+          (onSelectionChanged)="onPatientAllegationSetSelected($event)">
+          <dxi-column dataField="Id" dataType="string" [visible]="false"></dxi-column>
+          <dxi-column [width]="50+'%'" dataField="Allegations" dataType="string" [allowSorting]="false"></dxi-column>
+          <dxi-column caption="Hpi Templates" cellTemplate="hpiTemplatesTemplate"></dxi-column>
+          <dxi-column caption="Ros Templates" cellTemplate="rosTemplatesTemplate"></dxi-column>
+          <dxi-column caption="PE Templates" cellTemplate="peTemplatesTemplate"></dxi-column>
+          <dxi-column caption="Delete Allegations" cellTemplate="deleteAllegtionsTemplate"></dxi-column>
+
+          <div *dxTemplate="let template of 'hpiTemplatesTemplate'">
+              <div class="text-left margin-top-5" *ngFor="let item of template.data.HpiTemplates; let i = index">
+                {{item.ReportTitle}}
+              </div>
+          </div>
+
+          <div *dxTemplate="let template of 'rosTemplatesTemplate'">
+            <div class="text-left margin-top-5" *ngFor="let item of template.data.RosTemplates; let i = index">
+                {{item.ReportTitle}}
+            </div>
+          </div>
+
+          <div *dxTemplate="let template of 'peTemplatesTemplate'">
+              <div class="text-left margin-top-5" *ngFor="let item of template.data.PeTemplates; let i = index">
+                {{item.ReportTitle}}
+              </div>
+          </div>
+
+          <div *dxTemplate="let template of 'deleteAllegtionsTemplate'">
+            <div class="text-center margin-top-5">
+              <dx-button [disabled]="isSignedOff" type="danger" text="Delete" (onClick)="deletePatientAllegationsSet($event, template.data.Id)"></dx-button>
+            </div>
+          </div>
+
+        <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10">
+      <div *ngIf="isPatientAllegationsCreationFormVisible" class="row margin-top-15">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header text-left">
+              <a *ngIf="isNewPatientAllegationsSet" href="" (click)="showAllegationsRelatedChiefComplaints($event)">Search
+                templates</a>
+            </div>
+            <div class="card-body">
+              <div *ngIf="isPatientAllegationsCreationFormVisible" class="dx-filed margin-top-15">
+                <div class="row">
+                  <div class="col-md-12">
+                    <b>Allegations:</b>
+                    <dx-text-area [height]="90" [(value)]="currentPatientAllegationSet.Allegations">
+                    </dx-text-area>
+                  </div>
+                </div>
+                <div *ngIf="currentPatientAllegationSet.HpiTemplates.length || currentPatientAllegationSet.PeTemplates.length || currentPatientAllegationSet.RosTemplates.length" class="row margin-top-15">
+                  <div class="col-md-12">
+                      <table class="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <th scope="col">HPI Templates</th>
+                                  <th scope="col">ROS Templates</th>
+                                  <th scope="col">PE Templates</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                <td>
+                                  <div class="margin-top-5 text-left" *ngFor="let item of currentPatientAllegationSet.HpiTemplates; let i = index">
+                                    {{item.ReportTitle}}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="margin-top-5 text-left" *ngFor="let item of currentPatientAllegationSet.PeTemplates; let i = index">
+                                    {{item.ReportTitle}}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="margin-top-5 text-left" *ngFor="let item of currentPatientAllegationSet.RosTemplates; let i = index">
+                                    {{item.ReportTitle}}
+                                  </div>
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+                </div>
+                <div class="row margin-top-15">
+                  <div class="col-md-12">
+                    <div class="text-right">
+                      <dx-button text="save" (onClick)="savePatientAllegationSet()"></dx-button>
+                      <dx-button text="cancel" (onClick)="cancelPatientAllegationCreation()"></dx-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<allegations-related-chief-complaints
+  #allegationsRelatedChiefComplaints
+  [allegations]="currentPatientAllegationSet.Allegations"
+   (onChiefComplaintTemplatesAdded)="addChiefComplaintTemplates($event)">
+</allegations-related-chief-complaints>

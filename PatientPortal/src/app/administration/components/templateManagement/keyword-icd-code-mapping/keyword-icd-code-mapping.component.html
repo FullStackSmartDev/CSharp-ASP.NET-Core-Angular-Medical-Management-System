@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col-md-2 mt-md-2">
+        <button type="button" (click)="openCodeKeywordsForm()" class="btn btn-sm btn-outline-secondary">NEW MAPPING</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mt-md-2">
+        <dx-data-grid
+            #codeKeywordsDataGrid
+            [selectedRowKeys]="selectedCodes"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onCodeSelected($event)"
+            [wordWrapEnabled]="true"  
+            [dataSource]="icdCodeKeywordsDataSource" 
+            [showBorders]="true">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]= "true"></dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes"></dxo-pager>
+
+            <dxi-column dataField="icdCodeId" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column caption="ICD Code" [width]="15+'%'" dataField="icdCodeName" [allowSorting]="false" [allowFiltering]="false" dataType="string"></dxi-column>
+            <dxi-column caption="ICD Description" [width]="25+'%'" dataField="icdCodeDescription" [allowSorting]="false" [allowFiltering]="false" dataType="string"></dxi-column>
+            <dxi-column dataField="keywords" [allowFiltering]="false" [allowSorting]="false" dataType="string"></dxi-column>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #codeKeywordsPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true"
+    title="ICD CODE KEYWORDS" [closeOnOutsideClick]="false" [(visible)]="isCodeKeywordsPopupOpened"
+    (onHidden)="onCodeKeywordsPopupClose()">
+    <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isCodeKeywordsPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #codeKeywordsForm [height]="460" [(formData)]="codeKeywordsFormData">
+
+                        <dxi-item [label]="{text: 'Code Description'}" 
+                            dataField="icdCode" 
+                            editorType="dxSelectBox"
+                            [editorOptions]="{ searchEnabled: true, displayExpr: 'name', valueExpr: 'id', dataSource: icdCodesDataSource, readOnly: !isNewCodeKeywordsMapping}">
+                            <dxi-validation-rule message="ICD code is already used in mapping" type="custom" [validationCallback]="validateIcdCodeMappingExistence" ></dxi-validation-rule>
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <dx-data-grid #keywordsDataGrid [dataSource]="keywords"
+                                        height="300"
+                                        [showBorders]="true"
+                                        (onRowInserted)="onNewKeywordInserted($event)"
+                                        (onRowRemoved)="onKeywordRemoved($event)">
+                             
+                                     <dxo-editing mode="row" [allowDeleting]="true" [allowAdding]="true"></dxo-editing>
+                                 
+                                     <dxi-column dataField="id" [visible]="false"></dxi-column>
+                                     <dxi-column dataType="string" dataField="value">
+                                         <dxi-validation-rule type="required"></dxi-validation-rule>
+                                         <dxi-validation-rule message="Keyword already exists" type="custom" [validationCallback]="validateKeywordExistence" ></dxi-validation-rule>
+                                     </dxi-column>
+                                 </dx-data-grid>
+                                </div>
+                             </div>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 mt-md-2 text-right">
+                    <button type="button" (click)="saveCodeKeywords()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                </div>
+            </div>
+    </div>
+</dx-popup>

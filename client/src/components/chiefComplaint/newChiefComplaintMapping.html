@@ -1,0 +1,119 @@
+<form (submit)="createChiefComplaint($event)">
+    <dx-validation-group #chiefComplaintValidationGroup>
+        <div class="dx-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label">Chief complaint title:</div>
+                <div class="dx-field-value">
+                    <dx-text-box [(value)]="chiefComplaint.Title">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            <dxi-validation-rule 
+                                type="custom" 
+                                [validationCallback]="validateGeneratedName">
+                            </dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                </div>
+            </div>
+            <div class="dx-field">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <template-add 
+                                    [templateTypeId]="templateTypeIds.hpi"
+                                    (onTemplateAdded)="addTemplate($event)">
+                                </template-add>
+                            </div>
+                            <div class="card-body">
+                                <dx-list 
+                                    [dataSource]="hpiTemplates"
+                                    itemTemplate="data" 
+                                    [height]="100"
+                                    [allowItemDeleting]="allowTemplateDeleting"
+                                    [itemDeleteMode]="templateDeleteType">
+                                    <div *dxTemplate="let item of 'data'">
+                                        <div>{{item.ReportTitle}}</div>
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <template-add 
+                                    [templateTypeId]="templateTypeIds.ros"
+                                    (onTemplateAdded)="addTemplate($event)">
+                                </template-add>
+                            </div>
+                            <div class="card-body">
+                                <dx-list 
+                                    [dataSource]="rosTemplates"
+                                    [height]="100"
+                                    itemTemplate="data"
+                                    [allowItemDeleting]="allowTemplateDeleting"
+                                    [itemDeleteMode]="templateDeleteType">
+                                    <div *dxTemplate="let item of 'data'">
+                                        <div>{{item.ReportTitle}}</div>
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dx-field">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <template-add 
+                                    [templateTypeId]="templateTypeIds.pe"
+                                    (onTemplateAdded)="addTemplate($event)">
+                                </template-add>
+                            </div>
+                            <div class="card-body">
+                                <dx-list
+                                    [dataSource]="peTemplates"
+                                    itemTemplate="data" 
+                                    [height]="100"
+                                    [allowItemDeleting]="allowTemplateDeleting"
+                                    [itemDeleteMode]="templateDeleteType">
+                                    <div *dxTemplate="let item of 'data'">
+                                        <div>{{item.ReportTitle}}</div>
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <keyword-add 
+                                    (onKeywordAdded)="addKeyword($event)">
+                                </keyword-add>
+                            </div>
+                            <div class="card-body">
+                                <dx-list 
+                                    [items]="keywords"
+                                    [height]="100"
+                                    [allowItemDeleting]="allowTemplateDeleting"
+                                    [itemDeleteMode]="templateDeleteType">
+                                </dx-list>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dx-fieldset">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <dx-button text="Create / Update" type="default" [useSubmitBehavior]="true"></dx-button>
+                </div>
+            </div>
+        </div>
+    </dx-validation-group>
+</form>
+  

@@ -1,0 +1,83 @@
+<div class="row mt-md-2">
+    <div class="col-md-2">
+        <button type="button" (click)="openRoomForm()" class="btn btn-sm btn-outline-secondary">NEW ROOM</button>
+    </div>
+</div>
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedRooms"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onRoomSelected($event)"
+            [wordWrapEnabled]="true"
+            #roomDataGrid 
+            [dataSource]="roomDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations 
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="name"></dxi-column>
+            <dxi-column [filterOperations]="searchConfiguration.availableFilters" dataField="location"></dxi-column>
+            <dxi-column dataField="isActive" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteRoomTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let room of 'deleteRoomTemplate'">
+                <button type="button" (click)="deleteRoom(room.data, $event)" class="btn btn-sm btn-outline-danger">DELETE</button>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+            
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #roomPopup class="popup" [width]="900" [height]="580" [dragEnabled]="false" [showTitle]="true" title="ROOM"
+    [closeOnOutsideClick]="false" [(visible)]="isRoomPopupOpened" (onHidden)="onRoomPopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+            <div *ngIf="isRoomPopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form #roomForm [(formData)]="room" [height]="460" (onFieldDataChanged)="onRoomFieldChanged($event)">
+            
+                        <dxi-item itemType="tabbed">
+                            <dxi-tab [colCount]="2" title="Base Info">
+                                <dxi-item dataField="name">
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [label]="{text: 'Location'}" dataField="locationId" editorType="dxSelectBox"
+                                    [editorOptions]="{ searchEnabled: true, displayExpr: 'name', valueExpr: 'id', dataSource: locationDataSource}">
+                                    <dxi-validation-rule type="required" message="Location is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="isActive"></dxi-item>
+                            </dxi-tab>
+                            <!-- <extra-fields-tab
+                                *ngIf="isRoomSet"
+                                #extraFieldsTab
+                                [entityName]="tableNames.room"
+                                [entityModel]="room"
+                                (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                            </extra-fields-tab> -->
+                        </dxi-item>
+                    </dx-form>
+                </div>
+
+                <div class="col-md-12 text-right mt-md-2">
+                    <button type="button" (click)="createUpdateRoom()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+                </div>
+            </div>
+    </div>
+</dx-popup>

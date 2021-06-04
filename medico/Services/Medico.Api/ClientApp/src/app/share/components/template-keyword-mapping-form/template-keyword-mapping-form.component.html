@@ -1,0 +1,49 @@
+<div *ngIf="areTemplateIdsSet" class="row">
+    <div class="col-md-12">
+        <dx-form #mappingForm [colCount]="4" [(formData)]="mapping.chiefComplaint" labelLocation="top">
+            <dxi-item [colSpan]="4" dataField="title">
+                <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                <dxi-validation-rule *ngIf="isNewMapping" type="custom" [validationCallback]="validateGeneratedName">
+                </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item [colSpan]="2" dataField="hpiTemplates">
+                <template-type-mapping
+                    #hpiTemplateMapping
+                    [companyId]="companyId"
+                    [chiefComplaintId]="mapping.chiefComplaint.id" 
+                    [templateTypeId]="hpiTemplateTypeId">
+                </template-type-mapping>
+            </dxi-item>
+
+            <dxi-item [colSpan]="2" dataField="rosTemplates">
+                <template-type-mapping
+                    #rosTemplateMapping
+                    [companyId]="companyId"
+                    [chiefComplaintId]="mapping.chiefComplaint.id" 
+                    [templateTypeId]="rosTemplateTypeId">
+                </template-type-mapping>
+            </dxi-item>
+
+            <dxi-item [colSpan]="2" dataField="physicalExamTemplates">
+                <template-type-mapping
+                    #physicalExamTemplateMapping
+                    [companyId]="companyId"
+                    [chiefComplaintId]="mapping.chiefComplaint.id" 
+                    [templateTypeId]="physicalExamTemplateTypeId">
+                </template-type-mapping>
+            </dxi-item>
+
+            <dxi-item [colSpan]="2" dataField="keywords">
+                <keyword-mapping
+                    #keywordTemplateMapping
+                    [chiefComplaintId]="mapping.chiefComplaint.id"
+                    [newKeywordsToAdd]="newKeywordsToAdd">
+                </keyword-mapping>
+            </dxi-item>
+        </dx-form>
+    </div>
+
+    <div class="col-md-12 text-right mt-md-2">
+        <button type="button" (click)="createUpdateMapping()" class="btn btn-sm btn-outline-secondary">SAVE</button>
+    </div>
+</div>

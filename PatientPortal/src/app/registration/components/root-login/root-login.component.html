@@ -1,0 +1,21 @@
+<div *ngIf="!email">
+    <div class="row mt-md-5">
+        <div class="offset-md-4 col-md-4">
+            <dx-form #emailForm [(formData)]="emailModel">
+                <dxi-item dataField="email">
+                    <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                    <dxi-validation-rule type="email" message="Email is invalid"></dxi-validation-rule>
+                </dxi-item>
+            </dx-form>
+        </div>
+    </div>
+    <div class="row mt-md-2">
+      <div class="col-md-2 offset-md-4 text-left">
+        <button type="button" (click)="forgotPassword()" class="btn btn-sm btn-outline-secondary">FORGOT PASSWORD</button>
+      </div>
+      <div class="col-md-2 text-right">
+        <button type="button" (click)="findUsers()" class="btn btn-sm btn-outline-secondary">NEXT</button>
+      </div>
+    </div>
+</div>
+<login *ngIf="email" (onBackToEmailForm)="resetEmail()" [email]="email"></login>

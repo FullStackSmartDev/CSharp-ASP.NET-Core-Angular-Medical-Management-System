@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-md-12 mt-md-2">
+        <dx-form #companyForm [(formData)]="company">
+            <dxi-item itemType="tabbed">
+                <dxi-tab [colCount]="12" title="Base Info">
+                    <dxi-item [colSpan]="6" dataField="name">
+                        <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" [editorOptions]="{ height: '70' }" dataField="address" editorType="dxTextArea">
+                        <dxi-validation-rule type="required" message="Address is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" [editorOptions]="{ height: '70' }" dataField="secondaryAddress" editorType="dxTextArea">
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" dataField="city">
+                        <dxi-validation-rule type="required" message="City is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" dataField="state" editorType="dxSelectBox" [editorOptions]="{ displayExpr: 'name', valueExpr: 'value', dataSource: states}">
+                        <dxi-validation-rule type="required" message="State is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="3" dataField="zipCodeType" editorType="dxSelectBox"
+                        [editorOptions]="{ width: '100%', height: '30', items: zipCodeTypes, displayExpr: 'name', valueExpr: 'value'  }">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="3" dataField="zipCode"
+                        [editorOptions]="{ useMaskedValue: false, width: '100%', height: '30', mask: zipMask }">
+                        <dxi-validation-rule type="required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" dataField="phone" [editorOptions]="{ mask: validationMasks.phone }">
+                        <dxi-validation-rule type="required" message="Phone is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" dataField="fax" [editorOptions]="{ mask: validationMasks.phone}">
+                        <dxi-validation-rule type="required" message="Fax is required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <dxi-item [colSpan]="6" dataField="webSiteUrl">
+                        <dxi-validation-rule type="pattern" [pattern]="regexRuleList.url" message="Invalid URL."></dxi-validation-rule>
+                    </dxi-item>
+                </dxi-tab>
+                <!-- <extra-fields-tab
+                        *ngIf="isCompanySet"
+                        #extraFieldsTab
+                        [entityName]="tableNames.company"
+                        [entityModel]="company"
+                        (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                    </extra-fields-tab> -->
+            </dxi-item>
+        </dx-form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 text-right mt-md-1">
+        <button type="button" (click)="updateCompany()" class="btn btn-outline-secondary">SAVE</button>
+    </div>
+</div>

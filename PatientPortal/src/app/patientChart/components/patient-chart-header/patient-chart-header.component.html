@@ -1,0 +1,134 @@
+<div>
+    <div *ngIf="isPatientChartHeaderReady" class="row">
+        <div class="col-md-10">
+            <table style="font-size: 0.9em;" class="table table-bordered mb-0">
+                <tr>
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>NAME:</b></div>
+                            <div class="col-md-9 text-center">{{patientName}}</div>
+                        </div>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>DOB:</b></div>
+                            <div class="col-md-9 text-center">{{patientDateOfBirth | date}}</div>
+                        </div>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-4"><b>AGE:</b></div>
+                            <div class="col-md-8 text-center">{{patientDateOfBirth | age}}</div>
+                        </div>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>MRN:</b></div>
+                            <div class="col-md-9 text-center">{{patientMrn}}</div>
+                        </div>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>DOS:</b></div>
+                            <div class="col-md-9 text-center">{{dateOfService | date}}</div>
+                        </div>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>DATE:</b></div>
+                            <div class="col-md-9 text-center">{{currentDate | date}}</div>
+                        </div>
+                    </td>
+                    <td style="width: 20%;" class="text-left align-middle">
+                        <div class="row">
+
+                            <div class="col-md-4 text-left">
+                                <b>ALLERGIES:</b>
+                            </div>
+
+                            <ng-container *ngIf="isPatientHaveAllergies && isPatientHaveOnlyOneAllergy">
+                                <div style="overflow: auto; height: 20px;" class="col-md-8 text-left">{{patientAllergies.latestPatientAllergy}}</div>
+                            </ng-container>
+
+                            <ng-container *ngIf="isPatientHaveAllergies && !isPatientHaveOnlyOneAllergy">
+                                <div style="overflow: auto; height: 20px;" class="col-md-6 text-left">{{patientAllergies.latestPatientAllergy}}</div>
+                                <div id="allergies" (click)="togglePatientAllergiesPopover()" class="col-md-2 text-center">
+                                    <i [ngClass]="isPatientAllergiesPopoverVisible ? 'dx-icon-chevronup' : 'dx-icon-chevrondown'"></i>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="!isPatientHaveAllergies">
+                                <div class="col-md-8 text-center">{{allergiesDefaultValue}}</div>
+                            </ng-container>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table  style="font-size: 0.9em;" class="table table-bordered mb-0">
+                <tr>
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-6"><b>HEIGHT WEIGHT BMI:</b></div>
+                            <div class="col-md-6 text-center">{{patientVitalSigns.height}} - {{patientVitalSigns.weight}} - {{patientVitalSigns.bmi}}</div>
+                        </div>
+                    </td>
+                    
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-4"><b>PULSE:</b></div>
+                            <div class="col-md-8 text-center">{{patientVitalSigns.pulse | notSet}}</div>
+                        </div>
+                    </td>
+                    
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>BP:</b></div>
+                            <div class="col-md-9 text-center">{{patientVitalSigns.bloodPressure.systolic | notSet}} / {{patientVitalSigns.bloodPressure.diastolic | notSet}}</div>
+                        </div>
+                    </td>
+                    
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-3"><b>RESP:</b></div>
+                            <div class="col-md-9 text-center">{{patientVitalSigns.resp | notSet}}</div>
+                        </div>
+                    </td>
+                    
+                    <td class="align-middle">
+                        <div class="row">
+                            <div class="col-md-6"><b>O2 SAT:</b></div>
+                            <div class="col-md-6 text-center">{{patientVitalSigns.o2Sat | notSet}}</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div *ngIf="!isPatientChartHeaderReady" class="row">
+        <div class="col-md-12 text-left">
+            <b>Loading...</b>
+        </div>
+    </div>
+</div>
+<dx-popover 
+    target="#allergies"
+    position="bottom"
+    [width]="300"
+    [showTitle]="false"
+    [(visible)]="isPatientAllergiesPopoverVisible">
+    <div *dxTemplate="let data = model of 'content'">
+        <div *ngIf="!patientAllergies.restPatientAllergies.length">
+            <h6>Patient have no allergies.</h6>
+        </div>
+        <div *ngIf="patientAllergies.restPatientAllergies.length">
+            <div class="text-left margin-top-5" *ngFor="let allergy of patientAllergies.restPatientAllergies; let i = index">
+                {{allergy}}
+            </div>
+        </div>
+    </div>
+</dx-popover>

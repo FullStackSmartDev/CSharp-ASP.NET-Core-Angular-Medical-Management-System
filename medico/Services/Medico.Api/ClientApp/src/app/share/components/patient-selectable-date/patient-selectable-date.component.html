@@ -1,0 +1,9 @@
+<div *ngIf="visible" class="row">
+    <div class="col-md-3">
+        <dx-text-box [(value)]="date"></dx-text-box>
+    </div>
+    <div *ngIf="!isPreviewMode" class="offset-md-6 col-md-3 text-right">
+        <button type="button" (click)="saveSelectbleItemChanges()"
+            class="btn btn-sm btn-outline-secondary">APPLY</button>
+    </div>
+</div>

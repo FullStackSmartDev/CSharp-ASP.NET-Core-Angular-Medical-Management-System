@@ -1,0 +1,123 @@
+<div class="row">
+    <div *ngIf="!isSignedOff" class="col-md-2">
+      <a href="" (click)="openAssessmentCreationForm($event)">Add Assessment</a>
+    </div>
+  </div>
+  <div class="row margin-top-15">
+    <div class="col-md-12">
+      <dx-data-grid 
+        [selectedRowKeys]="selectedAssessments"
+        [hoverStateEnabled]="true"
+        (onSelectionChanged)="onAssessmentSelected($event)"
+        [wordWrapEnabled]="true" 
+        #assessmentsGrid 
+        [dataSource]="assessments" 
+        [showBorders]="true"
+        [showRowLines]="true">
+
+        <dxi-column 
+            dataField="Id" 
+            dataType="string"
+            [visible]="false">
+        </dxi-column>
+
+        <dxi-column 
+            [width]="5 +'%'" 
+            dataField="Order"
+            dataType="number">
+        </dxi-column>
+
+        <dxi-column 
+            dataField="Diagnosis"
+            dataType="string">
+        </dxi-column>
+
+        <dxi-column 
+            dataField="Notes"
+            dataType="string">
+        </dxi-column>
+
+        <dxo-selection mode="single"></dxo-selection>
+  
+      </dx-data-grid>
+    </div>
+  </div>
+  <dx-popup 
+    #createUpdateAssessmentPopup 
+    class="popup" [width]="600" [height]="500"
+    [dragEnabled]="false" 
+    [showTitle]="true"
+    title="Create / Update Assessment"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isCreateUpdatePopupOpened"
+    (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view [scrollByContent]="true">
+        <div class="row">
+          <div class="col-md-12">
+            <form (submit)="createUpdateAssessment($event)">
+              <dx-validation-group #assessmentValidationGroup>
+                <div class='dx-fieldset'>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Order:</div>
+                        <div class="dx-field-value">
+                            <dx-number-box
+                                [readOnly]="assessment.IsDelete"
+                                [(value)]="assessment.Order"
+                                [max]="orderNumberMaxAvailableValue"
+                                [min]="orderNumberMinAvailableValue">
+                            </dx-number-box>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Search diagnosis:</div>
+                        <div class="dx-field-value">
+                            <dx-lookup
+                                #icdCodeLookup
+                                [dataSource]="icdCodeDataSource"
+                                valueExpr="Id"
+                                displayExpr="Name"
+                                placeholder="Search diagnosis..." 
+                                (onValueChanged)="diagnosisChanged($event)">
+                            </dx-lookup>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Diagnosis:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="assessment.Diagnosis" [height]="90">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Notes:</div>
+                        <div class="dx-field-value">
+                            <dx-text-area [(value)]="assessment.Notes" [height]="90">
+                            </dx-text-area>
+                        </div>
+                    </div>
+                    <div *ngIf="!isNewAssessment" class="dx-field">
+                        <div class="dx-field-label">Is Delete: </div>
+                        <div class="dx-field-value">
+                            <dx-check-box [(value)]="assessment.IsDelete">
+                            </dx-check-box>
+                        </div>
+                      </div>
+                </div>
+                <div class="dx-fieldset">
+                    <dx-button 
+                        text="Create / Update" 
+                        type="default" 
+                        [useSubmitBehavior]="true">
+                    </dx-button>
+                </div>
+              </dx-validation-group>
+            </form>
+          </div>
+        </div>
+      </dx-scroll-view>
+    </div>
+  </dx-popup>

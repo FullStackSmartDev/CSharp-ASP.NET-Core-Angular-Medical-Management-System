@@ -1,0 +1,75 @@
+<ion-header>
+    <ion-navbar>
+        <ion-grid>
+            <ion-row>
+                <ion-col col-3>
+                    <ion-label>
+                        Patient: {{currentPatientDemographic.Name}}
+                    </ion-label>
+                </ion-col>
+                <ion-col col-4>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-3 style="min-width: 300px; ">
+                <div class="dx-field">
+                    <div class="dx-field-label">Report Preset:</div>
+                    <div class="dx-field-value">
+                        <dx-select-box #ReportPresetSelect [dataSource]="presetOptions" displayExpr="toString" valueExpr="toString" [value]="presetOptions[0]"
+                            (onValueChanged)="ChangeReportPreset(ReportPresetSelect.value)"></dx-select-box>
+                    </div>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-3 style="min-width: 300px; margin-bottom: 50px;">
+                <dx-tree-view id="patient-data-treeview" [width]="300" [dataSource]="patientDataModelTree" itemTemplate="itemTemplate">
+                    <div style="display: flex;" *dxTemplate="let itemObj of 'itemTemplate'">
+                        <div style="display: flex; flex: 1;">{{itemObj.text}}</div>
+                        <div style="display: flex; justify-content: flex-end; margin-right: 10px;" *ngIf="itemObj.items.length == 0">
+                            <dx-check-box [(value)]="itemObj.checked"></dx-check-box>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; margin-right: 10px;" *ngIf="itemObj.items.length != 0">
+                            <dx-check-box [(value)]="itemObj.checked" (onValueChanged)="CheckChildItems(itemObj, $event)"></dx-check-box>
+
+                        </div>
+                    </div>>
+                </dx-tree-view>
+                <dx-button [text]="makeAdmissionReportBtnText" [type]="makeAdmissionReportBtnType" (onClick)="makeAdmissionReport()"></dx-button>
+            </ion-col>
+            <ion-col col-9>
+                <!-- <pre>{{example}}</pre> -->
+                <!-- <div class="report-html" [innerHTML]="reportHTML"></div> -->
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col col-3 style="min-width: 300px; ">
+                <div class="dx-field">
+                    <div class="dx-field-label">Report Name</div>
+                    <div class="dx-field-value">
+                        <dx-text-box [(value)]="reportName"></dx-text-box>
+                    </div>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+
+        </ion-row>
+        <ion-row>
+            <dx-button *ngIf="reportHTML" style="margin: 20px 0px 0px 30px; background: #47E; color: #FFF;" [text]="exportReportAsPdfBtnText"
+                [type]="exportReportAsPdfBtnType" (onClick)="exportReportAsPdf()"></dx-button>
+
+        </ion-row>
+        <ion-row>
+            <div class="report-holder">
+                <div #report id="report" class="report-html" [innerHTML]="reportHTML"></div>
+            </div>
+        </ion-row>
+    </ion-grid>
+</ion-content>

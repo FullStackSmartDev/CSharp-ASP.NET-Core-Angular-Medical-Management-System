@@ -1,0 +1,24 @@
+<dx-popup 
+    #selectableRangePopup class="popup" [width]="500"
+    [height]="150"
+    [dragEnabled]="false"
+    [showTitle]="true"
+    title="Select" 
+    [closeOnOutsideClick]="false"
+    (onHidden)="onSelectablePopupHidden()">
+        <div *dxTemplate="let data of 'content'">
+            <div class="row">
+                <div class="col-md-4">
+                    <dx-number-box
+                        [(value)]="rangeValue"
+                        [min]="minRangeValue"
+                        [max]="maxRangeValue"
+                        [showSpinButtons]="true">
+                    </dx-number-box>
+                </div>
+                <div *ngIf="!isPreviewMode" class="offset-md-5 col-md-3 text-right">
+                    <button type="button" (click)="saveSelectbleItemChanges()" class="btn btn-sm btn-outline-secondary">APPLY</button>
+                </div>
+            </div>
+        </div>
+</dx-popup>

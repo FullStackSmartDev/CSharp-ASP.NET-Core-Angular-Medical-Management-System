@@ -1,0 +1,118 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>1605c43e-10ba-429c-8406-7373ca60f368</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190103175941_Fill_TemplateLookupItem_Table.cs" />
+    <Compile Remove="Migrations\20190103175941_Fill_TemplateLookupItem_Table.Designer.cs" />
+    <Compile Remove="Migrations\20190103181655_Remove_All_From_TemplateLookupItem_Table.cs" />
+    <Compile Remove="Migrations\20190103181655_Remove_All_From_TemplateLookupItem_Table.Designer.cs" />
+    <Compile Remove="Migrations\20190105141508_Remove_All_From_Template_Table.cs" />
+    <Compile Remove="Migrations\20190105141508_Remove_All_From_Template_Table.Designer.cs" />
+    <Compile Remove="Migrations\20190105141916_Insert_Into_TemplateLookupItem_Table_Part_1.cs" />
+    <Compile Remove="Migrations\20190105141916_Insert_Into_TemplateLookupItem_Table_Part_1.Designer.cs" />
+    <Compile Remove="Migrations\20190105151920_Insert_New_Templates.cs" />
+    <Compile Remove="Migrations\20190105151920_Insert_New_Templates.Designer.cs" />
+    <Compile Remove="Migrations\20190126125834_FamilyHistory_SurgicalHistory_MedicalHistory_Changes.cs" />
+    <Compile Remove="Migrations\20190126125834_FamilyHistory_SurgicalHistory_MedicalHistory_Changes.Designer.cs" />
+    <Compile Remove="Migrations\20190126130618_FamilyHistory_SurgicalHistory_MedicalHistory_Changes.cs" />
+    <Compile Remove="Migrations\20190126130618_FamilyHistory_SurgicalHistory_MedicalHistory_Changes.Designer.cs" />
+    <Compile Remove="Migrations\20190126152220_Patient_History_Data_Structure_Table_Changes.cs" />
+    <Compile Remove="Migrations\20190126152220_Patient_History_Data_Structure_Table_Changes.Designer.cs" />
+    <Compile Remove="Migrations\20190126165345_Patient_History_Data_Structure_Table_Changes.cs" />
+    <Compile Remove="Migrations\20190126165345_Patient_History_Data_Structure_Table_Changes.Designer.cs" />
+    <Compile Remove="Migrations\20190127212252_VitalSigns_Table.cs" />
+    <Compile Remove="Migrations\20190127212252_VitalSigns_Table.Designer.cs" />
+    <Compile Remove="Migrations\20190128214232_VitalSigns_Table.cs" />
+    <Compile Remove="Migrations\20190128214232_VitalSigns_Table.Designer.cs" />
+    <Compile Remove="Migrations\20190131212650_Change_VitalSigns_Structure.cs" />
+    <Compile Remove="Migrations\20190131212650_Change_VitalSigns_Structure.Designer.cs" />
+    <Compile Remove="Migrations\20190131213449_Change_VitalSigns_Structure.cs" />
+    <Compile Remove="Migrations\20190131213449_Change_VitalSigns_Structure.Designer.cs" />
+    <Compile Remove="Migrations\20190131214524_Change_VitalSigns_Structure.cs" />
+    <Compile Remove="Migrations\20190131214524_Change_VitalSigns_Structure.Designer.cs" />
+    <Compile Remove="Migrations\20190131224036_Change_VitalSigns_Structure.cs" />
+    <Compile Remove="Migrations\20190131224036_Change_VitalSigns_Structure.Designer.cs" />
+    <Compile Remove="Migrations\20190331100401_ExtraField_Table_IsActive_ShowInList_Columns_Aadded.cs" />
+    <Compile Remove="Migrations\20190331100401_ExtraField_Table_IsActive_ShowInList_Columns_Aadded.Designer.cs" />
+    <Compile Remove="Migrations\20190403083122_Employee_Table_Change_EmployeeType_Column_Name.cs" />
+    <Compile Remove="Migrations\20190403083122_Employee_Table_Change_EmployeeType_Column_Name.Designer.cs" />
+    <Compile Remove="Migrations\20190428130926_Employee_Table_Change_IsDelete_To_IsActive.cs" />
+    <Compile Remove="Migrations\20190428130926_Employee_Table_Change_IsDelete_To_IsActive.Designer.cs" />
+    <Compile Remove="Migrations\20190428144834_Employee_Table_Change_IsDelete_To_IsActive.cs" />
+    <Compile Remove="Migrations\20190428144834_Employee_Table_Change_IsDelete_To_IsActive.Designer.cs" />
+    <Compile Remove="Migrations\20190429042828_Employee_Table_Change_IsDelete_To_IsActive.cs" />
+    <Compile Remove="Migrations\20190429042828_Employee_Table_Change_IsDelete_To_IsActive.Designer.cs" />
+    <Compile Remove="Migrations\20190430000713_Template_Table_Change_IsDelete_To_IsActive.cs" />
+    <Compile Remove="Migrations\20190430000713_Template_Table_Change_IsDelete_To_IsActive.Designer.cs" />
+    <Compile Remove="Migrations\20190503120454_Template_Table_Change_IsDelete_To_IsActive.cs" />
+    <Compile Remove="Migrations\20190503120454_Template_Table_Change_IsDelete_To_IsActive.Designer.cs" />
+    <Compile Remove="Migrations\20190526110718_Change_Patient_Data_Model_According_Report.cs" />
+    <Compile Remove="Migrations\20190526110718_Change_Patient_Data_Model_According_Report.Designer.cs" />
+    <Compile Remove="Migrations\20190606161738_Patient_Data_Model_Change_Occupational_History_Fix.cs" />
+    <Compile Remove="Migrations\20190606161738_Patient_Data_Model_Change_Occupational_History_Fix.Designer.cs" />
+    <Compile Remove="Migrations\20190606161916_Patient_Data_Model_Change_Occupational_History_Fix.cs" />
+    <Compile Remove="Migrations\20190606161916_Patient_Data_Model_Change_Occupational_History_Fix.Designer.cs" />
+    <Compile Remove="Migrations\20190616224250_Employee_Table_NameSuffix_NamePrefix_Not_Required.cs" />
+    <Compile Remove="Migrations\20190616224250_Employee_Table_NameSuffix_NamePrefix_Not_Required.Designer.cs" />
+    <Compile Remove="Migrations\20190617120021_Update_ICD10_Codes.cs" />
+    <Compile Remove="Migrations\20190617120021_Update_ICD10_Codes.Designer.cs" />
+    <Compile Remove="Migrations\20190618004424_Change_Medication_Table_Columns.cs" />
+    <Compile Remove="Migrations\20190618004424_Change_Medication_Table_Columns.Designer.cs" />
+    <Compile Remove="Migrations\20190618011222_Change_Medication_Table_Columns.cs" />
+    <Compile Remove="Migrations\20190618011222_Change_Medication_Table_Columns.Designer.cs" />
+    <Compile Remove="Migrations\20190618012107_Update_Medications.cs" />
+    <Compile Remove="Migrations\20190618012107_Update_Medications.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".dockerignore" />
+    <None Remove="Dockerfile" />
+    <None Remove="Dockerfile_byVS" />
+    <None Remove="Dockerfile_gitlab" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.1" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="19.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DB\Scripts\icd10Codes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DB\Scripts\insertNewTemplateLookupItems.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DB\Scripts\insertNewTemplates.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DB\Scripts\insertOldTemplateLookupItems.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DB\Scripts\insertOldTemplates.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DB\Scripts\medication.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

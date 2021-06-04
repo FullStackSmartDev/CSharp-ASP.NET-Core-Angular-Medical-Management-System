@@ -1,0 +1,18 @@
+<div class="row">
+    <div *ngIf="!areAllegationsNotesSet" class="col-md-12 text-primary">AllEGATIONS NOTES ARE NOT SET</div>
+    <div *ngIf="areAllegationsNotesSet" class="col-md-12">
+        <span [ngClass]="areAllegationsNotesReviewed ? 'text-primary' : 'text-danger'" id="allegationsNotes" (click)="toggleAllegationsNotesPopover()">
+            <span>ALLEGATIONS NOTES</span><i class="pl-3" [ngClass]="isAllegationsNotesPopoverVisible ? 'dx-icon-chevronup' : 'dx-icon-chevrondown'"></i>
+        </span>
+    </div>
+</div>
+<dx-popover 
+    target="#allegationsNotes"
+    position="bottom"
+    [width]="300"
+    [showTitle]="false"
+    [(visible)]="isAllegationsNotesPopoverVisible">
+    <div *dxTemplate="let data = model of 'content'">
+        {{allegationsNotes}}
+    </div>
+</dx-popover>

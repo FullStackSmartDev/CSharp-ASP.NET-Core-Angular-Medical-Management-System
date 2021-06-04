@@ -1,0 +1,137 @@
+<div *ngIf="!isExpressionFormVisible" class="row">
+    <div class="col-md-2">        
+        <button (click)="switchToExpressionForm()" class="btn btn-sm btn-outline-secondary"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="col-md-2 offset-md-2 text-right">
+        <div class="btn-group btn-group-sm" role="group">
+            <button (click)="openExpressionImportManagementPopup()" class="btn btn-outline-secondary">
+                <i class="fas fa-upload"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row mt-2">
+    <div *ngIf="!isExpressionFormVisible" class="col-md-6">
+        <dx-data-grid #expressionsGrid width="100%" 
+            [selectedRowKeys]="selectedExpressions" 
+            [showBorders]="true"
+            [dataSource]="expressionDataSource" 
+            [columnHidingEnabled]="false"
+            [hoverStateEnabled]="true" 
+            (onSelectionChanged)="onExpressionChanged($event)">
+
+            <dxo-remote-operations [paging]="true" [filtering]="true" [sorting]="true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column 
+                dataField="id" 
+                dataType="string" 
+                [visible]="false">
+            </dxi-column>
+
+            <dxi-column 
+                [allowSorting]="false" 
+                dataField="title" 
+                dataType="string" 
+                [filterOperations]="searchConfiguration.availableFilters">
+            </dxi-column>
+
+            <dxi-column alignment="center" caption="Actions" cellTemplate="actionsExpression"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let expression of 'actionsExpression'">        
+                <div class="btn-group btn-group-sm" role="group">
+                    <button (click)="deleteExpression(expression.data, $event)" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    <button *ngIf="expression.data.libraryExpressionId" (click)="syncWithLibraryExpression(expression.data, $event)" class="btn btn-outline-secondary"><i class="fas fa-sync"></i></button>
+                </div>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+    <div *ngIf="isExpressionFormVisible" class="col-md-10">
+        <div class="row">
+            <div class="col-md-12 mt-md-2">
+                <dx-form #expressionForm [(formData)]="expression">
+                    <dxi-item class="p-4" [tabPanelOptions]="{ deferRendering: false }" itemType="tabbed" [colSpan]="2">
+                        <dxi-tab title="Base Info">
+                            <dxi-item [editorOptions]="{ width: '50%' }" dataField="title">
+                                <dxi-validation-rule type="required" message="Title is required"></dxi-validation-rule>
+                            </dxi-item>
+                        </dxi-tab>
+    
+                        <dxi-tab title="Reference Tables">
+                            <reference-table-list #referenceTableList 
+                                [companyId]="companyId" 
+                                [expressionId]="expression.id">
+                            </reference-table-list>
+                        </dxi-tab>
+    
+                        <dxi-tab title="Expression">
+                            <dxi-item dataField="template"
+                                editorType="dxTextArea"
+                                [editorOptions]="{ width: '100%', height: '400' }"
+                                [label]="{ visible: false }">
+                                <dxi-validation-rule type="required" message="Expression is required"></dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button (click)="executeExpression($event)" class="btn btn-sm btn-outline-secondary">EXECUTE</button>
+                                    <button (click)="getExecutionContext($event)" class="btn btn-sm btn-outline-secondary"> EXECUTION CONTEXT</button>
+                                </div>
+                            </dxi-item>
+                        </dxi-tab>
+                    </dxi-item>
+                </dx-form>
+            </div>
+        </div>
+        <div class="row mt-md-2">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-sm btn-outline-danger text-left" (click)="switchToExpressionsDataGrid()">CANCEL</button>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="saveExpression()">SAVE</button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- import library popup -->
+<dx-popup class="popup" [width]="800" [height]="580" [showTitle]="true" title="Import from library"
+    [closeOnOutsideClick]="false" [(visible)]="isExpressionImportFormVisible">
+    <expression-import *ngIf="isExpressionImportFormVisible" 
+        [companyId]="companyId" 
+        (onExpressionImportApplied)="onReferenceTableImportApplied()"
+        (onExpressionImportCanceled)="onReferenceTableImportCanceled()">
+    </expression-import>
+</dx-popup>
+
+<dx-popup class="popup" [width]="800" [height]="580" [showTitle]="true"
+    [closeOnOutsideClick]="false" 
+    [visible]="isExecutionResultContextPopupVisible"
+    (onHidden)="onExecutionContextResultPopupHidden()">
+    <dx-scroll-view width="100%" height="100%">
+        <expression-execution-result
+            *ngIf="isExecutionResultVisible"
+            [expressionTemplate]="expression.template"
+            [referenceTables]="referenceTableList.expressionReferenceTables">
+        </expression-execution-result>
+
+        <expression-execution-context 
+            *ngIf="isExecutionContextVisible">
+        </expression-execution-context>
+    </dx-scroll-view>
+</dx-popup>

@@ -1,0 +1,58 @@
+<div class="row mt-md-2">
+    <div class="col-md-12">
+        <dx-data-grid #appointmentsGrid 
+            [showBorders]="true"
+            [dataSource]="appointmentsDataSource"
+            [hoverStateEnabled]="false"
+            [height]="470">
+
+            <dxo-scrolling mode="virtual" ></dxo-scrolling>
+            <dxo-grouping #expand [autoExpandAll]="false"></dxo-grouping>
+
+            <dxi-column dataField="id" dataType="string" [visible]="false"></dxi-column>
+
+            <dxi-column format="shortDate" [groupIndex]="0" dataType="date" dataField="date"></dxi-column>
+
+            <dxi-column [width]="20+'%'" [allowSorting]="false" dataField="physician" cellTemplate="physicianNameTemplate"></dxi-column>
+
+            <dxi-column [width]="20+'%'" [allowSorting]="false" dataField="nurse" cellTemplate="nurseNameTemplate"></dxi-column>
+
+            <dxi-column [width]="20+'%'" [allowSorting]="false" caption="Location" dataField="locationName"></dxi-column>
+
+            <dxi-column [width]="15+'%'" [allowSorting]="false" caption="Room" dataField="roomName"></dxi-column>
+
+            <dxi-column [width]="15+'%'" [allowSorting]="false" caption="Status" cellTemplate="appointmentStatusTemplate" dataField="appointmentStatus"></dxi-column>
+
+            <dxi-column [allowSorting]="false" cellTemplate="actionsTemplate"></dxi-column>
+
+            <dxo-remote-operations [paging]="true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="searchConfiguration.pageSizeCount">
+            </dxo-paging>
+
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="searchConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <div *dxTemplate="let appointment of 'nurseNameTemplate'">
+                {{appointment.data.nurseFirstName}} {{appointment.data.nurseLastName}}
+            </div>
+
+            <div *dxTemplate="let appointment of 'physicianNameTemplate'">
+                {{appointment.data.physicianFirstName}} {{appointment.data.physicianLastName}}
+            </div>
+
+            <div *dxTemplate="let appointment of 'appointmentStatusTemplate'">
+                <span *ngIf="!appointment.data.admissionId" class="badge badge-secondary">{{appointment.data.appointmentStatus}}</span>
+                <span *ngIf="appointment.data.admissionId && !appointment.data.signingDate" class="badge badge-danger">{{appointment.data.appointmentStatus}}</span>
+                <span *ngIf="appointment.data.admissionId && appointment.data.signingDate" class="badge badge-success">{{appointment.data.appointmentStatus}}</span>
+            </div>
+
+            <div class="text-center" *dxTemplate="let appointment of 'actionsTemplate'">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button (click)="navigateToPatientAdmission(appointment.data.id)" class="btn btn-outline-secondary"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </dx-data-grid>
+    </div>
+</div>

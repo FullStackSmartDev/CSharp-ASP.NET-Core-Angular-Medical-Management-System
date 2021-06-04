@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-md-12">
+        <dx-lookup 
+            class="margin-top-15" 
+            [(value)]="selectedLookupItemId"
+            [dataSource]="lookupItemDataSource"
+            valueExpr="Id"
+            displayExpr="Title"
+            (onValueChanged)="onTemplateLookupItemChanged($event)"
+            placeholder="Search template item...">
+        </dx-lookup>
+    </div>
+</div>

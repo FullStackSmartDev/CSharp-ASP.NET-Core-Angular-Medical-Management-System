@@ -1,0 +1,86 @@
+<div class="row">
+    <div class="col-md-2">
+        <span class="action" (click)="openRoomCreationForm()">New Room</span>
+    </div>
+</div>
+<div class="row margin-top-15">
+    <div class="col-md-12">
+        <dx-data-grid 
+            [selectedRowKeys]="selectedRooms"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="onRoomSelected($event)"
+            [wordWrapEnabled]="true"
+            #roomDataGrid 
+            [dataSource]="roomDataSource"
+            [showBorders]="true">
+
+            <dxo-remote-operations 
+                [paging]="true"
+                [filtering]="true"
+                [sorting]= "true">
+            </dxo-remote-operations>
+
+            <dxo-paging [pageSize]="applicationConfiguration.defaultPageSizeCount"></dxo-paging>
+
+            <dxo-pager 
+                [showPageSizeSelector]="true" 
+                [allowedPageSizes]="applicationConfiguration.allowedPageSizes">
+            </dxo-pager>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+            <dxi-column dataField="Room_Id" dataType="string" [visible]="false"></dxi-column>
+            <dxi-column [filterOperations]="['contains', '=', 'startswith']" caption="Name" dataField="Room_Name" dataType="string"></dxi-column>
+            <dxi-column [filterOperations]="['contains', '=', 'startswith']" caption="Location" dataField="Location_Name" dataType="string"></dxi-column>
+            <dxi-column caption="Is Active"  dataField="Room_IsActive" dataType="boolean"></dxi-column>
+            <dxi-column alignment="center" caption="Delete" cellTemplate="deleteRoomTemplate"></dxi-column>
+
+            <div class="text-center" *dxTemplate="let room of 'deleteRoomTemplate'">        
+                <span class="action delete-action" (click)="deleteRoom(room.data, $event)"><i class="dx-icon-remove"></i></span>
+            </div>
+
+            <dxo-selection mode="single"></dxo-selection>
+            
+        </dx-data-grid>
+    </div>
+</div>
+<dx-popup #createUpdateRoomPopup class="popup" [width]="800" [height]="500" [dragEnabled]="false" [showTitle]="true" title="Create / Update Room"
+    [closeOnOutsideClick]="false" [(visible)]="isCreateUpdatePopupOpened" (onHidden)="onCreateUpdatePopupHidden()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [scrollByContent]="true">
+            <div *ngIf="isCreateUpdatePopupOpened" class="row">
+                <div class="col-md-12">
+                    <dx-form
+                        #roomCreationForm
+                        [(formData)]="room"
+                        (onFieldDataChanged)="onRoomFieldChanged($event)">
+            
+                        <dxi-item itemType="tabbed">
+                            <dxi-tab [colCount]="2" title="Base Info">
+                                <dxi-item dataField="Name">
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                </dxi-item>
+
+                                <dxi-item [label]="{text: 'Location'}" dataField="LocationId" editorType="dxLookup" [editorOptions]="{ displayExpr: 'Name', valueExpr: 'Id', dataSource: locationDataSource}">
+                                    <dxi-validation-rule type="required" message="Location is required"></dxi-validation-rule>
+                                </dxi-item>
+            
+                                <dxi-item dataField="IsActive"></dxi-item>
+                            </dxi-tab>
+                            <!-- <extra-fields-tab
+                                *ngIf="isRoomSet"
+                                #extraFieldsTab
+                                [entityName]="tableNames.room"
+                                [entityModel]="room"
+                                (onExtraFieldsTabCreated)="onExtraFieldsTabCreated($event)">
+                            </extra-fields-tab> -->
+                        </dxi-item>
+                    </dx-form>
+                </div>
+                <div class="col-md-12 text-left margin-top-10">
+                    <dx-button (onClick)="createUpdateRoom()" text="SAVE" type="default"></dx-button>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</dx-popup>
